@@ -1,27 +1,26 @@
 const isDev = location.host.startsWith(`dev.`);
-const perfNow = performance.now();
 const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 const { logFactory, $ } = lib;
+// start performance
+const perfNow = performance.now();
 const dateProxyFactory = isDev
   ? (await import("../index.ejs.js")).default
   : (await import("../Bundle/esDateFiddler.min.js")).default
 const { log, logTop } = logFactory(true);
 
 demoNdTest();
-const contentDiv = $(`<div class="content" id="content"><h3>Content</h3><ul></ul></div>`, $(`#inits`)[0], $.at.BeforeBegin);
-const ul = contentDiv.find$(`ul`);
-
+// content and handling
 $.delegate(`click`, `h3[id]`, () => {
   $.node(`#content`).scrollIntoView();
-  document.documentElement.scrollTop = 0;
-});
+  document.documentElement.scrollTop = 0; });
 $.delegate(`click`, `.content li .linkLike`, evt => {
-  console.log($.node(evt.target.dataset.target));
   $.node(evt.target.dataset.target).scrollIntoView();
-  document.documentElement.scrollBy(0, -15);
-});
-
-
+  document.documentElement.scrollBy(0, -15); });
+const contentDiv = $(
+  `<div class="content" id="content"><h3>Content</h3><ul></ul></div>`,
+  $(`#inits`),
+  $.at.BeforeBegin );
+const ul = contentDiv.find$(`ul`);
 $(`h3[id]`).each(h3 => {
     const header = $(h3).duplicate();
     const doQuote = header.hasClass(`quoted`) ? ` class="linkLike quoted"` : `class="linkLike"`;
@@ -123,8 +122,35 @@ function demoNdTest() {
     .format(`{<code>d1.subtract(\`2 days, 5 hours)</code> =>} WD MM d yyyy hh:mmi:ss`, defaultLocale));
   log(`${toCode(`DateX().previousYear.nextMonth.local`)} => ${DateX().previousYear.nextMonth.local}`);
 
+  // difference
+  log(`!!<h3 id="difference">Difference utility</h3`);
+  log(`${toCode(`DateX().differenceFrom('1991/08/27 13:30').full`)}
+   <p> => ${DateX().differenceFrom('1991/08/27 13:30').full}</p>`);
+  log(`${toCode(`DateX().differenceFrom(DateX().subtract(\`5 days, 2 hours, 1 minute\`)).clean`)}
+   <p> => ${
+     DateX().differenceFrom(DateX().subtract(`5 days, 2 hours, 1 minute`)).clean}
+     (<b>Note</b>:<code>.clean</code> removes zero values) </p>`);
+  const today = DateX();
+  const then = DateX(`2023/07/16`);
+  log(`!!${
+    toCode(`const today = DateX();
+      const then = DateX(\`2023/07/16\`);
+      const diffFromThen = today.differenceFrom(then);`, true)}`);
+  log(`!!${toCode(`diffFromThen`)} => <pre>${toJSON(today.differenceFrom(then), true)}</pre>`);
+  log(`${toCode(`then.differenceFrom(then).full`)} ${toJSON(then.differenceFrom(then).full)}`);
+  log(`${toCode(`then.differenceFrom(then).clean`)} ${then.differenceFrom(then).clean}`);
+
+  // error
+  log(`!!<h3 id="constructor" class="quoted">Constructor</h3`);
+  log(`${toCode(`DateX(\`hello\`).ISO`)}
+    <p>=> invalid Date returns (proxified) <i>now</i>: ${DateX(`hello`).ISO}</p>`);
+  log(`${toCode(`DateX(\`2012/12/12 00:00:00\`).ISO`)}
+    <p>=> string converted to (proxified) Date (when convertable): ${DateX(`2012/12/12 00:00:00`).ISO}</p>`);
+  log(`${toCode(`DateX().ISO`)}
+    <p>=> no parameters returns (proxified) <i>now</i>: ${DateX().ISO}</p>`);
+
   // customs
-  log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`)
+  log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`);
   const now = DateX();
   const y2000 = now.clone;
   y2000.date = { year: 2000, date: 1 };
@@ -157,33 +183,6 @@ function demoNdTest() {
   log(`<code>y2000.values()</code> => <p>${JSON.stringify(y2000.values())}</p>`);
   log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
 
-  // difference
-  log(`!!<h3 id="difference">Difference utility</h3`);
-  log(`${toCode(`DateX().differenceFrom('1991/08/27 13:30').full`)}
-   <p> => ${DateX().differenceFrom('1991/08/27 13:30').full}</p>`);
-  log(`${toCode(`DateX().differenceFrom(DateX().subtract(\`5 days, 2 hours, 1 minute\`)).clean`)}
-   <p> => ${
-     DateX().differenceFrom(DateX().subtract(`5 days, 2 hours, 1 minute`)).clean}
-     (<b>Note</b>:<code>.clean</code> removes zero values) </p>`);
-  const today = DateX();
-  const then = DateX(`2023/07/16`);
-  log(`!!${
-    toCode(`const today = DateX();
-      const then = DateX(\`2023/07/16\`);
-      const diffFromThen = today.differenceFrom(then);`, true)}`);
-  log(`!!${toCode(`diffFromThen`)} => <pre>${toJSON(today.differenceFrom(then), true)}</pre>`);
-  log(`${toCode(`then.differenceFrom(then).full`)} ${toJSON(then.differenceFrom(then).full)}`);
-  log(`${toCode(`then.differenceFrom(then).clean`)} ${then.differenceFrom(then).clean}`);
-
-  // error
-  log(`!!<h3 id="constructor" class="quoted">Constructor</h3`);
-  log(`${toCode(`DateX(\`hello\`).ISO`)}
-    <p>=> invalid Date returns (proxified) <i>now</i>: ${DateX(`hello`).ISO}</p>`);
-  log(`${toCode(`DateX(\`2012/12/12 00:00:00\`).ISO`)}
-    <p>=> string converted to (proxified) Date (when convertable): ${DateX(`2012/12/12 00:00:00`).ISO}</p>`);
-  log(`${toCode(`DateX().ISO`)}
-    <p>=> no parameters returns (proxified) <i>now</i>: ${DateX().ISO}</p>`);
-
   // natives
   log(`!!<h3 id="natives">Use all native Date methods</h3`);
   y2000.setHours(y2000.hour - 3);
@@ -198,7 +197,7 @@ function demoNdTest() {
 
   log(`!!<h3 id="perfomance">Performance</h3`);
   const perf = performance.now() - perfNow;
-  log(`The whole enchilada above this (imports included) took 
+  log(`The whole enchilada above this (importing the module included) took 
     <b>${(perf).toFixed(2)}</b> milliseconds (${(perf/1000).toFixed(2)} seconds)`);
 }
 
