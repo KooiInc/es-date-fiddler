@@ -1,4 +1,3 @@
-/* build 09-06-2023 15:16:35 */
 window.DateFiddlerFactory = DateFiddlerFactory;
 
 function DateFiddlerFactory() {

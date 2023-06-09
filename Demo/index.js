@@ -5,7 +5,7 @@ const { logFactory, $ } = lib;
 const perfNow = performance.now();
 const dateProxyFactory = isDev
   ? (await import("../index.esm.js")).default
-  : (await import("../Bundle/esDateFiddler.min.js")).default
+  : (await import("../Bundle/index.esm.min.js")).default
 const { log, logTop } = logFactory(true);
 
 demoNdTest();
