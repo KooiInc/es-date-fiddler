@@ -2,10 +2,9 @@ const isDev = location.host.startsWith(`dev.`);
 const perfNow = performance.now();
 const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 const { logFactory, $ } = lib;
-const DateProxyFactory = isDev
-  ? (await import("/DateProxyModule/index.ejs.js")).default
-  : (await import("../index.ejs.js")).default
-import dateProxyFactory from "/DateProxyModule/index.ejs.js";
+const dateProxyFactory = isDev
+  ? (await import("../index.ejs.js")).default
+  : (await import("../Bundle/esDateFiddler.min.js")).default
 const { log } = logFactory(true);
 
 demoNdTest();
