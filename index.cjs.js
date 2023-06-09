@@ -1,7 +1,6 @@
 exports.DateFiddlerFactory = DateFiddlerFactory;
 
 function DateFiddlerFactory() {
-  console.log(`hello world`)
   const proxied = methodHelpersFactory(proxify);
   const proxy = {
     get: ( target, key ) => { return !target[key] && proxied[key]?.(target) || targetGetter(target, key); },
