@@ -5,7 +5,7 @@ const { logFactory, $ } = lib;
 const dateProxyFactory = isDev
   ? (await import("../index.ejs.js")).default
   : (await import("../Bundle/esDateFiddler.min.js")).default
-const { log } = logFactory(true);
+const { log, logTop } = logFactory(true);
 
 demoNdTest();
 const contentDiv = $(`<div class="content" id="content"><h3>Content</h3><ul></ul></div>`, $(`#inits`)[0], $.at.BeforeBegin);
@@ -26,6 +26,10 @@ $(`h3[id]`).each(h3 => {
 });
 
 $(`<div class="spacer"></div>`);
+logTop(`!!
+      <a class="gitLink" href="//github.com/KooiInc/es-date-fiddler">
+        <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink"> Source code @Github
+     </a>`);
 
 function demoNdTest() {
   const yn = tf => tf ? `Yep` : `Nope`;
@@ -266,6 +270,15 @@ function styleIt() {
     `.spacer {
       position: relative;
       height: 75vh;
-    }`);
-
+    }`,
+    `#log2screen a.gitLink img {
+      width: 24px;
+      height: auto;
+      margin-right: 4px;
+      vertical-align: middle;
+    }`,
+    `#log2screen a.gitLink  {
+      font-weight: normal !important;
+    }`
+  );
 }
