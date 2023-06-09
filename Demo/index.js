@@ -13,22 +13,28 @@ const ul = contentDiv.find$(`ul`);
 
 $.delegate(`click`, `h3[id]`, () => {
   $.node(`#content`).scrollIntoView();
-  document.documentElement.scrollBy(0, -100);
+  document.documentElement.scrollTop = 0;
 });
+$.delegate(`click`, `.content li .linkLike`, evt => {
+  console.log($.node(evt.target.dataset.target));
+  $.node(evt.target.dataset.target).scrollIntoView();
+  document.documentElement.scrollBy(0, -15);
+});
+
 
 $(`h3[id]`).each(h3 => {
     const header = $(h3).duplicate();
-    const doQuote = header.hasClass(`quoted`) ? ` class="quoted" ` : ` `;
+    const doQuote = header.hasClass(`quoted`) ? ` class="linkLike quoted"` : `class="linkLike"`;
     header.find$(`a`).remove();
     const headerText = header.html();
-    ul.append(`<li><a${doQuote}href="#${h3.id}">${headerText.replace(/\(.+\)/, ``)}</a></li>`);
+    ul.append(`<li><div ${doQuote} data-target="h3#${h3.id}">${headerText.replace(/\(.+\)/, ``)}</div></li>`);
     $(h3).prop(`title`, `Back to top`);
 });
 
 $(`<div class="spacer"></div>`);
 logTop(`!!
       <a class="gitLink" href="//github.com/KooiInc/es-date-fiddler">
-        <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink"> Source code @Github
+        <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink"> Back to repository @Github
      </a>`);
 
 function demoNdTest() {
@@ -198,7 +204,10 @@ function demoNdTest() {
 
 function styleIt() {
   $.editCssRules(
-    `body { margin-top: 2rem; }`,
+    `body { 
+      margin-top: 2rem;
+      font: normal 14px/17px system-ui, verdana, arial; 
+     }`,
     `.head pre, .head div { font-weight: normal }`,
     `code, code.codeblock {
       background-color: #fffff8; 
@@ -269,7 +278,7 @@ function styleIt() {
     }`,
     `.spacer {
       position: relative;
-      height: 75vh;
+      height: 95vh;
     }`,
     `#log2screen a.gitLink img {
       width: 24px;
@@ -279,6 +288,16 @@ function styleIt() {
     }`,
     `#log2screen a.gitLink  {
       font-weight: normal !important;
-    }`
+    }`,
+    `.linkLike {
+      color: blue;
+      cursor: pointer;
+      display: inline-block;
+      font-family: system-ui;
+      padding: 1px 3px;
+    }`,
+    `.linkLike:hover {
+      background-color: #EEE;
+    }`,
   );
 }
