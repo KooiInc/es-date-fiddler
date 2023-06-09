@@ -1,4 +1,4 @@
-window.DateFiddlerFactory = DateFiddlerFactory;
+exports.DateFiddlerFactory = DateFiddlerFactory;
 
 function DateFiddlerFactory() {
   console.log(`hello world`)
