@@ -4,7 +4,7 @@ const { logFactory, $ } = lib;
 // start performance
 const perfNow = performance.now();
 const dateProxyFactory = isDev
-  ? (await import("../index.ejs.js")).default
+  ? (await import("../index.esm.js")).default
   : (await import("../Bundle/esDateFiddler.min.js")).default
 const { log, logTop } = logFactory(true);
 
