@@ -1,0 +1,25 @@
+{
+  "name": "es-date-fiddler",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "ES Date helper",
+  "keywords": [
+    "ECMAScript",
+    "Date",
+    "Utilities",
+    "ES20xx"
+  ],
+  "author": "KooiInc",
+  "license": "GNU General Public License v3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KooiInc/es-date-fiddler"
+  },
+  "bugs": {
+    "url": "https://github.com/KooiInc/es-date-fiddler/issues"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.5"
+  }
+}
