@@ -1,11 +1,12 @@
 const isDev = location.host.startsWith(`dev.`);
 const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 const { logFactory, $ } = lib;
-// start performance
+// start performance here
+if (isDev) { document.title = `#DEV ${document.title}`; }
 const perfNow = performance.now();
-const dateProxyFactory = isDev
+const DateX = isDev
   ? (await import("../index.esm.js")).default
-  : (await import("../Bundle/index.esm.min.js")).default
+  : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 
 demoNdTest();
@@ -41,9 +42,9 @@ function demoNdTest() {
   const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
   styleIt();
   const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${str.replace(/^\s+\b/gm, ``).replace(/^\s{3,}(\W)/gm, `  $1`)}</code>`;
-  const DateX = dateProxyFactory({localeId: `en-GB`});
+  //const DateX = dateProxyFactory({localeId: `en-GB`});
   window.DX = DateX;
-  const d1 = DateX();
+  const d1 = DateX({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.clone;
   d2.date = { year: 2022, date: 10, month: 12 };
   d2.locale = { locale: `nl-NL`, timeZone: `Europe/Amsterdam` };
@@ -55,8 +56,8 @@ function demoNdTest() {
 
   log(`!!<h3 id="inits">Initializations</h3>`)
   log(`!!` + toCode(`
-    const DateX = dateProxyFactory({localeId: \`en-GB\`});
-    const d1 = DateX();
+    const DateX = dateProxyFactory();
+    const d1 = DateX({ locale: 'en-US', timeZone: 'US/Pacific' });
     const d2 = d1.clone;
     d2.date = { year: 2022, date: 10, month: 12 };
     d2.locale = { locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` };`, true));
@@ -67,8 +68,8 @@ function demoNdTest() {
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
-  log(d1.format(`{<code>d1.format(\`WD MM d yyyy hh:mi\`, d1.locale.formats)</code>} => WD MM d yyyy hh:mi`, d1.locale.formats));
-  log(`${toCode(`d2.format('WD d MM yyyy', d2.locale.formats)`)} => ${d2.format('WD d MM yyyy', d2.locale.formats)}`);
+  log(d1.format(`{<code>d1.format(\`WD MM d yyyy hh:mi\`, d1.locale?.formats)</code>} => WD MM d yyyy hh:mi`, d1.locale?.formats));
+  log(`${toCode(`d2.format('WD d MM yyyy', d2.locale?.formats)`)} => ${d2.format('WD d MM yyyy', d2.locale?.formats)}`);
   log(`${
     toCode(`d1.format(\`{[d1 formatted} => (WD) d MM yyyy (hh:mmi:ss~dp)\`)`)}
     <p>=> ${ d1.format(`{[d1 formatted]} => (WD) d MM yyyy (hh:mmi:ss~dp)`)}</p>` );
@@ -77,8 +78,8 @@ function demoNdTest() {
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
   const d2Brazil = d2French.clone;
   d2Brazil.locale = { locale: `pt-BR`, timeZone: `America/Fortaleza` };
-  const d2EnFrancais = d2French.format(`{<i>En français</i>} => d MM yyyy (hh:mmi:ss)`, d2French.locale.formats);
-  const d2BrazilFormatted = d2Brazil.format(`WD d MM yyyy hh:mmi:ss`, d2Brazil.locale.formats);
+  const d2EnFrancais = d2French.format(`{<i>En français</i>} => d MM yyyy (hh:mmi:ss)`, d2French.locale?.formats);
+  const d2BrazilFormatted = d2Brazil.format(`WD d MM yyyy hh:mmi:ss`, d2Brazil.locale?.formats);
 
   log(`!!` + toCode(`
     const d2French = d2.clone;
@@ -86,9 +87,9 @@ function demoNdTest() {
     d2French.locale = {locale: \`fr-FR\`, timeZone: \`Europe/Paris\`};
     d2Brazil.locale = { locale: \`pt-BR\`, timeZone: \`America/Fortaleza\` };
     const d2EnFrancais = d2French.format(
-      \`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\`, d2French.locale.formats );
+      \`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\`, d2French.locale?.formats );
     const d2BrazilFormatted = d2Brazil.format(
-      \`WD d MM yyyy hh:mmi:ss\`, d2Brazil.locale.formats)`, true));
+      \`WD d MM yyyy hh:mmi:ss\`, d2Brazil.locale?.formats)`, true));
   log(`${toCode(`d2French.locale`)} => ${toJSON(d2French.locale)}`);
   log(`${toCode(`d2EnFrancais`)} => ${d2EnFrancais}`);
   log(`${toCode(`d2Brazil`)} => ${d2BrazilFormatted}`);
@@ -115,7 +116,7 @@ function demoNdTest() {
       .format(`{<code>d1.add(\`5 days, 3 hours\`).nextYear</code>} => d MM yyyy (hh:mmi:ss)`, `l:en-GB`),
     `${toCode(`d1.clone.addYears(-10).local`)} => ${d1.clone.addYears(-10).local}`,
   );
-  const defaultLocale = DateX().locale.formats;
+  const defaultLocale = DateX().locale?.formats;
   log(d1.add(`2 days, 5 hours`)
     .format(`{<code>d1.add(\`2 days, 5 hours\`)</code> =>} WD MM d yyyy hh:mmi:ss`, defaultLocale));
   log(d1.subtract(`2 days`, `5 hours`)
@@ -128,7 +129,7 @@ function demoNdTest() {
    <p> => ${DateX().differenceFrom('1991/08/27 13:30').full}</p>`);
   log(`${toCode(`DateX().differenceFrom(DateX().subtract(\`5 days, 2 hours, 1 minute\`)).clean`)}
    <p> => ${
-     DateX().differenceFrom(DateX().subtract(`5 days, 2 hours, 1 minute`)).clean}
+    DateX().differenceFrom(DateX().subtract(`5 days, 2 hours, 1 minute`)).clean}
      (<b>Note</b>:<code>.clean</code> removes zero values) </p>`);
   const today = DateX();
   const then = DateX(`2023/07/16`);
@@ -140,7 +141,7 @@ function demoNdTest() {
   log(`${toCode(`then.differenceFrom(then).full`)} ${toJSON(then.differenceFrom(then).full)}`);
   log(`${toCode(`then.differenceFrom(then).clean`)} ${then.differenceFrom(then).clean}`);
 
-  // error
+  // constructor
   log(`!!<h3 id="constructor" class="quoted">Constructor</h3`);
   log(`${toCode(`DateX(\`hello\`).ISO`)}
     <p>=> invalid Date returns (proxified) <i>now</i>: ${DateX(`hello`).ISO}</p>`);
@@ -148,6 +149,14 @@ function demoNdTest() {
     <p>=> string converted to (proxified) Date (when convertable): ${DateX(`2012/12/12 00:00:00`).ISO}</p>`);
   log(`${toCode(`DateX().ISO`)}
     <p>=> no parameters returns (proxified) <i>now</i>: ${DateX().ISO}</p>`);
+  log(`${toCode(`DateX({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local`)}
+    <p>=> (proxified) <i>now</i> with locale parameters: ${
+    DateX({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local}</p>`);
+  const frDate = DateX('2020/03/18 17:00', {locale: 'fr-FR', timeZone: 'Europe/Paris' });
+  const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi', frDate.locale.formats);
+  log(`${toCode(`const frDate = DateX('2020/03/18 17:00', { locale: 'fr-FR', timeZone: 'Europe/Paris' });
+    const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi', frDate.locale.formats)`, true)}
+    <p>=> (proxified) Date with locale parameters: ${frDateFormatted}</p>`);
 
   // customs
   log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`);

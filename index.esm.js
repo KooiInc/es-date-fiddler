@@ -1,6 +1,6 @@
 import methodHelpersFactory from "./src/DateProxyHelpers.js";
-
-export default DateFiddlerFactory;
+const dx = DateFiddlerFactory();
+export { dx as default, DateFiddlerFactory };
 
 function DateFiddlerFactory() {
   const proxied = methodHelpersFactory(proxify);
@@ -9,10 +9,17 @@ function DateFiddlerFactory() {
     set: ( target, key, value ) => { return proxied[key]?.(target, value) || target[key]; }
   };
 
-  return function(date) {
-    const maybeDate = new Date(Date.parse(date));
+  return function(dateOrLocale, localeInfo) {
+    const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
+    const maybeDate = dateIsLocaleInfo ? new Date() : new Date(Date.parse(dateOrLocale));
     const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
-    return proxify(date2Proxy);
+    const proxied = proxify(date2Proxy);
+
+    if (dateIsLocaleInfo || localeInfo) {
+      proxied.locale = dateIsLocaleInfo ? dateOrLocale : localeInfo;
+    }
+
+    return proxied;
   }
 
   function proxify(date) {

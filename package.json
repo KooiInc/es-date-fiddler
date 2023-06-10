@@ -1,8 +1,8 @@
 {
   "name": "es-date-fiddler",
-  "version": "0.1.0",
-  "private": false,
   "type": "module",
+  "version": "0.1.1",
+  "private": false,
   "main": "./index.esm.js",
   "description": "ES Date helper",
   "keywords": [
@@ -11,6 +11,13 @@
     "Utilities",
     "ES20xx"
   ],
+  "exports": {
+    "./Bundle": {
+      "require": "./index.cjs.min.js",
+      "import": "./index.esm.min.js",
+      "browser": "./index.browser.min.js"
+    }
+  },
   "author": "KooiInc",
   "license": "GNU General Public License v3.0",
   "repository": {
