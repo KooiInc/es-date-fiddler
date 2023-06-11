@@ -100,7 +100,7 @@ const DateX = dfFactory();
 - `differenceFrom(someDate: Date | DateX)`: calculates the difference from [somedate] in years, months, days, hours, minutes, seconds and milliseconds. See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for a few examples.
 
 ### Setters to add or subtract days, years, hours etc.
-The following setters use a local derivation of the datefiddler library. See [github](https://kooiinc.github.io/datefiddler/Examples/) for a comprehensive examples page.
+The following setters use a local derivation of specific library. See [github](https://kooiinc.github.io/datefiddler/Examples/) for a comprehensive examples page.
 
 **Notes**:
 * all setters below *change the instance Date*. If you don't want that, `clone` the `DateX` instance first, e.g `const nextYear = [instance].clone.nextYear`.
