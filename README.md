@@ -6,7 +6,7 @@ See [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 ## What is it?
 The datefiddler library delivers an enhanced ES-Date called `DateX`.
 
-A `DateX` 'behaves' like a normal ES-Date, but it contains additional setters and getters. For example, to set the date of a `DateX`, you use
+A `DateX` instance 'behaves' like a normal ES-Date, but it contains additional setters and getters. For example, to set the date of a `DateX`, you use
 
 ``` ecmascript 6
 // the DateX instance is call myDate
@@ -15,7 +15,7 @@ myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
 myDate.date = { date: 12, month: 5 };
 ```
 
-A `DateX` date can be *locale aware*. When you initialize a `DateX` Date, you can either provide a locale an/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `DateX`, or by the `.locale` setter. The next snippet demonstrates this (and shows you the basic syntax of `DateX` as well).
+A `DateX` date can be *locale aware*. When you initialize a `DateX` Date, you can either provide a locale and/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `DateX`, or by the `.locale` setter. The next snippet demonstrates this (and shows you the basic syntax of `DateX` as well).
 
 ``` ecmascript 6
 const myDate = DateX(`2021/2/15`, {locale: `fr-FR`, timeZone: `Europe/Paris`});
@@ -41,15 +41,21 @@ const DateX = require("[local location of the bundle]/index.cjs.min.js").DateX;
 
 ### ESM import
 ``` ecmascript 6
-const DateX = (await import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js").default;
+const DateX = (await 
+  import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js")
+    .default;
 // Note: the module also exports a factory named DateFiddlerFactory. Use it as
-const dfFactory = (await import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js").DateFiddlerFactory;
+const dfFactory = (await 
+  import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js")
+    .DateFiddlerFactory;
 const DateX = dfFactory();
 ```
 
 ### Browser script
 ``` html
-<script src="https://kooiinc.github.io/es-date-fiddler/Bundle/index.browser.min.js"></script>
+<script 
+  src="https://kooiinc.github.io/es-date-fiddler/Bundle/index.browser.min.js">
+</script>
 <script>
   const DateX = window.DateX;
   // optionally delete from global namespace
