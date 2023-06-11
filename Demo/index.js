@@ -67,8 +67,8 @@ function demoNdTest() {
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
-  log(d1.format(`{<code>d1.format(\`WD MM d yyyy hh:mi\`, d1.locale?.formats)</code>} => WD MM d yyyy hh:mi`, d1.locale?.formats));
-  log(`${toCode(`d2.format('WD d MM yyyy', d2.locale?.formats)`)} => ${d2.format('WD d MM yyyy', d2.locale?.formats)}`);
+  log(d1.format(`{<code>d1.format(\`WD MM d yyyy hh:mmi\`)</code>} => WD MM d yyyy hh:mmi`));
+  log(`${toCode(`d2.format('WD d MM yyyy')`)} => ${d2.format('WD d MM yyyy')}`);
   log(`${
     toCode(`d1.format(\`{[d1 formatted} => (WD) d MM yyyy (hh:mmi:ss~dp)\`)`)}
     <p>=> ${ d1.format(`{[d1 formatted]} => (WD) d MM yyyy (hh:mmi:ss~dp)`)}</p>` );
@@ -77,8 +77,8 @@ function demoNdTest() {
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
   const d2Brazil = d2French.clone;
   d2Brazil.locale = { locale: `pt-BR`, timeZone: `America/Fortaleza` };
-  const d2EnFrancais = d2French.format(`{<i>En français</i>} => d MM yyyy (hh:mmi:ss)`, d2French.locale?.formats);
-  const d2BrazilFormatted = d2Brazil.format(`WD d MM yyyy hh:mmi:ss`, d2Brazil.locale?.formats);
+  const d2EnFrancais = d2French.format(`{<i>En français</i>} => d MM yyyy (hh:mmi:ss)`);
+  const d2BrazilFormatted = d2Brazil.format(`WD d MM yyyy hh:mmi:ss`);
 
   log(`!!` + toCode(`
     const d2French = d2.clone;
@@ -86,9 +86,9 @@ function demoNdTest() {
     d2French.locale = {locale: \`fr-FR\`, timeZone: \`Europe/Paris\`};
     d2Brazil.locale = { locale: \`pt-BR\`, timeZone: \`America/Fortaleza\` };
     const d2EnFrancais = d2French.format(
-      \`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\`, d2French.locale?.formats );
+      \`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\` );
     const d2BrazilFormatted = d2Brazil.format(
-      \`WD d MM yyyy hh:mmi:ss\`, d2Brazil.locale?.formats)`, true));
+      \`WD d MM yyyy hh:mmi:ss\)`, true));
   log(`${toCode(`d2French.locale`)} => ${toJSON(d2French.locale)}`);
   log(`${toCode(`d2EnFrancais`)} => ${d2EnFrancais}`);
   log(`${toCode(`d2Brazil`)} => ${d2BrazilFormatted}`);
