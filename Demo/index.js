@@ -204,9 +204,20 @@ function demoNdTest() {
     y2000.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}</p>`);
 
   log(`!!<h3 id="perfomance">Performance</h3`);
-  const perf = performance.now() - perfNow;
-  log(`The whole enchilada above this (importing the module included) took 
-    <b>${(perf).toFixed(2)}</b> milliseconds (${(perf/1000).toFixed(2)} seconds)`);
+  log(checkPerformance(10_000));
+}
+
+function checkPerformance(nRuns) {
+  const start = performance.now();
+  for (let i = 0; i < nRuns; i += 1) {
+    const nowX = DateX();
+    nowX.locale = {locale: `nl-NL`, timeZone: `Europe/Amsterdam`};
+    const nowXX = nowX.clone.add(`42 days`);
+  }
+  const perf = performance.now() - start;
+  return `Created, set locale and cloned a DateX instance ${nRuns.toLocaleString()} times. 
+    <br>That took ${
+    (perf).toFixed(2)}</b> milliseconds (${(perf/1000).toFixed(2)} seconds)`;
 }
 
 function styleIt() {
