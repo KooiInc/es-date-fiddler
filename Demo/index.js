@@ -65,18 +65,23 @@ function demoNdTest() {
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
-  log(`<div><b>Note</b>: formatting uses either<ul>
+  log(`<div><b>Note</b>: formatting uses either<ul class="decimal">
       <li>the locale of its <code>DateX</code> instance (no second parameter)</li>
-      <li>the given locale from its second parameter, or</li> 
-      <li>your locale (no second parameter)</li></ul></div>`);
-  log(d1.format(`{<code>d1.format(\`WD MM d yyyy hh:mmi\`)</code>} => WD MM d yyyy hh:mmi`));
-  log(`${toCode(`d2.format('WD d MM yyyy')`)} => ${d2.format('WD d MM yyyy')}`);
+      <li>the given locale from its second parameter,</li> 
+      <li>your locale (no locale set and no second parameter), or</li> 
+      <li>your locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
+    </ul></div>`);
+  log(`${toCode(`d1.format(\`{(1.) d1 with instance locale} WD MM d yyyy hh:mmi dp\`)}`)}
+    <p>=> ${d1.format(`{(1.) d1 with instance locale} WD MM d yyyy hh:mmi dp`)}`);
   log(`${
-    toCode(`d1.format(\`{[d1 formatted /w second parameter]} => (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
-    <p>=> ${ d1.format(`{[d1 formatted /w second parameter]} => (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
+    toCode(`d1.format(\`{(2.) d1 formatted /w second parameter} => (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
+    <p>=> ${ d1.format(`{(2.) d1 formatted /w second parameter} => (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
   log(`${
-    toCode(`DateX().format(\`{[your locale]} => (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
-    <p>=> ${ DateX().format(`{[your locale]} => (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
+    toCode(`DateX().format(\`{(3.) new instance your locale} => (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
+    <p>=> ${ DateX().format(`{(3.) new instance your locale} => (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
+  log(`${
+    toCode(`d1.format(\`{(4.) d1 your locale} => (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
+    <p>=> ${ d1.format(`{(4.) d1 your locale} => (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
 
   const d2French = d2.clone;
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
@@ -87,7 +92,7 @@ function demoNdTest() {
 
   log(`!!` + toCode(`
     const d2French = d2.clone;
-    const d2Brazil = d2French.clone;    
+    const d2Brazil = d2French.clone;
     d2French.locale = {locale: \`fr-FR\`, timeZone: \`Europe/Paris\`};
     d2Brazil.locale = { locale: \`pt-BR\`, timeZone: \`America/Fortaleza\` };
     const d2EnFrancais = d2French.format(
@@ -324,6 +329,11 @@ function styleIt() {
     }`,
     `.comment {
       color: #c0c0c0;
+    }`,
+    `#log2screen ul.decimal li {
+      list-style-type: decimal;
+      padding-left: initial;
+      margin: 0.3rem 0px 0px -0.5rem;
     }`
   );
 }
