@@ -42,7 +42,6 @@ function demoNdTest() {
   const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
   styleIt();
   const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${str.replace(/^\s+\b/gm, ``).replace(/^\s{3,}(\W)/gm, `  $1`)}</code>`;
-  //const DateX = dateProxyFactory({localeId: `en-GB`});
   window.DX = DateX;
   const d1 = DateX({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.clone;
