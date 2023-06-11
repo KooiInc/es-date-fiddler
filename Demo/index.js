@@ -1,7 +1,6 @@
 const isDev = location.host.startsWith(`dev.`);
 const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 const { logFactory, $ } = lib;
-// start performance here
 if (isDev) { document.title = `#DEV ${document.title}`; }
 const perfNow = performance.now();
 const DateX = isDev
@@ -34,7 +33,7 @@ $(`h3[id]`).each(h3 => {
 $(`<div class="spacer"></div>`);
 logTop(`!!
       <a class="gitLink" href="//github.com/KooiInc/es-date-fiddler">
-        <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink"> Back to repository @Github
+        <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink" alt="github icon">Back to repository @Github
      </a>`);
 
 function demoNdTest() {
@@ -54,8 +53,7 @@ function demoNdTest() {
   );
 
   log(`!!<h3 id="inits">Initializations</h3>`)
-  log(`!!` + toCode(`
-    const DateX = dateProxyFactory();
+  log(`!!` + toCode(`<span class="comment">// DateX imported</span>
     const d1 = DateX({ locale: 'en-US', timeZone: 'US/Pacific' });
     const d2 = d1.clone;
     d2.date = { year: 2022, date: 10, month: 12 };
@@ -67,11 +65,18 @@ function demoNdTest() {
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
+  log(`<div><b>Note</b>: formatting uses either<ul>
+      <li>the locale of its <code>DateX</code> instance (no second parameter)</li>
+      <li>the given locale from its second parameter, or</li> 
+      <li>your locale (no second parameter)</li></ul></div>`);
   log(d1.format(`{<code>d1.format(\`WD MM d yyyy hh:mmi\`)</code>} => WD MM d yyyy hh:mmi`));
   log(`${toCode(`d2.format('WD d MM yyyy')`)} => ${d2.format('WD d MM yyyy')}`);
   log(`${
-    toCode(`d1.format(\`{[d1 formatted} => (WD) d MM yyyy (hh:mmi:ss~dp)\`)`)}
-    <p>=> ${ d1.format(`{[d1 formatted]} => (WD) d MM yyyy (hh:mmi:ss~dp)`)}</p>` );
+    toCode(`d1.format(\`{[d1 formatted /w second parameter]} => (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
+    <p>=> ${ d1.format(`{[d1 formatted /w second parameter]} => (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
+  log(`${
+    toCode(`DateX().format(\`{[your locale]} => (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
+    <p>=> ${ DateX().format(`{[your locale]} => (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
 
   const d2French = d2.clone;
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
@@ -317,5 +322,8 @@ function styleIt() {
     `.linkLike:hover {
       background-color: #EEE;
     }`,
+    `.comment {
+      color: #c0c0c0;
+    }`
   );
 }
