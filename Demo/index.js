@@ -71,17 +71,17 @@ function demoNdTest() {
       <li>your locale (no locale set and no second parameter), or</li> 
       <li>your locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
     </ul></div>`);
-  log(`${toCode(`d1.format(\`{(1.) d1 with instance locale} WD MM d yyyy hh:mmi dp\`)}`)}
-    <p>=> ${d1.format(`{(1.) d1 with instance locale} WD MM d yyyy hh:mmi dp`)}`);
+  log(`${toCode(`d1.format(\`{(1.) d1 with instance locale:} WD MM d yyyy hh:mmi dp\`)}`)}
+    <p>=> ${d1.format(`{(1.) d1 with instance locale:} WD MM d yyyy hh:mmi dp`)}`);
   log(`${
-    toCode(`d1.format(\`{(2.) d1 formatted /w second parameter} => (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
-    <p>=> ${ d1.format(`{(2.) d1 formatted /w second parameter} => (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
+    toCode(`d1.format(\`{(2.) d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
+    <p>=> ${ d1.format(`{(2.) d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
   log(`${
-    toCode(`DateX().format(\`{(3.) new instance your locale} => (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
-    <p>=> ${ DateX().format(`{(3.) new instance your locale} => (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
+    toCode(`DateX().format(\`{(3.) new instance your locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
+    <p>=> ${ DateX().format(`{(3.) new instance your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
   log(`${
-    toCode(`d1.format(\`{(4.) d1 your locale} => (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
-    <p>=> ${ d1.format(`{(4.) d1 your locale} => (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
+    toCode(`d1.format(\`{(4.) d1 your locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
+    <p>=> ${ d1.format(`{(4.) d1 your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
 
   const d2French = d2.clone;
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
