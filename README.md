@@ -9,7 +9,7 @@ The datefiddler library delivers an enhanced ES-Date called `DateX`.
 A `DateX` instance 'behaves' like a normal ES-Date, but it contains additional setters and getters. For example, to set the date of a `DateX`, you use
 
 ``` ecmascript 6
-// the DateX instance is call myDate
+// the DateX instance is called myDate
 myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
 // you don't need to fill all values, the following keeps the current year of the XDate
 myDate.date = { date: 12, month: 5 };
