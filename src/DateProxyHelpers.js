@@ -39,7 +39,6 @@ function methodHelpersFactory(proxify) {
     toDate = proxify(toDate ?? new Date());
     const cloneFrom = proxify(d);
     const {hour, minutes, seconds, ms} = cloneFrom;
-    console.log(ms);
     toDate.time = {hour, minutes, seconds, milliseconds: ms};
 
     if (cloneFrom.locale) {
