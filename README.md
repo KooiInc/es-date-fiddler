@@ -41,9 +41,9 @@ const DateX = require("[local location of the bundle]/index.cjs.min.js").DateX;
 
 ### ESM import
 ``` ecmascript 6
-const DateX = (await 
-  import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js")
-    .default;
+const DateX = ( await 
+  import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js") 
+).default;
 // Note: the module also exports a factory named DateFiddlerFactory. Use it as
 const dfFactory = (await 
   import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js")
