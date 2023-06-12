@@ -5,7 +5,7 @@ const { logFactory, $ } = lib;
 if (isDev) { document.title = `#DEV ${document.title}`; }
 const perfNow = performance.now();
 const DateX = isDev
-  ? (await import(devMini(false))).default
+  ? (await import(devMini(true))).default
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 window.DateX = DateX;
