@@ -72,9 +72,10 @@ function demoNdTest() {
         <p>With <code>DateX</code> you can associate a <i>locale</i> (and/or <i>timeZone</i>) 
           with its <code>Date</code></p>
         <p>The setter (<code>[instance].locale = <span class="comment">/* one or both of */</span> {locale, timeZone}</code>)
-          'auto fills' locale/timeZone with default values if it's not in the parameter. For locale that will be "utc",
-          for the timeZone "Etc/UTC". As long as <code>[instance].locale</code> is not set, it is considered 
-          <code>undefined</code>, meaning the instance <code>Date</code> will use your locale.</p>  
+          'auto fills' locale/timeZone with default values if it's not in the parameter or not set earlier. 
+          For locale that will be "utc", for the timeZone "Etc/UTC". As long as <code>[instance].locale</code> 
+          is not set, it is considered <code>undefined</code>, meaning the instance 
+          <code>Date</code> will use your locale.</p>  
         <p>When an associated locale can't be used in <code>[instance].local</code> or 
           <code>[instance].format</code> the result of those getters will contain an error
           message (and the locale of the result will be your locale). </p>
