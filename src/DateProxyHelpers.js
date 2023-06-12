@@ -100,6 +100,11 @@ function methodHelpersFactory(proxify) {
       formats: `l:${locale},tz:${timeZone}` };
     return d.localeInfo;
   };
+  const reLocate = function(d, locale, timeZone) {
+    d = proxify(d);
+    d.locale = {locale, timeZone};
+    return d;
+  };
 
   const proxyProperties = {
     clone,
@@ -119,6 +124,7 @@ function methodHelpersFactory(proxify) {
     self: d => d,
     local: (d, opts) => getLocalStr(d, opts),
     locale: (d, values) => getLocale(d, values),
+    relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
     differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
     values: d => asArray => getValues(d, asArray),
     ISO: d => d.toISOString(),

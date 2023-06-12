@@ -8,6 +8,7 @@ const DateX = isDev
   ? (await import(devMini(1))).default
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
+window.DateX = DateX;
 
 demoNdTest();
 // content and handling
@@ -30,6 +31,9 @@ $(`h3[id]`).each(h3 => {
     ul.append(`<li><div ${doQuote} data-target="h3#${h3.id}">${headerText.replace(/\(.+\)/, ``)}</div></li>`);
     $(h3).prop(`title`, `Back to top`);
 });
+
+$(`<div><b>Note</b>: Use <code>DateX</code> in the developer console to experiment with it</div>`,
+  contentDiv, $.at.AfterEnd);
 
 $(`<div class="spacer"></div>`);
 logTop(`!!
