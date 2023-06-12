@@ -148,6 +148,17 @@ function methodHelpersFactory(proxify) {
 
     return d.localeInfo;
   };
+  const cloneDateTo = (d, toDate) => {
+    toDate = proxify(toDate ?? new Date());
+    const date2Clone = proxify(d);
+
+    if (toDate) {
+      const {year, month, date} = date2Clone;
+      toDate.date = {year, month, date};
+    }
+
+    return toDate;
+  };
   const cloneTimeTo = (d, toDate) => {
     const cloneD = new Date(...getDateX(toDate ?? new Date()));
     const cloneT = getTime(d, true);
@@ -216,9 +227,8 @@ function methodHelpersFactory(proxify) {
     hour: (d, v) => v && d.setHours(v) || d.getHours(),
     minutes: (d, v) => v && d.setMinutes(v) || d.getMinutes(),
     seconds: (d, v) => v && d.setSeconds(v) || d.getSeconds(),
-    cloneDate: d => clone(new Date(...getDateX(d).concat([0, 0, 0]))),
-    cloneTime: d => cloneTimeTo(d),
     cloneTimeTo: d => toDate => cloneTimeTo(d, toDate),
+    cloneDateTo: d => toDate => cloneDateTo(d, toDate),
     time: (d, hmsms) => hmsms && setTime(d, hmsms) || getTime(d),
     timeStr: d => (ms = false) => getTimeStr(d, ms),
     ms: (d, v) => v && d.setMilliseconds(v) || d.getMilliseconds(),
@@ -229,8 +239,6 @@ function methodHelpersFactory(proxify) {
     locale: (d, values) => getLocale(d, values),
     differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
     values: d => asArray => getValues(d, asArray),
-    UTC: d => Date.UTC( ...getValues(d, true) ),
-    UTCString: d => d.toUTCString(),
     ISO: d => d.toISOString(),
     daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
     isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,

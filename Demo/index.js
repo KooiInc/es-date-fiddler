@@ -66,22 +66,22 @@ function demoNdTest() {
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
   log(`<div><b>Note</b>: formatting uses either<ul class="decimal">
-      <li>the locale of its <code>DateX</code> instance (no second parameter)</li>
+      <li>the locale of its <code>DateX</code> instance (no second parameter),</li>
       <li>the given locale from its second parameter,</li> 
-      <li>your locale (no locale set and no second parameter), or</li> 
-      <li>your locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
+      <li>the default (your) locale (no locale set and no second parameter), or</li> 
+      <li>the default (your) locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
     </ul></div>`);
-  log(`${toCode(`d1.format(\`{(1.) d1 with instance locale:} WD MM d yyyy hh:mmi dp\`)}`)}
-    <p>=> ${d1.format(`{(1.) d1 with instance locale:} WD MM d yyyy hh:mmi dp`)}`);
+  log(`${toCode(`d1.format(\`{1. d1 with instance locale:} WD MM d yyyy hh:mmi dp\`)}`)}
+    <p>=> ${d1.format(`{1. d1 with instance locale:} WD MM d yyyy hh:mmi dp`)}`);
   log(`${
-    toCode(`d1.format(\`{(2.) d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
-    <p>=> ${ d1.format(`{(2.) d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
+    toCode(`d1.format(\`{2. d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
+    <p>=> ${ d1.format(`{2. d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
   log(`${
-    toCode(`DateX().format(\`{(3.) new instance your locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
-    <p>=> ${ DateX().format(`{(3.) new instance your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
+    toCode(`DateX().format(\`{3. new instance default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
+    <p>=> ${ DateX().format(`{3. new instance default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
   log(`${
-    toCode(`d1.format(\`{(4.) d1 your locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
-    <p>=> ${ d1.format(`{(4.) d1 your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
+    toCode(`d2.format(\`{4. d2 default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
+    <p>=> ${ d2.format(`{4. d2 default (your) your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
 
   const d2French = d2.clone;
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
@@ -202,7 +202,7 @@ function demoNdTest() {
   log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
 
   // natives
-  log(`!!<h3 id="natives">Use all native Date methods</h3`);
+  log(`!!<h3 id="natives">Use all native <code>Date</code> methods</h3`);
   y2000.setHours(y2000.hour - 3);
   log(`<code>y2000.setHours(y2000.hour - 3)</code><p>${toCode(`y2024.getHours()`)} => ${y2000.getHours()}</p>`);
   log(`<code>y2000.getFullYear()</code> ${y2000.getFullYear()}`);
