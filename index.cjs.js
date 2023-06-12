@@ -1,24 +1,11 @@
 exports.DateX = DateFiddlerFactory();
 
-function DateFiddlerFactory() {
+function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);
   const proxy = {
     get: ( target, key ) => { return !target[key] && proxied[key]?.(target) || targetGetter(target, key); },
     set: ( target, key, value ) => { return proxied[key]?.(target, value) || target[key]; }
   };
-
-  return function(dateOrLocale, localeInfo) {
-    const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
-    const maybeDate = dateIsLocaleInfo ? new Date() : new Date(Date.parse(dateOrLocale));
-    const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
-    const proxied = proxify(date2Proxy);
-
-    if (dateIsLocaleInfo || localeInfo) {
-      proxied.locale = dateIsLocaleInfo ? dateOrLocale : localeInfo;
-    }
-
-    return proxied;
-  }
 
   function proxify(date) {
     return new Proxy(date, proxy);
@@ -27,6 +14,22 @@ function DateFiddlerFactory() {
   function targetGetter(target, key) {
     if (key in target && target[key] instanceof Function) { return target[key].bind(target); }
     return target[key];
+  }
+
+  return function(dateOrLocale, localeInfo) {
+    const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
+    const dateIsDate = (dateOrLocale || ``) instanceof Date;
+    const maybeDate = dateIsLocaleInfo
+      ? new Date()
+      : new Date( dateIsDate ? dateOrLocale : Date.parse(dateOrLocale));
+    const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
+    const proxied = proxify(date2Proxy);
+
+    if (dateIsLocaleInfo || localeInfo) {
+      proxied.locale = dateIsLocaleInfo ? dateOrLocale : localeInfo;
+    }
+
+    return proxied;
   }
 }
 
@@ -149,20 +152,30 @@ function methodHelpersFactory(proxify) {
   };
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
-    const date2Clone = proxify(d);
+    const cloneFrom = proxify(d);
 
     if (toDate) {
-      const {year, month, date} = date2Clone;
+      const {year, month, date} = cloneFrom;
       toDate.date = {year, month, date};
+
+      if (cloneFrom.locale) {
+        toDate.locale = { locale: cloneFrom.locale.l, timeZone: cloneFrom.locale.tz };
+      }
     }
 
     return toDate;
   };
   const cloneTimeTo = (d, toDate) => {
-    const cloneD = new Date(...getDateX(toDate ?? new Date()));
-    const cloneT = getTime(d, true);
-    const newDT = clone(new Date(...getDateX(cloneD).concat(cloneT)));
-    return newDT;
+    toDate = proxify(toDate ?? new Date());
+    const cloneFrom = proxify(d);
+    const {hour, minutes, seconds, ms} = cloneFrom;
+    toDate.time = {hour, minutes, seconds, milliseconds: ms};
+
+    if (cloneFrom.locale) {
+      toDate.locale = { locale: cloneFrom.locale.l, timeZone: cloneFrom.locale.tz };
+    }
+
+    return toDate;
   };
   const getLocalStr = (d, opts) => {
     d = proxify(d);
@@ -175,13 +188,24 @@ function methodHelpersFactory(proxify) {
       opts = {...(opts ?? {}), timeZone: d.locale.tz };
     }
 
-    return d.toLocaleString(d.locale.l, opts);
+    try { return d.toLocaleString(d.locale.l, opts); }
+    catch(err) {
+      const {l, tz} = d.locale ?? {l: undefined, tz: undefined};
+      const report = [`locale: "${l ?? `none`}"`, `timeZone: "${tz ?? `none`}"`].join(`, `);
+      return d.toLocaleString() + ` !!INVALID LOCALE DATA (${report})!!`;
+    }
   }
   const doFormat = (d, ...args) => {
     const locale = proxify(d).locale;
-    return args.length === 1
-      ? formatter(d, args[0], locale?.formats) : args.length
-        ? formatter(d, ...args) : d.toLocaleString(locale?.l);
+    try {
+      return args.length === 1
+        ? formatter(d, args[0], locale?.formats) : args.length
+          ? formatter(d, ...args) : d.toLocaleString(locale?.l);
+    } catch(err) {
+        const {l, tz} = locale ?? {l: undefined, tz: undefined};
+        const report = [`locale: ${l ?? `none`}`, `timeZone: ${tz ?? `none`}`].join(`, `);
+        return formatter(d, args[0] + ` {!!INVALID LOCALE DATA (${report})}!!`, undefined);
+    }
   };
   const setDate = (d, {year, month, date} = {}) => {
     const [y, m, dt] = getDate(d);
@@ -217,6 +241,11 @@ function methodHelpersFactory(proxify) {
       formats: `l:${locale},tz:${timeZone}` };
     return d.localeInfo;
   };
+  const reLocate = function(d, locale, timeZone) {
+    d = proxify(d);
+    d.locale = {locale, timeZone};
+    return d;
+  };
 
   const proxyProperties = {
     clone,
@@ -236,6 +265,7 @@ function methodHelpersFactory(proxify) {
     self: d => d,
     local: (d, opts) => getLocalStr(d, opts),
     locale: (d, values) => getLocale(d, values),
+    relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
     differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
     values: d => asArray => getValues(d, asArray),
     ISO: d => d.toISOString(),

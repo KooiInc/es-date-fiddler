@@ -5,7 +5,7 @@ const { logFactory, $ } = lib;
 if (isDev) { document.title = `#DEV ${document.title}`; }
 const perfNow = performance.now();
 const DateX = isDev
-  ? (await import(devMini(1))).default
+  ? (await import(devMini(false))).default
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 window.DateX = DateX;
@@ -69,19 +69,43 @@ function demoNdTest() {
   // locale
   log(`!!<h3 id="locale">Locale</h3>`);
   log(`!!<div>
-        <div>With <code>DateX</code> you can <i>localize</i> a <code>Date</code> to any (valid) locale/timeZone.</div>
-        <div>There are several ways to do this, here are two examples. Read more in the
-          repository README document.</div>
+        <p>With <code>DateX</code> you can associate a <i>locale</i> (and/or <i>timeZone</i>) 
+          with its <code>Date</code></p>
+        <p>The setter (<code>[instance].locale = <span class="comment">/* one or both of */</span> {locale, timeZone}</code>)
+          'auto fills' locale/timeZone with default values if it's not in the parameter. For locale that will be "utc",
+          for the timeZone "Etc/UTC". As long as <code>[instance].locale</code> is not set, it is considered 
+          <code>undefined</code>, meaning the instance <code>Date</code> will use your locale.</p>  
+        <p>When an associated locale can't be used in <code>[instance].local</code> or 
+          <code>[instance].format</code> the result of those getters will contain an error
+          message (and the locale of the result will be your locale). </p>
+        <p>There are several ways to associate locale information with a <code>DateX</code> instance.
+        Here are some examples.</p>
       </div>`);
 
   const d2German = d2.clone;
   d2German.locale = { locale: `de-DE`, timeZone: `Europe/Berlin` };
   const d2Dutch = d2.clone.relocate({ locale: `nl-NL`, timeZone: `Europe/Amsterdam` } );
+  const todayAustralia = DateX({timeZone: 'Australia/Darwin', locale: 'en-AU'});
+  const nwZealandTomorrow = DateX(new Date(), {timeZone: 'Pacific/Auckland', locale: 'en-NZ'}).tomorrow;
+  const invalidLocale = DateX({locale: 'somewhere'});
+  const invalidTimezone = DateX({timeZone: 'somewhere'});
+  const invalidLocaleData = DateX({locale: 'somewhere', timeZone: 'somehow'});
   log(`!!` + toCode(`const d2German = d2.clone;
     d2German.locale = { locale: \`de-DE\`, timeZone: \`Europe/Berlin\` };
-    const d2Dutch = d2.clone.relocate({ locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` });`, true));
+    const d2Dutch = d2.clone.relocate({ locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` });
+    const toDayAustralia = DateX({timeZone: 'Australia/Darwin', locale: 'en-AU'});
+    const nwZealandTomorrow = DateX(new Date(), {timeZone: 'Pacific/Auckland', locale: 'en-NZ'}).tomorrow;
+    const invalidLocale = DateX({locale: 'somewhere'});
+    const invalidTimezone = DateX({timeZone: 'somewhere'});
+    const invalidLocaleData = DateX({locale: 'somewhere', timeZone: 'somehow'});`, true));
   log(toCode(`d2German.local`) + ` => ${d2German.local}`);
-  log(toCode(`d2Dutch.local`) + ` => ${d2Dutch.local}`) ;
+  log(toCode(`d2Dutch.local`) + ` => ${d2Dutch.local}`);
+  log(toCode(`todayAustralia.local`) + ` => ${todayAustralia.local}`);
+  log(toCode(`nwZealandTomorrow.local`) + ` => ${nwZealandTomorrow.local}`);
+  log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
+  log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
+  log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
+
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
@@ -137,6 +161,10 @@ function demoNdTest() {
         "l:en-US, tz:America/Los_Angeles" );`, true)}`,
     `${toCode(`d1Clone.local`)} => ${d1Clone.local}`,
     d1CloneFormattedUS,);
+  log(`!!<div><b>Note</b>: a <code>DateX</code> instance with invalid locale data 
+    formats the <code>Date</code> using your locale <i>and adds an error message</i>:</div>`);
+  log( toCode(`invalidLocaleData.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
+    invalidLocaleData.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
 
   // cloning
   log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
@@ -306,10 +334,11 @@ function styleIt() {
     `a[target="_blank"]:before {
       content: '\\2197';
      }`,
-    `@media screen and (width > 1600px) {
+    `@media (width > 1600px) {
       code.codeblock {
         width: 40vw;
       }
+      ul#log2screen { max-width: 35vw; }
     }`,
     `#log2screen .content ul {
       margin-left: initial;
@@ -320,10 +349,11 @@ function styleIt() {
       margin-top: auto;
       list-style: '\\27A4';
     }`,
-    `@media screen and (width < 1401px) {
+    `@media (width < 1401px) {
       code.codeblock {
         width: 50vw;
       }
+      ul#log2screen { max-width: 50vw; }
     }`,
     `h3[id] {
       cursor: pointer;
@@ -374,6 +404,7 @@ function styleIt() {
       list-style-type: decimal;
       padding-left: initial;
       margin: 0.3rem 0px 0px -0.5rem;
-    }`
+    }`,
+    `.head div { line-height: 1.3rem; }`
   );
 }

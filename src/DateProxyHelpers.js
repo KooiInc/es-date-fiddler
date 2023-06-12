@@ -58,13 +58,24 @@ function methodHelpersFactory(proxify) {
       opts = {...(opts ?? {}), timeZone: d.locale.tz };
     }
 
-    return d.toLocaleString(d.locale.l, opts);
+    try { return d.toLocaleString(d.locale.l, opts); }
+    catch(err) {
+      const {l, tz} = d.locale ?? {l: undefined, tz: undefined};
+      const report = [`locale: "${l ?? `none`}"`, `timeZone: "${tz ?? `none`}"`].join(`, `);
+      return d.toLocaleString() + ` !!INVALID LOCALE DATA (${report})!!`;
+    }
   }
   const doFormat = (d, ...args) => {
     const locale = proxify(d).locale;
-    return args.length === 1
-      ? formatter(d, args[0], locale?.formats) : args.length
-        ? formatter(d, ...args) : d.toLocaleString(locale?.l);
+    try {
+      return args.length === 1
+        ? formatter(d, args[0], locale?.formats) : args.length
+          ? formatter(d, ...args) : d.toLocaleString(locale?.l);
+    } catch(err) {
+        const {l, tz} = locale ?? {l: undefined, tz: undefined};
+        const report = [`locale: ${l ?? `none`}`, `timeZone: ${tz ?? `none`}`].join(`, `);
+        return formatter(d, args[0] + ` {!!INVALID LOCALE DATA (${report})}!!`, undefined);
+    }
   };
   const setDate = (d, {year, month, date} = {}) => {
     const [y, m, dt] = getDate(d);

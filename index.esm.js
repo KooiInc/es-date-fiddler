@@ -20,7 +20,10 @@ function DateXFactory() {
 
   return function(dateOrLocale, localeInfo) {
     const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
-    const maybeDate = dateIsLocaleInfo ? new Date() : new Date(dateOrLocale);
+    const dateIsDate = (dateOrLocale || ``) instanceof Date;
+    const maybeDate = dateIsLocaleInfo
+      ? new Date()
+      : new Date( dateIsDate ? dateOrLocale : Date.parse(dateOrLocale));
     const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
     const proxied = proxify(date2Proxy);
 
