@@ -83,8 +83,11 @@ const DateX = dxFactory();
 - `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' locale
 - `self`: returns the original `Date` as a plain ES `Date`
 - `clone`: clones the `DateX` instance to a new `DateX`
+   - **Note**: `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).   
 - `cloneDateTo([dateTo]: Date|DateX)`: copies the *date part* of the `DateX` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `DateX` instance.
-- `cloneTimeTo([dateTo]: Date/DateX)`: clones the *time part*  of the `DateX` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `DateX` instance. 
+  - **Note**: `[instance].cloneDateTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
+- `cloneTimeTo([dateTo]: Date/DateX)`: clones the *time part*  of the `DateX` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `DateX` instance.
+  - **Note**: `[instance].cloneTimeTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `daysInMonth`: returns the days in the month of the `DateX` instance Date.
 - `isLeapYear`: calculates and returns if the `DateX` instance is a leap year (return true or false)
 - `values`(asArray: boolean): returns the values (year, month etc.) either as `Object` or as `Array`.
@@ -106,16 +109,16 @@ The following setters use a local derivation of specific library. See [github](h
 
 **Notes**:
 * all setters below *change the instance Date*. If you don't want that, `clone` the `DateX` instance first, e.g `const nextYear = [instance].clone.nextYear`.
-* all setters below can be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). So `[instance].nextYear.add("15 days")` works.
+* all setters below can be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript), e.g. `[instance].nextYear.add("15 days").subtract("2 hours, 30 minutes")`.
 ---
 - `add(...things2Add: string | string[])`: add [things2Add] to the `DateX` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].add("1 day, 5 hours")` or `[instance].add("1 day", "5 hours")` 
 - `subtract(...things2Subtract: string | string[])`: subtract [things2Add] from the `DateX` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].subtract("1 day, 5 hours")` or `[instance].subtract("1 day", "5 hours")`.
   - **Note**: `subtract` is for convenience, it can also be written as `[instance].add("-1 day, -5 hours")`
-- `addYears(n: Number)`: add [n] years to the `DateX` instance and set its value to the result. 
-- `addMonths(n: Number)`: add [n] months to the `DateX` instance and set its value to the result. 
-- `addWeeks(n: Number)`: add [n] weeks to the `DateX` instance and set its value to the result. 
-- `addDays(n: Number)`: add [n] days to the `DateX` instance and set its value to the result. 
-- `nextYear`: add one year to the `DateX` instance and set its value to the result.   
+- `addYears(n: Number)`: add `n` years to the `DateX` instance and set its value to the result. `n` May be  negative. 
+- `addMonths(n: Number)`: add `n` months to the `DateX` instance and set its value to the result. `n` May be  negative. 
+- `addWeeks(n: Number)`: add `n` weeks to the `DateX` instance and set its value to the result. `n` May be  negative.
+- `addDays(n: Number)`: add `n` days to the `DateX` instance and set its value to the result. `n` May be negative.
+- `nextYear`: add one year to the `DateX` instance and set its value to the result.
 - `previousYear`: subtract one year to the `DateX` instance and set its value to the result.
 - `nextWeek`: add one week (7 days) to the `DateX` instance and set its value to the result. 
 - `previousWeek`: subtract one week (7 days) from the `DateX` instance  and set its value to the result.

@@ -59,36 +59,51 @@ function demoNdTest() {
     `!!<h2>a proxy to extend and make working with ES <code>Date</code> somewhat easier</h3>`
   );
 
-  log(`!!<h3 id="inits">Initializations</h3>`)
+  log(`!!<h3 id="inits">Initialization</h3>`);
   log(`!!` + toCode(`<span class="comment">// DateX imported</span>
-    const d1 = DateX({ locale: 'en-US', timeZone: 'US/Pacific' });
-    const d2 = d1.clone;
-    d2.date = { year: 2022, date: 10, month: 12 };
-    d2.locale = { locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` };`, true));
-  log(`${toCode(`d1.locale`)} => ${toJSON(d1.locale)}`);
-  log(`${toCode(`d2.locale`)} => ${toJSON(d2.locale)}`);
-  log(`${toCode(`d1.local`)} => ${d1.local}`);
-  log(`${toCode(`d2.local`)} => ${d2.local}`);
+    const d1 = DateX();
+    const d2 = d1.clone;`, true) );
+  log(`${toCode(`d1`)} => ${d1}`);
+  log(`${toCode(`d2`)} => ${d2}`);
+
+  // locale
+  log(`!!<h3 id="locale">Locale</h3>`);
+  log(`!!<div>
+        <div>With <code>DateX</code> you can <i>localize</i> a <code>Date</code> to any (valid) locale/timeZone.</div>
+        <div>There are several ways to do this, here are two examples. Read more in the
+          repository README document.</div>
+      </div>`);
+
+  const d2German = d2.clone;
+  d2German.locale = { locale: `de-DE`, timeZone: `Europe/Berlin` };
+  const d2Dutch = d2.clone.relocate({ locale: `nl-NL`, timeZone: `Europe/Amsterdam` } );
+  log(`!!` + toCode(`const d2German = d2.clone;
+    d2German.locale = { locale: \`de-DE\`, timeZone: \`Europe/Berlin\` };
+    const d2Dutch = d2.clone.relocate({ locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` });`, true));
+  log(toCode(`d2German.local`) + ` => ${d2German.local}`);
+  log(toCode(`d2Dutch.local`) + ` => ${d2Dutch.local}`) ;
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
+  log(`!!` + toCode(`d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});`));
+  d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});
   log(`!!<div><b>Note</b>: formatting uses either<ul class="decimal">
       <li>the locale of its <code>DateX</code> instance (no second parameter),</li>
-      <li>the given locale from its second parameter,</li> 
-      <li>the default (your) locale (no locale set and no second parameter), or</li> 
+      <li>the given locale from its second parameter,</li>
+      <li>the default (your) locale (no locale set and no second parameter), or</li>
       <li>the default (your) locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
     </ul></div>`);
-  log(`${toCode(`d1.format(\`{1. d1 with instance locale:} WD MM d yyyy hh:mmi dp\`)}`)}
-    <p>=> ${d1.format(`{1. d1 with instance locale:} WD MM d yyyy hh:mmi dp`)}`);
+  log(`${toCode(`d1.format(\`{1. d1 with instance locale:} &lt;i>&ltb>WD MM d yyyy hh:mmi dp&lt/b>&lt;/i>\`)}`)}
+    <p>=> ${d1.format(`{1. d1 with instance locale:} <i><b>WD MM d yyyy hh:mmi dp</b></i>`)}`);
   log(`${
-    toCode(`d1.format(\`{2. d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)\`, 'l:fr-FR')`)}
-    <p>=> ${ d1.format(`{2. d1 formatted /w second parameter:} (WD) d MM yyyy (hh:mmi:ss)`, 'l:fr-FR')}</p>` );
+    toCode(`d1.format(\`{2. d1 formatted /w second parameter:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss)&lt/b>&lt/i>\`, <b><i>'l:fr-FR'</i></b>)`)}
+    <p>=> ${ d1.format(`{2. d1 formatted /w second parameter:} <i><b>(WD) d MM yyyy (hh:mmi:ss)</b></i>`, 'l:fr-FR')}</p>` );
   log(`${
-    toCode(`DateX().format(\`{3. new instance default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
-    <p>=> ${ DateX().format(`{3. new instance default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
+    toCode(`DateX().format(\`{3. new instance default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss dp)&lt/b>&lt;/i>\`)`)}
+    <p>=> ${ DateX().format(`{3. new instance default (your) locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss dp)</b></i>`)}</p>` );
   log(`${
-    toCode(`d1.format(\`{4. d1 default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
-    <p>=> ${ d1.format(`{4. d1 default (your) your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
+    toCode(`d1.format(\`{4. d1 default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss dp)&lt/b>&lt;/i>\`, <b><i>undefined</i></b>)`)}
+    <p>=> ${ d1.format(`{4. d1 default (your) your locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss dp)</b></i>`, undefined)}</p>` );
 
   const d2French = d2.clone;
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
@@ -113,7 +128,7 @@ function demoNdTest() {
   const d1Clone = d1.clone;
   d1Clone.date = { year: 2000, month: 2 };
   const d1CloneFormattedUS = d1Clone.format(
-    `{${toCode(`d1CloneFormattedUS`)} in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss~dp`,`l:en-US, tz:America/Los_Angeles`);
+    `{${toCode(`d1CloneFormattedUS`)} in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp`,`l:en-US, tz:America/Los_Angeles`);
   log(`!!${toCode(`
       const d1Clone = DateX(d1.clone);
       d1Clone.date = { year: 2000, month: 2 };
