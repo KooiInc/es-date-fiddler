@@ -121,7 +121,9 @@ function demoNdTest() {
 
   // cloning
   log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
-  log(`!!<div><b>Note</b>: the locale of the original is also cloned</div>`);
+  log(`!!<div><b>Notes</b>:<ul class="decimal">
+    <li>The locale of the original is also cloned.</li>
+    <li>Time for the result may differ due to daylight saving times</li></ul></div>`);
   const initial = DateX(new Date(`1999/05/31 14:22:44.142`), { locale: `en-GB` });
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();
@@ -132,6 +134,8 @@ function demoNdTest() {
   log(`${toCode(`initial.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${initial.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
   log(`${toCode(`dateCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${dateCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
   log(`${toCode(`timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
+  log(`${toCode(`initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${
+    initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss.ms')}`);
 
   // fiddling
   log(`!!<h3 id="fiddling">Fiddling (add/subtract to/from the Date at hand)</h3>`);
