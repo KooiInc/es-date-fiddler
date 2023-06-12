@@ -235,7 +235,6 @@ function methodHelpersFactory(proxify) {
   const dateAdd = dateAddFactory();
   const add2Date = (d, ...terms) => proxify(dateAdd(d, ...terms));
   const createLocaleInfo = function(d, {locale, timeZone } = {}) {
-    d = proxify(d);
     const localeParam = locale || d.localeInfo?.l || `utc`;
     const timeZoneParam = timeZone = timeZone || d.localeInfo?.tz || `Etc/UTC`;
     d.localeInfo = {
