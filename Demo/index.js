@@ -122,10 +122,10 @@ function demoNdTest() {
   // cloning
   log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
   log(`!!<div><b>Note</b>: the locale of the original is also cloned</div>`);
-  const initial = DateX(new Date(`1999/12/31 14:22:44.142`), { locale: `en-GB` });
+  const initial = DateX(new Date(`1999/05/31 14:22:44.142`), { locale: `en-GB` });
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();
-  log(toCode(`const initial = DateX(new Date(\`1999/12/31 14:22:44.142\`), {locale: \`en-GB\`});
+  log(toCode(`const initial = DateX(new Date(\`1999/05/31 14:22:44.142\`), { locale: \`en-GB\` });
   <span class="comment">// Clone date/time of [initial] to current date</span>
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();`, true));
