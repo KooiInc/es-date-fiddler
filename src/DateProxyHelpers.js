@@ -104,7 +104,10 @@ function methodHelpersFactory(proxify) {
   const clone = d => proxify(new Date(d));
   const dateAdd = dateAddFactory();
   const add2Date = (d, ...terms) => proxify(dateAdd(d, ...terms));
-  const createLocaleInfo = function(d, {locale = `utc`, timeZone = `Etc/UTC` } = {}) {
+  const createLocaleInfo = function(d, {locale, timeZone } = {}) {
+    d = proxify(d);
+    locale = locale ?? d.locale?.l ?? `utc`;
+    timeZone = timeZone ?? d.locale?.tz ?? `Etc/UTC`;
     d.localeInfo = {
       l: locale,
       tz: timeZone,
