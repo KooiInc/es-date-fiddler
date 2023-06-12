@@ -41,7 +41,9 @@ function demoNdTest() {
   const yn = tf => tf ? `Yep` : `Nope`;
   const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
   styleIt();
-  const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${str.replace(/^\s+\b/gm, ``).replace(/^\s{3,}(\W)/gm, `  $1`)}</code>`;
+  const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${
+    str.replace(/^\s+\b/gm, ``).replace(/^\s{3,}(\W)/gm, `  $1`)
+      .replace(/^\s+</gm, `<`)}</code>`;
   window.DX = DateX;
   const d1 = DateX({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.clone;
@@ -66,7 +68,7 @@ function demoNdTest() {
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
-  log(`<div><b>Note</b>: formatting uses either<ul class="decimal">
+  log(`!!<div><b>Note</b>: formatting uses either<ul class="decimal">
       <li>the locale of its <code>DateX</code> instance (no second parameter),</li>
       <li>the given locale from its second parameter,</li> 
       <li>the default (your) locale (no locale set and no second parameter), or</li> 
@@ -81,8 +83,8 @@ function demoNdTest() {
     toCode(`DateX().format(\`{3. new instance default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`)`)}
     <p>=> ${ DateX().format(`{3. new instance default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)`)}</p>` );
   log(`${
-    toCode(`d2.format(\`{4. d2 default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
-    <p>=> ${ d2.format(`{4. d2 default (your) your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
+    toCode(`d1.format(\`{4. d1 default (your) locale:} (WD) d MM yyyy (hh:mmi:ss dp)\`, undefined)`)}
+    <p>=> ${ d1.format(`{4. d1 default (your) your locale:} (WD) d MM yyyy (hh:mmi:ss dp)`, undefined)}</p>` );
 
   const d2French = d2.clone;
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
@@ -119,10 +121,12 @@ function demoNdTest() {
 
   // cloning
   log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
+  log(`!!<div><b>Note</b>: the locale of the original is also cloned</div>`);
   const initial = DateX(new Date(`1999/12/31 14:22:44.142`), { locale: `en-GB` });
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();
   log(toCode(`const initial = DateX(new Date(\`1999/12/31 14:22:44.142\`), {locale: \`en-GB\`});
+  <span class="comment">// Clone date/time of [initial] to current date</span>
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();`, true));
   log(`${toCode(`initial.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${initial.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
@@ -130,9 +134,9 @@ function demoNdTest() {
   log(`${toCode(`timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
 
   // fiddling
-  log(`!!<h3 id="fiddling">Fiddling (add/subtract stuff from the Date at hand)</h3>`);
-  log(`<b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are
-    <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a>`);
+  log(`!!<h3 id="fiddling">Fiddling (add/subtract to/from the Date at hand)</h3>`);
+  log(`!!<div><b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are
+    <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a></div>`);
   log(
     d1.add(`5 days, 3 hours`).nextYear
       .format(`{<code>d1.add(\`5 days, 3 hours\`).nextYear</code>} => d MM yyyy (hh:mmi:ss)`, `l:en-GB`),
