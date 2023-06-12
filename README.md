@@ -6,7 +6,7 @@ See [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 ## What is it?
 The datefiddler library delivers an enhanced ES-Date called `DateX`.
 
-A `DateX` instance 'behaves' like a normal ES-Date, but it contains additional setters and getters. For example, to set the date of a `DateX`, you use
+A `DateX` is a normal ES-Date, but it can use a number of additional setters and getters. For example, to set the date of a `DateX`, you use
 
 ``` ecmascript 6
 // the DateX instance is called myDate
