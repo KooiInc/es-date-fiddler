@@ -1,4 +1,4 @@
-exports.DateX = DateFiddlerFactory();
+exports.DateX = DateXFactory();
 
 function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);

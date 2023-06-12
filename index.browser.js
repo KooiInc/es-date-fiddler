@@ -1,5 +1,4 @@
-const DateX = DateFiddlerFactory();
-window.DateX = DateX;
+window.DateX = DateXFactory();
 
 function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);
