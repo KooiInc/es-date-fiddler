@@ -1,24 +1,17 @@
-const DateX = DateFiddlerFactory();
-window.DateX = DateX;
+window.DateFiddlerFactory = DateFiddlerFactory;
 
 function DateFiddlerFactory() {
+  console.log(`nounou`);
   const proxied = methodHelpersFactory(proxify);
   const proxy = {
     get: ( target, key ) => { return !target[key] && proxied[key]?.(target) || targetGetter(target, key); },
     set: ( target, key, value ) => { return proxied[key]?.(target, value) || target[key]; }
   };
 
-  return function(dateOrLocale, localeInfo) {
-    const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
-    const maybeDate = dateIsLocaleInfo ? new Date() : new Date(Date.parse(dateOrLocale));
+  return function(date) {
+    const maybeDate = new Date(Date.parse(date));
     const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
-    const proxied = proxify(date2Proxy);
-
-    if (dateIsLocaleInfo || localeInfo) {
-      proxied.locale = dateIsLocaleInfo ? dateOrLocale : localeInfo;
-    }
-
-    return proxied;
+    return proxify(date2Proxy);
   }
 
   function proxify(date) {
@@ -142,47 +135,23 @@ function methodHelpersFactory(proxify) {
     return asArray ? Object.values(valueObj) : valueObj;
   };
   const getLocale = (d, values) => {
-    if (values) {
-      d.localeInfo = createLocaleInfo(d, values);
-    }
-
+    d.localeInfo =  (!(`localeInfo` in d) || values ) ? createLocaleInfo(d, values) : d.localeInfo;
     return d.localeInfo;
-  };
-  const cloneDateTo = (d, toDate) => {
-    toDate = proxify(toDate ?? new Date());
-    const date2Clone = proxify(d);
-
-    if (toDate) {
-      const {year, month, date} = date2Clone;
-      toDate.date = {year, month, date};
-    }
-
-    return toDate;
   };
   const cloneTimeTo = (d, toDate) => {
     const cloneD = new Date(...getDateX(toDate ?? new Date()));
     const cloneT = getTime(d, true);
-    const newDT = clone(new Date(...getDateX(cloneD).concat(cloneT)));
-    return newDT;
+    return clone(new Date(...getDateX(cloneD).concat(cloneT)));
   };
   const getLocalStr = (d, opts) => {
     d = proxify(d);
-
-    if (!d.locale) {
-      return d.toLocaleString();
-    }
-
-    if (d.locale?.tz) {
-      opts = {...(opts ?? {}), timeZone: d.locale.tz };
-    }
-
-    return d.toLocaleString(d.locale.l, opts);
+    return d.toLocaleString(d.locale.l, {...(opts ?? {}), timeZone: d.locale.tz });
   }
   const doFormat = (d, ...args) => {
     const locale = proxify(d).locale;
     return args.length === 1
-      ? formatter(d, args[0], locale?.formats) : args.length
-        ? formatter(d, ...args) : d.toLocaleString(locale?.l);
+      ? formatter(d, args[0], locale.formats) : args.length
+        ? formatter(d, ...args) : d.toLocaleString(locale.l);
   };
   const setDate = (d, {year, month, date} = {}) => {
     const [y, m, dt] = getDate(d);
@@ -227,18 +196,21 @@ function methodHelpersFactory(proxify) {
     hour: (d, v) => v && d.setHours(v) || d.getHours(),
     minutes: (d, v) => v && d.setMinutes(v) || d.getMinutes(),
     seconds: (d, v) => v && d.setSeconds(v) || d.getSeconds(),
+    cloneDate: d => clone(new Date(...getDateX(d).concat([0, 0, 0]))),
+    cloneTime: d => cloneTimeTo(d),
     cloneTimeTo: d => toDate => cloneTimeTo(d, toDate),
-    cloneDateTo: d => toDate => cloneDateTo(d, toDate),
     time: (d, hmsms) => hmsms && setTime(d, hmsms) || getTime(d),
     timeStr: d => (ms = false) => getTimeStr(d, ms),
     ms: (d, v) => v && d.setMilliseconds(v) || d.getMilliseconds(),
-    monthName: d => { d = proxify(d); return d.format(`MM`, `l:${d.locale?.l || `utc`}`); },
-    weekDay: d => { d = proxify(d); return d.format(`WD`, `l:${d.locale?.l || `utc`}`); },
+    monthName: d => { d = proxify(d); return d.format(`MM`, `l:${d.locale.l}`); },
+    weekDay: d => { d = proxify(d); return d.format(`WD`, `l:${d.locale.l}`); },
     self: d => d,
     local: (d, opts) => getLocalStr(d, opts),
     locale: (d, values) => getLocale(d, values),
     differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
     values: d => asArray => getValues(d, asArray),
+    UTC: d => Date.UTC( ...getValues(d, true) ),
+    UTCString: d => d.toUTCString(),
     ISO: d => d.toISOString(),
     daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
     isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,
@@ -260,7 +232,6 @@ function methodHelpersFactory(proxify) {
     add: d => (...args) => add2Date(d, ...args),
     subtract: d => (...args) => add2Date(d, ...[`subtract`].concat([args]).flat()),
   };
-
 
   return {...proxyProperties, ...fiddling};
 }

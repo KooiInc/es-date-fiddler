@@ -11,7 +11,7 @@ function DateFiddlerFactory() {
 
   return function(dateOrLocale, localeInfo) {
     const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
-    const maybeDate = dateIsLocaleInfo ? new Date() : new Date(Date.parse(dateOrLocale));
+    const maybeDate = dateIsLocaleInfo ? new Date() : new Date(dateOrLocale);
     const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
     const proxied = proxify(date2Proxy);
 

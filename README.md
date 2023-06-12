@@ -83,8 +83,8 @@ const DateX = dfFactory();
 - `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' locale
 - `self`: returns the original `Date` as a plain ES `Date`
 - `clone`: clones the `DateX` instance to a new `DateX`
-- `cloneDateTo([dateTo]: Date|DateX)`: copies the *date part*  of the `DateX` instance to [toDate]. When [toDate] is missing the date part is copied to *now*. Returns a new `DateX` instance.
-- `cloneTimeTo([dateTo]: Date/DateX)`: clones the *time part*  of the `DateX` instance to [toDate]. When [toDate] is missing the time part is copied to *now*. Returns a new `DateX` instance. 
+- `cloneDateTo([dateTo]: Date|DateX)`: copies the *date part* of the `DateX` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `DateX` instance.
+- `cloneTimeTo([dateTo]: Date/DateX)`: clones the *time part*  of the `DateX` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `DateX` instance. 
 - `daysInMonth`: returns the days in the month of the `DateX` instance Date.
 - `isLeapYear`: calculates and returns if the `DateX` instance is a leap year (return true or false)
 - `values`(asArray: boolean): returns the values (year, month etc.) either as `Object` or as `Array`.

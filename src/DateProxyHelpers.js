@@ -22,20 +22,31 @@ function methodHelpersFactory(proxify) {
   };
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
-    const date2Clone = proxify(d);
+    const cloneFrom = proxify(d);
 
     if (toDate) {
-      const {year, month, date} = date2Clone;
+      const {year, month, date} = cloneFrom;
       toDate.date = {year, month, date};
+
+      if (cloneFrom.locale) {
+        toDate.locale = { locale: cloneFrom.locale.l, timeZone: cloneFrom.locale.tz };
+      }
     }
 
     return toDate;
   };
   const cloneTimeTo = (d, toDate) => {
-    const cloneD = new Date(...getDateX(toDate ?? new Date()));
-    const cloneT = getTime(d, true);
-    const newDT = clone(new Date(...getDateX(cloneD).concat(cloneT)));
-    return newDT;
+    toDate = proxify(toDate ?? new Date());
+    const cloneFrom = proxify(d);
+    const {hour, minutes, seconds, ms} = cloneFrom;
+    console.log(ms);
+    toDate.time = {hour, minutes, seconds, milliseconds: ms};
+
+    if (cloneFrom.locale) {
+      toDate.locale = { locale: cloneFrom.locale.l, timeZone: cloneFrom.locale.tz };
+    }
+
+    return toDate;
   };
   const getLocalStr = (d, opts) => {
     d = proxify(d);

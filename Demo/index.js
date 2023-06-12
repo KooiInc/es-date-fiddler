@@ -1,10 +1,11 @@
 const isDev = location.host.startsWith(`dev.`);
+const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
 const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 const { logFactory, $ } = lib;
 if (isDev) { document.title = `#DEV ${document.title}`; }
 const perfNow = performance.now();
 const DateX = isDev
-  ? (await import("../index.esm.js")).default
+  ? (await import(devMini(1))).default
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 
@@ -114,11 +115,23 @@ function demoNdTest() {
         "{&lt;code>dateFrom_d1&lt;/code> in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp",
         "l:en-US, tz:America/Los_Angeles" );`, true)}`,
     `${toCode(`d1Clone.local`)} => ${d1Clone.local}`,
-    d1CloneFormattedUS,)
+    d1CloneFormattedUS,);
+
+  // cloning
+  log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
+  const initial = DateX(new Date(`1999/12/31 14:22:44.142`), { locale: `en-GB` });
+  const dateCloned = initial.cloneDateTo();
+  const timeCloned = initial.cloneTimeTo();
+  log(toCode(`const initial = DateX(new Date(\`1999/12/31 14:22:44.142\`), {locale: \`en-GB\`});
+  const dateCloned = initial.cloneDateTo();
+  const timeCloned = initial.cloneTimeTo();`, true));
+  log(`${toCode(`initial.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${initial.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
+  log(`${toCode(`dateCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${dateCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
+  log(`${toCode(`timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
 
   // fiddling
   log(`!!<h3 id="fiddling">Fiddling (add/subtract stuff from the Date at hand)</h3>`);
-  log(`<b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are 
+  log(`<b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are
     <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a>`);
   log(
     d1.add(`5 days, 3 hours`).nextYear
@@ -225,20 +238,20 @@ function checkPerformance(nRuns) {
     const nowXX = nowX.clone.add(`42 days`);
   }
   const perf = performance.now() - start;
-  return `Created, set locale and cloned a DateX instance ${nRuns.toLocaleString()} times. 
+  return `Created, set locale and cloned a DateX instance ${nRuns.toLocaleString()} times.
     <br>That took ${
     (perf).toFixed(2)}</b> milliseconds (${(perf/1000).toFixed(2)} seconds)`;
 }
 
 function styleIt() {
   $.editCssRules(
-    `body { 
+    `body {
       margin-top: 2rem;
-      font: normal 14px/17px system-ui, verdana, arial; 
+      font: normal 14px/17px system-ui, verdana, arial;
      }`,
     `.head pre, .head div { font-weight: normal }`,
     `code, code.codeblock {
-      background-color: #fffff8; 
+      background-color: #fffff8;
       border: 1px dotted #999;
       color: rgb(81, 76, 125);
       font-weight: normal;
@@ -246,8 +259,8 @@ function styleIt() {
      }`,
     `#log2screen li.head h2 { line-height: 1.5rem; }`,
     `#log2screen  li { margin-top: 0.7rem; vertical-align: middle; }`,
-    `#log2screen li p, #log2screen li.head p { 
-      margin: 0.6rem 0; 
+    `#log2screen li p, #log2screen li.head p {
+      margin: 0.6rem 0;
       font-weight: normal}`,
     `.quoted:before {
       content: '\\201C';
@@ -263,7 +276,7 @@ function styleIt() {
       padding-right: 2px;
       vertical-align: baseline;
      }`,
-    `a[target="_blank"]:before { 
+    `a[target="_blank"]:before {
       content: '\\2197';
      }`,
     `@media screen and (width > 1600px) {
