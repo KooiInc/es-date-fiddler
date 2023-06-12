@@ -44,11 +44,11 @@ const DateX = require("[local location of the bundle]/index.cjs.min.js").DateX;
 const DateX = ( await 
   import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js") 
 ).default;
-// Note: the module also exports a factory named DateFiddlerFactory. Use it as
-const dfFactory = (await 
+// Note: the module also exports a factory named DateXFactory. Use it as
+const dxFactory = (await 
   import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js")
-    .DateFiddlerFactory;
-const DateX = dfFactory();
+    .DateXFactory;
+const DateX = dxFactory();
 ```
 
 ### Browser script

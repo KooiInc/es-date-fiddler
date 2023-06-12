@@ -1,13 +1,22 @@
 import methodHelpersFactory from "./src/DateProxyHelpers.js";
-const dx = DateFiddlerFactory();
-export { dx as default, DateFiddlerFactory };
+const dx = DateXFactory();
+export { dx as default, DateXFactory };
 
-function DateFiddlerFactory() {
+function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);
   const proxy = {
     get: ( target, key ) => { return !target[key] && proxied[key]?.(target) || targetGetter(target, key); },
     set: ( target, key, value ) => { return proxied[key]?.(target, value) || target[key]; }
   };
+
+  function proxify(date) {
+    return new Proxy(date, proxy);
+  }
+
+  function targetGetter(target, key) {
+    if (key in target && target[key] instanceof Function) { return target[key].bind(target); }
+    return target[key];
+  }
 
   return function(dateOrLocale, localeInfo) {
     const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
@@ -20,14 +29,5 @@ function DateFiddlerFactory() {
     }
 
     return proxied;
-  }
-
-  function proxify(date) {
-    return new Proxy(date, proxy);
-  }
-
-  function targetGetter(target, key) {
-    if (key in target && target[key] instanceof Function) { return target[key].bind(target); }
-    return target[key];
   }
 }
