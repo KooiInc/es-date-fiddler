@@ -364,7 +364,7 @@ function styleIt() {
       margin-top: auto;
       list-style: '\\27A4';
     }`,
-    `@media (width < 1401px) {
+    `@media (width < 1600px) {
       code.codeblock {
         width: 50vw;
       }
