@@ -17,7 +17,7 @@ myDate.date = { date: 12, month: 5 };
 
 A `DateX` date can be *locale aware*. When you initialize a `DateX` Date, you can either provide a locale and/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `DateX`, or by the `.locale` setter. The next snippet demonstrates this (and shows you the basic syntax of `DateX` as well).
 
-``` ecmascript 6
+``` javascript
 const myDate = DateX(`2021/2/15`, {locale: `fr-FR`, timeZone: `Europe/Paris`});
 const nowGermany = DateX({locale: `de-DE`, timeZone: `Europe/Berlin`});
 const myDutchDate = myDate.clone;
