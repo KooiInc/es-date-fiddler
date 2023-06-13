@@ -1,4 +1,4 @@
-/*build time 13-06-2023 14:10:11*/
+/*build time 13-06-2023 14:32:19*/
 exports.DateX = DateXFactory();
 
 function DateXFactory() {
@@ -143,6 +143,10 @@ function methodHelpersFactory(proxify) {
       ...{formats} };
     return d.localeInfo;
   };
+  const removeLocaleInfo = (d) => {
+    d = proxify(d);
+    delete d.localeInfo;
+  };
   const reLocate = function(d, locale, timeZone) {
     d = proxify(d);
     d.locale = {locale, timeZone};
@@ -167,7 +171,7 @@ function methodHelpersFactory(proxify) {
     self: d => d,
     local: (d, opts) => getLocalStr(d, opts),
     locale: (d, values) => getLocale(d, values),
-    removeLocale: d => delete d.localeInfo,
+    removeLocale: d => () => removeLocaleInfo(d),
     relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
     differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
     values: d => asArray => getValues(d, asArray),

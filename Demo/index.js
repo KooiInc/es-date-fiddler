@@ -112,6 +112,9 @@ function demoNdTest() {
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`)
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
+  invalidLocaleData.removeLocale();
+  log(`!!` + toCode(`invalidLocaleData.removeLocale()`));
+  log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
 
 
   // formatting
