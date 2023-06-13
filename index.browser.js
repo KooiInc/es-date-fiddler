@@ -1,4 +1,4 @@
-/*build time 13-06-2023 14:32:19*/
+/*build time 13-06-2023 14:58:12*/
 window.DateX = DateXFactory();
 
 function DateXFactory() {
@@ -43,7 +43,7 @@ function methodHelpersFactory(proxify) {
       seconds: d.getSeconds(), milliseconds: d.getMilliseconds() };
     return asArray ? Object.values(valueObj) : valueObj;
   };
-  const getLocale = (d, values) => {
+  const getOrSetLocale = (d, values) => {
     if (values) {
       d.localeInfo = createLocaleInfo(d, values);
     }
@@ -77,9 +77,10 @@ function methodHelpersFactory(proxify) {
 
     return toDate;
   };
-  const localeCatcher = function(dProx) {
-    const report = dProx.locale?.formats?.replace(/l:/, `locale: `).replace(/tz:/, `timeZone: `);
-    return dProx.toLocaleString() + ` !!invalid locale info => ${report}`;
+  const localeCatcher = function(dProxified) {
+    const formats = getFormats(dProxified);
+    const report = formats?.replace(/l:/, `locale: `).replace(/tz:/, `timeZone: `);
+    return dProxified.toLocaleString() + ` !!invalid locale info => ${report}`;
   };
   const getLocalStr = (d, opts) => {
     d = proxify(d);
@@ -88,19 +89,23 @@ function methodHelpersFactory(proxify) {
       return d.toLocaleString();
     }
 
-    if (d.locale?.tz) {
-      opts = {...(opts ?? {}), timeZone: d.locale.tz };
+    if (d.locale?.timeZone) {
+      opts = {...(opts ?? {}), timeZone: d.locale.timeZone };
     }
 
     try { return d.toLocaleString(d.locale.l, opts); }
     catch(err) { return localeCatcher(d); }
   }
   const doFormat = (d, ...args) => {
-    const locale = proxify(d).locale;
+    d = proxify(d);
+    const [ locale, timeZone ] = [ d.locale, d.timeZone ];
+    const formats = getFormats(d);
     try {
       return args.length === 1
-        ? formatter(d, args[0], locale?.formats) : args.length
-          ? formatter(d, ...args) : d.toLocaleString(locale?.l);
+        ? formatter(d, args[0], formats)
+        : args.length
+          ? formatter(d, ...args)
+          : d.toLocaleString(locale, timeZone ? { timeZone } : undefined);
     } catch(err) { return localeCatcher(proxify(d)); }
   };
   const setDate = (d, {year, month, date} = {}) => {
@@ -132,16 +137,23 @@ function methodHelpersFactory(proxify) {
   const add2Date = (d, ...terms) => proxify(dateAdd(d, ...terms));
   const createLocaleInfo = function(d, {locale, timeZone } = {}) {
     [locale, timeZone] = [
-      locale || d.localeInfo?.l, timeZone || d.localeInfo?.tz];
+      locale || d.localeInfo?.locale, timeZone || d.localeInfo?.timeZone];
     const formats = [
        `${locale ? `l:${locale}` : ``}`,
        `${timeZone ? `tz:${timeZone}` : ``}` ]
       .filter(v => v).join(`, `)
     d.localeInfo = {
-      ...(locale ? {l: locale} : {}),
-      ...(timeZone ? {tz: timeZone} : {}),
-      ...{formats} };
+      ...(locale ? {locale} : {}),
+      ...(timeZone ? {timeZone} : {}), };
     return d.localeInfo;
+  };
+  const getFormats = d => {
+    d = proxify(d);
+    const [locale, timeZone] = [ d.localeInfo?.locale, d.localeInfo?.timeZone];
+    return [
+      `${locale ? `l:${locale}` : ``}`,
+      `${timeZone ? `tz:${timeZone}` : ``}` ]
+      .filter(v => v).join(`, `);
   };
   const removeLocaleInfo = (d) => {
     d = proxify(d);
@@ -166,11 +178,11 @@ function methodHelpersFactory(proxify) {
     time: (d, hmsms) => hmsms && setTime(d, hmsms) || getTime(d),
     timeStr: d => (ms = false) => getTimeStr(d, ms),
     ms: (d, v) => v && d.setMilliseconds(v) || d.getMilliseconds(),
-    monthName: d => { d = proxify(d); return d.format(`MM`, `l:${d.locale?.l || `utc`}`); },
-    weekDay: d => { d = proxify(d); return d.format(`WD`, `l:${d.locale?.l || `utc`}`); },
+    monthName: d => { d = proxify(d); return d.format(`MM`, `l:${d.locale?.locale || `utc`}`); },
+    weekDay: d => { d = proxify(d); return d.format(`WD`, `l:${d.locale?.locale || `utc`}`); },
     self: d => d,
     local: (d, opts) => getLocalStr(d, opts),
-    locale: (d, values) => getLocale(d, values),
+    locale: (d, values) => getOrSetLocale(d, values),
     removeLocale: d => () => removeLocaleInfo(d),
     relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
     differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),

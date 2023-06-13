@@ -3,9 +3,10 @@ const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
 const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 const { logFactory, $ } = lib;
 if (isDev) { document.title = `#DEV ${document.title}`; }
+if (!/stackblitz/i.test(location)) { console.clear(); }
 const perfNow = performance.now();
 const DateX = isDev
-  ? (await import(devMini(true))).default
+  ? (await import(devMini(false))).default
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 window.DateX = DateX;
@@ -115,6 +116,7 @@ function demoNdTest() {
   invalidLocaleData.removeLocale();
   log(`!!` + toCode(`invalidLocaleData.removeLocale()`));
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
+  log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
 
 
   // formatting
