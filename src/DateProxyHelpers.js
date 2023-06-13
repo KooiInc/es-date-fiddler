@@ -47,6 +47,10 @@ function methodHelpersFactory(proxify) {
 
     return toDate;
   };
+  const localeCatcher = function(dProx) {
+    const report = dProx.locale?.formats?.replace(/l:/, `locale: `).replace(/tz:/, `timeZone: `);
+    return dProx.toLocaleString() + ` !!invalid locale info => ${report}`;
+  };
   const getLocalStr = (d, opts) => {
     d = proxify(d);
 
@@ -59,11 +63,7 @@ function methodHelpersFactory(proxify) {
     }
 
     try { return d.toLocaleString(d.locale.l, opts); }
-    catch(err) {
-      const {l, tz} = d.locale ?? {l: undefined, tz: undefined};
-      const report = [`locale: "${l ?? `none`}"`, `timeZone: "${tz ?? `none`}"`].join(`, `);
-      return d.toLocaleString() + ` !!INVALID LOCALE DATA (${report})!!`;
-    }
+    catch(err) { return localeCatcher(d); }
   }
   const doFormat = (d, ...args) => {
     const locale = proxify(d).locale;
@@ -71,11 +71,7 @@ function methodHelpersFactory(proxify) {
       return args.length === 1
         ? formatter(d, args[0], locale?.formats) : args.length
           ? formatter(d, ...args) : d.toLocaleString(locale?.l);
-    } catch(err) {
-        const {l, tz} = locale ?? {l: undefined, tz: undefined};
-        const report = [`locale: ${l ?? `none`}`, `timeZone: ${tz ?? `none`}`].join(`, `);
-        return formatter(d, args[0] + ` {!!INVALID LOCALE DATA (${report})}!!`, undefined);
-    }
+    } catch(err) { return localeCatcher(proxify(d)); }
   };
   const setDate = (d, {year, month, date} = {}) => {
     const [y, m, dt] = getDate(d);
@@ -105,12 +101,16 @@ function methodHelpersFactory(proxify) {
   const dateAdd = dateAddFactory();
   const add2Date = (d, ...terms) => proxify(dateAdd(d, ...terms));
   const createLocaleInfo = function(d, {locale, timeZone } = {}) {
-    const localeParam = locale || d.localeInfo?.l || `utc`;
-    const timeZoneParam = timeZone = timeZone || d.localeInfo?.tz || `Etc/UTC`;
+    [locale, timeZone] = [
+      locale || d.localeInfo?.l, timeZone || d.localeInfo?.tz];
+    const formats = [
+       `${locale ? `l:${locale}` : ``}`,
+       `${timeZone ? `tz:${timeZone}` : ``}` ]
+      .filter(v => v).join(`, `)
     d.localeInfo = {
-      l: locale,
-      tz: timeZone,
-      formats: `l:${locale},tz:${timeZone}` };
+      ...(locale ? {l: locale} : {}),
+      ...(timeZone ? {tz: timeZone} : {}),
+      ...{formats} };
     return d.localeInfo;
   };
   const reLocate = function(d, locale, timeZone) {
@@ -137,6 +137,7 @@ function methodHelpersFactory(proxify) {
     self: d => d,
     local: (d, opts) => getLocalStr(d, opts),
     locale: (d, values) => getLocale(d, values),
+    removeLocale: d => delete d.localeInfo,
     relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
     differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
     values: d => asArray => getValues(d, asArray),
