@@ -1,20 +1,19 @@
 export default dateAddFactory;
 
 function dateAddFactory() {
-  const units = Object.entries({
+  const parts = Object.entries({
     year: `FullYear`, month: `Month`, date: `Date`,
     day: `Date`, hour: `Hours`, minute: `Minutes`,
     second: `Seconds`, millisecond: `Milliseconds` })
     .reduce( (acc, [key, value]) =>
       ({...acc, [key]: value, [`${key}s`]: value}), {} );
 
-  const aggregateParams = function(...argsRaw) {
-    if (argsRaw.length < 1) {
-      return [];
-    }
+  const aggregateArguments = function(...argsRaw) {
+    if (argsRaw.length < 1) { return []; }
+
     let subtract;
 
-    if (argsRaw[0] === `subtract` || argsRaw[0].startsWith(`subtract`)) {
+    if (argsRaw[0].startsWith(`subtract`)) {
       subtract = true;
 
       if (argsRaw[0].startsWith(`subtract`) && argsRaw.length === 1) {
@@ -40,21 +39,19 @@ function dateAddFactory() {
       });
   }
 
-  const add2Date = function(date, ...args) {
-    let aggregated = aggregateParams(...args);
+  return function(date, ...args) {
+    let aggregated = aggregateArguments(...args);
 
     if (aggregated.length) {
-      aggregated.forEach( ([n, term]) => {
-        term = units[term];
+      aggregated.forEach( ([n, part]) => {
+        part = parts[part];
 
-        if (+n && term) {
-          date[`set${term}`](date[`get${term}`]() + +n);
+        if (+n && part) {
+          date[`set${part}`](date[`get${part}`]() + +n);
         }
       } );
     }
 
     return date;
   };
-
-  return add2Date;
 }
