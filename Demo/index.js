@@ -51,6 +51,7 @@ function demoNdTest() {
   window.DX = DateX;
   const d1 = DateX({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.clone;
+  const d3 = DateX(new Date(-200, 2, 18, 12, 0, 30));
   d2.date = { year: 2022, date: 10, month: 12 };
   d2.locale = { locale: `nl-NL`, timeZone: `Europe/Amsterdam` };
 
@@ -62,23 +63,25 @@ function demoNdTest() {
   log(`!!<h3 id="inits">Initialization</h3>`);
   log(`!!` + toCode(`<span class="comment">// DateX imported</span>
     const d1 = DateX();
-    const d2 = d1.clone;`, true) );
+    const d2 = d1.clone;
+    const d3 = DateX(new Date(-200, 2, 18, 12, 0, 30));`, true) );
   log(`${toCode(`d1`)} => ${d1}`);
   log(`${toCode(`d2`)} => ${d2}`);
+  log(`${toCode(`d3`)} => ${d3}`);
 
   // locale
   log(`!!<h3 id="locale">Locale</h3>`);
   log(`!!<div>
-        <p>With <code>DateX</code> you can associate a <i>locale</i> (and/or <i>timeZone</i>) 
+        <p>With <code>DateX</code> you can associate a <i>locale</i> and/or <i>timeZone</i> 
           with its <code>Date</code></p>
-        <p>The setter (<code>[instance].locale = <span class="comment">/* one or both of */</span> {locale, timeZone}</code>)
-          'auto fills' locale/timeZone with default values if it's not in the parameter or not set earlier. 
-          For locale that will be "utc", for the timeZone "Etc/UTC". As long as <code>[instance].locale</code> 
-          is not set, it is considered <code>undefined</code>, meaning the instance 
-          <code>Date</code> will use your locale.</p>  
-        <p>When an associated locale can't be used in <code>[instance].local</code> or 
+        <b>Notes</b><ul class="decimal">  
+        <li>As long as <code>[instance].locale</code> is not set (so not associated with 
+          either <i>locale</i> or <i>timeZone</i>), <i>locale</i> and/or <i>timeZone</i> are considered 
+          <code>undefined</code>, meaning the instance <code>Date</code> will use 
+          <i>your locale</i> and/or <i>your timeZone</i>.</li>  
+        <li>When an associated locale can't be used in <code>[instance].local</code> or 
           <code>[instance].format</code> the result of those getters will contain an error
-          message (and the locale of the result will be your locale). </p>
+          message (and the locale of the result will be your locale). </li></ul>
         <p>There are several ways to associate locale information with a <code>DateX</code> instance.
         Here are some examples.</p>
       </div>`);
@@ -103,21 +106,25 @@ function demoNdTest() {
   log(toCode(`d2Dutch.local`) + ` => ${d2Dutch.local}`);
   log(toCode(`todayAustralia.local`) + ` => ${todayAustralia.local}`);
   log(toCode(`nwZealandTomorrow.local`) + ` => ${nwZealandTomorrow.local}`);
+  log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`)
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
+  log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
+  log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`)
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
 
 
   // formatting
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
-  log(`!!` + toCode(`d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});`));
-  d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});
   log(`!!<div><b>Note</b>: formatting uses either<ul class="decimal">
       <li>the locale of its <code>DateX</code> instance (no second parameter),</li>
       <li>the given locale from its second parameter,</li>
       <li>the default (your) locale (no locale set and no second parameter), or</li>
       <li>the default (your) locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
     </ul></div>`);
+
+  d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});
+  log(`!!` + toCode(`d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});`));
   log(`${toCode(`d1.format(\`{1. d1 with instance locale:} &lt;i>&ltb>WD MM d yyyy hh:mmi dp&lt/b>&lt;/i>\`)}`)}
     <p>=> ${d1.format(`{1. d1 with instance locale:} <i><b>WD MM d yyyy hh:mmi dp</b></i>`)}`);
   log(`${
@@ -142,10 +149,8 @@ function demoNdTest() {
     const d2Brazil = d2French.clone;
     d2French.locale = {locale: \`fr-FR\`, timeZone: \`Europe/Paris\`};
     d2Brazil.locale = { locale: \`pt-BR\`, timeZone: \`America/Fortaleza\` };
-    const d2EnFrancais = d2French.format(
-      \`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\` );
-    const d2BrazilFormatted = d2Brazil.format(
-      \`WD d MM yyyy hh:mmi:ss\)`, true));
+    const d2EnFrancais = d2French.format(\`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\` );
+    const d2BrazilFormatted = d2Brazil.format(\`WD d MM yyyy hh:mmi:ss\)`, true));
   log(`${toCode(`d2French.locale`)} => ${toJSON(d2French.locale)}`);
   log(`${toCode(`d2EnFrancais`)} => ${d2EnFrancais}`);
   log(`${toCode(`d2Brazil`)} => ${d2BrazilFormatted}`);
@@ -314,7 +319,11 @@ function styleIt() {
       padding: 2px 6px;
      }`,
     `#log2screen li.head h2 { line-height: 1.5rem; }`,
-    `#log2screen  li { margin-top: 0.7rem; vertical-align: middle; }`,
+    `#log2screen  li { 
+      margin-top: 0.7rem; 
+      vertical-align: middle;  
+      line-height: 1.4rem; 
+    }`,
     `#log2screen li p, #log2screen li.head p {
       margin: 0.6rem 0;
       font-weight: normal}`,
