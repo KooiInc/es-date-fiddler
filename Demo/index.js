@@ -174,8 +174,8 @@ function demoNdTest() {
     d1CloneFormattedUS,);
   log(`!!<div><b>Note</b>: a <code>DateX</code> instance with invalid locale data 
     formats the <code>Date</code> using your locale <i>and adds an error message</i>:</div>`);
-  log( toCode(`invalidLocaleData.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
-    invalidLocaleData.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
+  log( toCode(`invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
+    invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
 
   // cloning
   log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
