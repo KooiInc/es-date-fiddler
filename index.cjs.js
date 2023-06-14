@@ -1,4 +1,4 @@
-/*build time 14-06-2023 12:09:08*/
+/*build time 14-06-2023 17:20:06*/
 exports.DateX = DateXFactory();
 
 function DateXFactory() {
@@ -31,7 +31,7 @@ function DateXFactory() {
     }
 
     return proxied;
-  }
+  };
 }
 
 function methodHelpersFactory(proxify) {
@@ -108,11 +108,15 @@ function methodHelpersFactory(proxify) {
           : d.toLocaleString(locale, timeZone ? { timeZone } : undefined);
     } catch(err) { return localeCatcher(proxify(d)); }
   };
-  const setDate = (d, {year, month, date} = {}) => {
+  const getOrSetDate = (d, {year, month, date} = {}) => {
+    if (year || month || date) {
     const [y, m, dt] = getDate(d);
-    d.setFullYear(year || y);
-    d.setMonth( (month || m + 1) - 1);
-    d.setDate(date || dt);
+      d.setFullYear(year || y);
+      d.setMonth( (month || m + 1) - 1);
+      d.setDate(date || dt);
+      return true;
+    }
+    return d.getDate();
   };
   const diffCalculator = dateDiffFactory();
   const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()];
@@ -122,12 +126,16 @@ function methodHelpersFactory(proxify) {
     const milliSecs = ms ? `.${timeArr.pop()}`.padStart(3, `0`) : ``;
     return `${timeArr.slice(0, 3).map( v => `${v}`.padStart(2, '0')).join(`:`)}${milliSecs}`;
   }
-  const setTime = function(d,  { hour, minutes, seconds, milliseconds } = {}) {
-    const [h, m, s, ms] = getTime(d);
-    d.setHours(hour ?? h);
-    d.setMinutes(minutes ?? m);
-    d.setSeconds(seconds ?? s);
-    d.setMilliseconds( milliseconds ?? ms);
+  const getOrSetTime = function(d,  { hour, minutes, seconds, milliseconds } = {}) {
+    if (hour || minutes || seconds || milliseconds) {
+      const [h, m, s, ms] = getTime(d);
+      d.setHours(hour ?? h);
+      d.setMinutes(minutes ?? m);
+      d.setSeconds(seconds ?? s);
+      d.setMilliseconds(milliseconds ?? ms);
+      return true;
+    }
+    return getTime(d);
   };
   const getDaysInMonth = (year, month) =>
     proxify(new Date(year, month + 1, 1, 0, 0, 0)).yesterday.getDate();
@@ -171,35 +179,35 @@ function methodHelpersFactory(proxify) {
 
   return {...({
       clone,
-      year: (d, v) => v && d.setFullYear(v) || d.getFullYear(),
-      month: (d, v) => v && d.setMonth(v - 1) || d.getMonth() + 1,
-      date: (d, ymd) => ymd && setDate(d, ymd) || d.getDate(d),
-      hour: (d, v) => v && d.setHours(v) || d.getHours(),
-      minutes: (d, v) => v && d.setMinutes(v) || d.getMinutes(),
-      seconds: (d, v) => v && d.setSeconds(v) || d.getSeconds(),
+      year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
+      month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
+      date: (d, {year, month, date} = {}) => getOrSetDate(d, {year, month, date}),
+      hour: (d, setValue) => setValue && d.setHours(setValue) || d.getHours(),
+      minutes: (d, setValue) => setValue && d.setMinutes(setValue) || d.getMinutes(),
+      seconds: (d, setValue) => setValue && d.setSeconds(setValue) || d.getSeconds(),
       cloneTimeTo: d => toDate => cloneTimeTo(d, toDate),
       cloneDateTo: d => toDate => cloneDateTo(d, toDate),
-      time: (d, hmsms) => hmsms && setTime(d, hmsms) || getTime(d),
+      time: (d, {hour, minutes, seconds, milliseconds} = {}) => getOrSetTime(d, {hour, minutes, seconds, milliseconds}),
       timeStr: d => (ms = false) => getTimeStr(d, ms),
-      ms: (d, v) => v && d.setMilliseconds(v) || d.getMilliseconds(),
+      ms: (d, setValue) => setValue && d.setMilliseconds(setValue) || d.getMilliseconds(),
       monthName: d => names(d, true),
       weekDay: d => names(d),
       self: d => d,
       local: (d, opts) => getLocalStr(d, opts),
-      locale: (d, values) => getOrSetLocale(d, values),
+      locale: (d, {locale, timeZone} = {}) => getOrSetLocale(d, {locale, timeZone}),
       removeLocale: d => () => removeLocaleInfo(d),
       relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
-      differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
+      differenceFrom: d => fromDate => diffCalculator({start: d, end: fromDate}),
       values: d => asArray => getValues(d, asArray),
       ISO: d => d.toISOString(),
       daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
       isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,
       format: d => (...args) => doFormat(d, ...args),
     }), ...({
-      addYears: d => (n = 1) => add2Date(d, `${n} years`),
-      addMonths: d => (n = 1) => add2Date(d, `${n} months`),
-      addWeeks: d => (n = 1) => add2Date(d, `${n * 7} days`),
-      addDays: d => (n = 1) => add2Date(d, `${n} days`),
+      addYears: d => (amount = 1) => add2Date(d, `${amount} years`),
+      addMonths: d => (amount = 1) => add2Date(d, `${amount} months`),
+      addWeeks: d => (amount = 1) => add2Date(d, `${amount * 7} days`),
+      addDays: d => (amount = 1) => add2Date(d, `${amount} days`),
       nextYear: d => add2Date(d, `1 year`),
       nextWeek: d => add2Date(d, `7 days`),
       previousWeek: d => add2Date(d, "subtract, 7 days"),
@@ -208,8 +216,8 @@ function methodHelpersFactory(proxify) {
       previousMonth: d => add2Date(d, `subtract, 1 month`),
       tomorrow: d => add2Date(d, `1 day`),
       yesterday: d => add2Date(d, `subtract, 1 day`),
-      add: d => (...args) => add2Date(d, ...args),
-      subtract: d => (...args) => add2Date(d, ...[`subtract`].concat([args]).flat()),
+      add: d => (...what2Add) => add2Date(d, ...what2Add),
+      subtract: d => (...what2Subtract) => add2Date(d, ...[`subtract`].concat([what2Subtract]).flat()),
     })};
 }
 

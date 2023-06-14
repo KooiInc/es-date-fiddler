@@ -32,5 +32,5 @@ function DateXFactory() {
     }
 
     return proxied;
-  }
+  };
 }
