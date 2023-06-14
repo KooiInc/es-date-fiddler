@@ -1,4 +1,4 @@
-/*build time 14-06-2023 17:20:06*/
+/*build time 14-06-2023 17:51:45*/
 window.DateX = DateXFactory();
 
 function DateXFactory() {
@@ -188,7 +188,7 @@ function methodHelpersFactory(proxify) {
       cloneTimeTo: d => toDate => cloneTimeTo(d, toDate),
       cloneDateTo: d => toDate => cloneDateTo(d, toDate),
       time: (d, {hour, minutes, seconds, milliseconds} = {}) => getOrSetTime(d, {hour, minutes, seconds, milliseconds}),
-      timeStr: d => (ms = false) => getTimeStr(d, ms),
+      timeStr: d => (displayMS = false) => getTimeStr(d, displayMS),
       ms: (d, setValue) => setValue && d.setMilliseconds(setValue) || d.getMilliseconds(),
       monthName: d => names(d, true),
       weekDay: d => names(d),
