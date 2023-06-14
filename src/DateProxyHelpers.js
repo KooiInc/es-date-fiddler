@@ -29,7 +29,7 @@ function methodHelpersFactory(proxify) {
       toDate.date = {year, month, date};
 
       if (cloneFrom.locale) {
-        toDate.locale = { locale: cloneFrom.locale.l, timeZone: cloneFrom.locale.tz };
+        toDate.locale = { locale: cloneFrom.locale.locale, timeZone: cloneFrom.locale.timeZone };
       }
     }
 
@@ -42,7 +42,7 @@ function methodHelpersFactory(proxify) {
     toDate.time = {hour, minutes, seconds, milliseconds: ms};
 
     if (cloneFrom.locale) {
-      toDate.locale = { locale: cloneFrom.locale.l, timeZone: cloneFrom.locale.tz };
+      toDate.locale = { locale: cloneFrom.locale.locale, timeZone: cloneFrom.locale.timeZone };
     }
 
     return toDate;
@@ -63,7 +63,7 @@ function methodHelpersFactory(proxify) {
       opts = {...(opts ?? {}), timeZone: d.locale.timeZone };
     }
 
-    try { return d.toLocaleString(d.locale.l, opts); }
+    try { return d.toLocaleString(d.locale.locale, opts); }
     catch(err) { return localeCatcher(d); }
   }
   const doFormat = (d, ...args) => {

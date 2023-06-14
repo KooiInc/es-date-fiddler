@@ -1,7 +1,7 @@
 const isDev = location.host.startsWith(`dev.`);
 const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
-const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
-const { logFactory, $ } = lib;
+import $ from "https://kooiinc.github.io/JQL/Bundle/jql.min.js";
+//const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 if (isDev) { document.title = `#DEV ${document.title}`; }
 if (!/stackblitz/i.test(location)) { console.clear(); }
 const perfNow = performance.now();
@@ -304,13 +304,94 @@ function checkPerformance(nRuns) {
     const nowXX = nowX.clone.add(`42 days`);
   }
   const perf = performance.now() - start;
+  const perfPerTest = perf/nRuns;
   return `Created, set locale and cloned a DateX instance ${nRuns.toLocaleString()} times.
     <br>That took ${
-    (perf).toFixed(2)}</b> milliseconds (${(perf/1000).toFixed(2)} seconds)`;
+    (perf).toFixed(2)}</b> milliseconds (${perfPerTest.toFixed(6)} ms per iteration).`
+}
+
+function logFactory(formatJSON = true) {
+  const logContainer = $(`<ul id="log2screen"/>`);
+  const toJSON = content => tryJSON(content, formatJSON);
+  const createItem = t => $(`${t}`.startsWith(`!!`) ? `<li class="head">` : `<li>`);
+  const logPosition = {top: logContainer.prepend, bottom: logContainer.append};
+  const cleanContent = content => !$.IS(content, String, Number) ? toJSON(content) : `${content}`;
+  const writeLogEntry = content => createItem(content).append( $(`<span>${content?.replace(/^!!/, ``)}</span>`) );
+  const logItem = (pos = `bottom`) => content => logPosition[pos]( writeLogEntry(cleanContent(content)) );
+  return {
+    log: (...txt) => txt.forEach( logItem() ),
+    logTop: (...txt) => txt.forEach( logItem(`top`) ), };
+}
+
+function tryJSON(content, formatted) {
+  try { return formatted ? `<pre>${JSON.stringify(content, null, 2)}</pre>` : JSON.stringify(content); }
+  catch(err) {return `Some [Object object] can not be converted to JSON`}
 }
 
 function styleIt() {
+
   $.editCssRules(
+    `code {
+      color: green;
+      background-color: #eee;
+      padding: 2px;
+      font-family: monospace;
+    }`,
+    `code.codeblock {
+      display: block;
+      padding: 6px;
+      border: 1px solid #999;
+      margin: 0.5rem 0; 
+      background-color: #eee;
+      white-space: pre-wrap;
+    }`,
+    `h3 {marginTop: 1.5rem;}`,
+    `.thickBorder {
+      border: 5px solid green;
+      borderWidth: 5px;
+      padding: 0.5rem;
+      display: inline-block; 
+    }`,
+    `a.ExternalLink {
+      text-decoration: none;
+      color: rgb(0, 0, 238);
+      background-color: #EEE;
+      padding: 3px;
+      font-weight: bold;
+    }`,
+    `.cmmt {
+      color: #888;
+    }`,
+    `.hidden {display: none;}`,
+    `.attention {color: red; font-size: 1.2em; font-weight: bold;}`,
+    `#log2screen li { 
+      listStyle: '\\2713'; 
+      paddingLeft: 6px; 
+      margin: 0.5rem 0 0 -1.2rem; 
+      font-family: monospace 
+    }`,
+    `#log2screen li.head {
+      list-style-type: none;
+      font-weight: bold;
+      margin-top: 0.8rem;
+      margin-bottom: -0.2rem;
+      font-family: revert;
+    }`,
+    `.err {fontStyle: italic; color: red; }`,
+    `a {text-decoration:none; font-weight:bold;}`,
+    `a:hover {text-decoration: underline;}`,
+    `a[target]:before, a.internalLink:before, a.externalLink:before {
+      color: rgba(0,0,238,0.7);
+      font-size: 1.1rem;
+      padding-right: 2px;
+      vertical-align: baseline;
+     }`,
+    `a[target="_blank"]:before, a.externalLink:before {
+      content: '\\2197';
+     }`,
+    `a[data-top]:before, a.internalLink:before, a[target="_top"]:before {
+      content: '\\21BA';
+     }`,
     `body {
       margin-top: 2rem;
       font: normal 14px/17px system-ui, verdana, arial;
