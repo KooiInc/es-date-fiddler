@@ -273,6 +273,9 @@ function demoNdTest() {
   log(`${toCode(`chinese.local`)} => ${chinese.local}`);
   log(`${toCode(`chinese.monthName`)} => ${chinese.monthName}`);
   log(`${toCode(`chinese.weekDay`)} => ${chinese.weekDay}`);
+  y2000.time = {hour: 12, minutes: 13, seconds: 0};
+  log(`!!${toCode(`y2000.time = {hour: 12, minutes: 13, seconds: 0};\ny2000.timeStr;`, true)}<p>=> ${
+    y2000.local}</p>`);
 
   // values
   log(`!!<h3 id="values">Values</h3`);
