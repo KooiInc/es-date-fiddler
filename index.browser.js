@@ -1,4 +1,4 @@
-/*build time 14-06-2023 10:32:51*/
+/*build time 14-06-2023 12:09:08*/
 window.DateX = DateXFactory();
 
 function DateXFactory() {
@@ -164,53 +164,53 @@ function methodHelpersFactory(proxify) {
     d.locale = {locale, timeZone};
     return d;
   };
+  const names = function(d, month) {
+    d = proxify(d);
+    return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
+  }
 
-  const proxyProperties = {
-    clone,
-    year: (d, v) => v && d.setFullYear(v) || d.getFullYear(),
-    month: (d, v) => v && d.setMonth(v - 1) || d.getMonth() + 1,
-    date: (d, ymd) => ymd && setDate(d, ymd) || d.getDate(d),
-    hour: (d, v) => v && d.setHours(v) || d.getHours(),
-    minutes: (d, v) => v && d.setMinutes(v) || d.getMinutes(),
-    seconds: (d, v) => v && d.setSeconds(v) || d.getSeconds(),
-    cloneTimeTo: d => toDate => cloneTimeTo(d, toDate),
-    cloneDateTo: d => toDate => cloneDateTo(d, toDate),
-    time: (d, hmsms) => hmsms && setTime(d, hmsms) || getTime(d),
-    timeStr: d => (ms = false) => getTimeStr(d, ms),
-    ms: (d, v) => v && d.setMilliseconds(v) || d.getMilliseconds(),
-    monthName: d => { d = proxify(d); return d.format(`MM`, `l:${d.locale?.locale || `utc`}`); },
-    weekDay: d => { d = proxify(d); return d.format(`WD`, `l:${d.locale?.locale || `utc`}`); },
-    self: d => d,
-    local: (d, opts) => getLocalStr(d, opts),
-    locale: (d, values) => getOrSetLocale(d, values),
-    removeLocale: d => () => removeLocaleInfo(d),
-    relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
-    differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
-    values: d => asArray => getValues(d, asArray),
-    ISO: d => d.toISOString(),
-    daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
-    isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,
-    format: d => (...args) => doFormat(d, ...args),
-  };
-  const fiddling = {
-    addYears: d => (n = 1) => add2Date(d, `${n} years`),
-    addMonths: d => (n = 1) => add2Date(d, `${n} months`),
-    addWeeks: d => (n = 1) => add2Date(d, `${n * 7} days`),
-    addDays: d => (n = 1) => add2Date(d, `${n} days`),
-    nextYear: d => add2Date(d, `1 year`),
-    nextWeek: d => add2Date(d, `7 days`),
-    previousWeek: d => add2Date(d, "subtract, 7 days"),
-    previousYear: d => add2Date(d, `subtract, 1 year`),
-    nextMonth: d => add2Date(d, `1 month`),
-    previousMonth: d => add2Date(d, `subtract, 1 month`),
-    tomorrow: d => add2Date(d, `1 day`),
-    yesterday: d => add2Date(d, `subtract, 1 day`),
-    add: d => (...args) => add2Date(d, ...args),
-    subtract: d => (...args) => add2Date(d, ...[`subtract`].concat([args]).flat()),
-  };
-
-
-  return {...proxyProperties, ...fiddling};
+  return {...({
+      clone,
+      year: (d, v) => v && d.setFullYear(v) || d.getFullYear(),
+      month: (d, v) => v && d.setMonth(v - 1) || d.getMonth() + 1,
+      date: (d, ymd) => ymd && setDate(d, ymd) || d.getDate(d),
+      hour: (d, v) => v && d.setHours(v) || d.getHours(),
+      minutes: (d, v) => v && d.setMinutes(v) || d.getMinutes(),
+      seconds: (d, v) => v && d.setSeconds(v) || d.getSeconds(),
+      cloneTimeTo: d => toDate => cloneTimeTo(d, toDate),
+      cloneDateTo: d => toDate => cloneDateTo(d, toDate),
+      time: (d, hmsms) => hmsms && setTime(d, hmsms) || getTime(d),
+      timeStr: d => (ms = false) => getTimeStr(d, ms),
+      ms: (d, v) => v && d.setMilliseconds(v) || d.getMilliseconds(),
+      monthName: d => names(d, true),
+      weekDay: d => names(d),
+      self: d => d,
+      local: (d, opts) => getLocalStr(d, opts),
+      locale: (d, values) => getOrSetLocale(d, values),
+      removeLocale: d => () => removeLocaleInfo(d),
+      relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
+      differenceFrom: d => fromD => diffCalculator({start: d, end: fromD}),
+      values: d => asArray => getValues(d, asArray),
+      ISO: d => d.toISOString(),
+      daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
+      isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,
+      format: d => (...args) => doFormat(d, ...args),
+    }), ...({
+      addYears: d => (n = 1) => add2Date(d, `${n} years`),
+      addMonths: d => (n = 1) => add2Date(d, `${n} months`),
+      addWeeks: d => (n = 1) => add2Date(d, `${n * 7} days`),
+      addDays: d => (n = 1) => add2Date(d, `${n} days`),
+      nextYear: d => add2Date(d, `1 year`),
+      nextWeek: d => add2Date(d, `7 days`),
+      previousWeek: d => add2Date(d, "subtract, 7 days"),
+      previousYear: d => add2Date(d, `subtract, 1 year`),
+      nextMonth: d => add2Date(d, `1 month`),
+      previousMonth: d => add2Date(d, `subtract, 1 month`),
+      tomorrow: d => add2Date(d, `1 day`),
+      yesterday: d => add2Date(d, `subtract, 1 day`),
+      add: d => (...args) => add2Date(d, ...args),
+      subtract: d => (...args) => add2Date(d, ...[`subtract`].concat([args]).flat()),
+    })};
 }
 
 function DateFormatFactory() {
