@@ -13,7 +13,7 @@ For example, to set the date of a `DateX`, use
 ``` javascript
 const myDate = DateX();
 myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
-// one doens't need to fill all values, the following keeps the current year of the XDate
+// one doesn't need to fill all values, the following keeps the current year of the XDate
 myDate.date = { date: 12, month: 5 };
 ```
 A `DateX` can be *locale aware*. When one initializes a `DateX`, one can either provide a locale and/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `DateX`, or by the `.locale` setter. The next snippet demonstrates this (it shows the basic syntax of `DateX` as well).
