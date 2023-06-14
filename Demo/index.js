@@ -1,7 +1,6 @@
 const isDev = location.host.startsWith(`dev.`);
 const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
 import $ from "https://kooiinc.github.io/JQL/Bundle/jql.min.js";
-//const lib  = await import("https://kooiinc.github.io/SBHelpers/index.browser.js");
 if (isDev) { document.title = `#DEV ${document.title}`; }
 if (!/stackblitz/i.test(location)) { console.clear(); }
 const perfNow = performance.now();
@@ -131,7 +130,7 @@ function demoNdTest() {
   d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});
   log(`!!` + toCode(`d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});`));
   log(`${toCode(`d1.format(\`{1. d1 with instance locale:} &lt;i>&ltb>WD MM d yyyy hh:mmi dp&lt/b>&lt;/i>\`)}`)}
-    <p>=> ${d1.format(`{1. d1 with instance locale:} <i><b>WD MM d yyyy hh:mmi dp</b></i>`)}`);
+    <p>=> ${d1.format(`{1. d1 with instance locale:} <i><b>WD d MM yyyy hh:mmi dp</b></i>`)}`);
   log(`${
     toCode(`d1.format(\`{2. d1 formatted /w second parameter:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss)&lt/b>&lt/i>\`, <b><i>'l:fr-FR'</i></b>)`)}
     <p>=> ${ d1.format(`{2. d1 formatted /w second parameter:} <i><b>(WD) d MM yyyy (hh:mmi:ss)</b></i>`, 'l:fr-FR')}</p>` );
@@ -307,7 +306,7 @@ function checkPerformance(nRuns) {
   const perfPerTest = perf/nRuns;
   return `Created, set locale and cloned a DateX instance ${nRuns.toLocaleString()} times.
     <br>That took ${
-    (perf).toFixed(2)}</b> milliseconds (${perfPerTest.toFixed(6)} ms per iteration).`
+    (perf).toFixed(2)}</b> milliseconds (${perfPerTest.toFixed(6)} ms / iteration).`
 }
 
 function logFactory(formatJSON = true) {
