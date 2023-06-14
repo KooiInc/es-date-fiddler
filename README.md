@@ -8,7 +8,7 @@ The datefiddler library delivers an enhanced ES-Date called `DateX`.
 
 A `DateX` is a normal ES-Date, but it can use a number of additional setters and getters. For example, to set the date of a `DateX`, you use
 
-``` ecmascript 6
+``` javascript
 // the DateX instance is called myDate
 myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
 // you don't need to fill all values, the following keeps the current year of the XDate
@@ -17,7 +17,7 @@ myDate.date = { date: 12, month: 5 };
 
 A `DateX` date can be *locale aware*. When you initialize a `DateX` Date, you can either provide a locale and/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `DateX`, or by the `.locale` setter. The next snippet demonstrates this (and shows you the basic syntax of `DateX` as well).
 
-``` ecmascript 6
+``` javascript
 const myDate = DateX(`2021/2/15`, {locale: `fr-FR`, timeZone: `Europe/Paris`});
 const nowGermany = DateX({locale: `de-DE`, timeZone: `Europe/Berlin`});
 const myDutchDate = myDate.clone;
@@ -32,7 +32,7 @@ For each flavor, the script is (bundled and) minified. The location of the minif
 
 ### NodeJS require
 
-``` ecmascript 6
+``` javascript
 // after you downloaded the bundle from 
 // https://kooiinc.github.io/es-date-fiddler/Bundle/index.cjs.min.js
 // Note: the module is exported as a function
@@ -40,7 +40,7 @@ const DateX = require("[local location of the bundle]/index.cjs.min.js").DateX;
 ```
 
 ### ESM import
-``` ecmascript 6
+``` javascript
 const DateX = ( await 
   import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js") 
 ).default;
