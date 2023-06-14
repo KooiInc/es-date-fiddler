@@ -6,16 +6,17 @@ See [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 ## What is it?
 The datefiddler library delivers an enhanced ES-Date called `DateX`.
 
-A `DateX` is a normal ES-Date, but it can use a number of additional setters and getters. For example, to set the date of a `DateX`, you use
+A `DateX` is a normal ECMAScript `Date` Object. By using `Proxy` functionality one can use a number of additional setters and getters (e.g. for arithmetic, formatting, locale awareness), *as well as* use all regular `Date` functionality. So, to create a `DateX`, instead of `new Date(...)` one uses `DateX(...)`.
+
+For example, to set the date of a `DateX`, use
 
 ``` javascript
-// the DateX instance is called myDate
+const myDate = DateX();
 myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
-// you don't need to fill all values, the following keeps the current year of the XDate
+// one doens't need to fill all values, the following keeps the current year of the XDate
 myDate.date = { date: 12, month: 5 };
 ```
-
-A `DateX` date can be *locale aware*. When you initialize a `DateX` Date, you can either provide a locale and/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `DateX`, or by the `.locale` setter. The next snippet demonstrates this (and shows you the basic syntax of `DateX` as well).
+A `DateX` can be *locale aware*. When one initializes a `DateX`, one can either provide a locale and/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `DateX`, or by the `.locale` setter. The next snippet demonstrates this (it shows the basic syntax of `DateX` as well).
 
 ``` javascript
 const myDate = DateX(`2021/2/15`, {locale: `fr-FR`, timeZone: `Europe/Paris`});
@@ -33,7 +34,7 @@ For each flavor, the script is (bundled and) minified. The location of the minif
 ### NodeJS require
 
 ``` javascript
-// after you downloaded the bundle from 
+// after download of the bundle from 
 // https://kooiinc.github.io/es-date-fiddler/Bundle/index.cjs.min.js
 // Note: the module is exported as a function
 const DateX = require("[local location of the bundle]/index.cjs.min.js").DateX;
@@ -97,7 +98,7 @@ const DateX = dxFactory();
 - `date`: `[instance].date = /* Object literal. One or more of */ { year, month, date };`
 - `time`: `[instance].time = /* Object literal. One or more of */ { hour, minutes, seconds, milliseconds };` 
 - `locale`:  `[instance].locale = /* Object literal. One or both of */ { locale: [locale], timeZone: [timeZone] }`.
-  - **Note**: when the locale of a `DateX` instance is not set your current locale is used.
+  - **Note**: when the locale of a `DateX` instance is not set ones current locale is used.
   - **Note**: it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), some stringify-getters (`format, local`) will show an error message in the resulting string. [See also](https://betterprogramming.pub/formatting-dates-with-the-datetimeformat-object-9c808dc58604), or [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
 - `removeLocale()`: remove all associated locale information from the `DateX` instance.  
 - `format(template: string, options: string)`: format the date (locale specific) using a template string. This uses a specific library. See [Github](https://github.com/KooiInc/dateformat) for all about the syntax.
@@ -109,7 +110,7 @@ const DateX = dxFactory();
 The following setters use a local derivation of specific library. See [github](https://kooiinc.github.io/datefiddler/Examples/) for a comprehensive examples page.
 
 **Notes**:
-* all setters below *change the instance Date*. If you don't want that, `clone` the `DateX` instance first, e.g `const nextYear = [instance].clone.nextYear`.
+* all setters below *change the instance Date*. If one doesn't want that, `clone` the `DateX` instance first, e.g `const nextYear = [instance].clone.nextYear`.
 * all setters below can be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript), e.g. `[instance].nextYear.add("15 days").subtract("2 hours, 30 minutes")`.
 ---
 - `add(...things2Add: string | string[])`: add [things2Add] to the `DateX` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].add("1 day, 5 hours")` or `[instance].add("1 day", "5 hours")` 
