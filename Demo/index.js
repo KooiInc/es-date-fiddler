@@ -274,8 +274,9 @@ function demoNdTest() {
   log(`${toCode(`chinese.monthName`)} => ${chinese.monthName}`);
   log(`${toCode(`chinese.weekDay`)} => ${chinese.weekDay}`);
   y2000.time = {hour: 12, minutes: 13, seconds: 0};
-  log(`!!${toCode(`y2000.time = {hour: 12, minutes: 13, seconds: 0};\ny2000.timeStr;`, true)}<p>=> ${
-    y2000.local}</p>`);
+  log(`${toCode(`y2000.time = {hour: 12, minutes: 13, seconds: 0};\ny2000.timeStr(true);`, true)}<p>=> ${
+    y2000.timeStr(true)}</p>`);
+  log(`${toCode(`y2000.time`)} => [${y2000.time}]`);
 
   // values
   log(`!!<h3 id="values">Values</h3`);
@@ -294,6 +295,7 @@ function demoNdTest() {
   log(`<code>y2000.toLocaleString(\`br-BR\`, {timeZone: \`America/Fortaleza\`})</code> <p> => ${
     y2000.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}</p>`);
 
+  //perf
   log(`!!<h3 id="perfomance">Performance</h3`);
   log(checkPerformance(10_000));
 }
