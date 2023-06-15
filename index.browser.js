@@ -1,4 +1,4 @@
-/*build time 14-06-2023 17:51:45*/
+/*build time 15-06-2023 11:54:56*/
 window.DateX = DateXFactory();
 
 function DateXFactory() {
@@ -43,9 +43,9 @@ function methodHelpersFactory(proxify) {
       seconds: d.getSeconds(), milliseconds: d.getMilliseconds() };
     return asArray ? Object.values(valueObj) : valueObj;
   };
-  const getOrSetLocale = (d, values) => {
-    if (values) {
-      d.localeInfo = createLocaleInfo(d, values);
+  const getOrSetLocale = (d, {locale, timeZone} = {}) => {
+    if ( locale || timeZone) {
+      d.localeInfo = createLocaleInfo(d, {locale, timeZone});
     }
 
     return d.localeInfo;
@@ -82,18 +82,19 @@ function methodHelpersFactory(proxify) {
     const report = formats?.replace(/l:/, `locale: `).replace(/tz:/, `timeZone: `);
     return dProxified.toLocaleString() + ` !!invalid locale info => ${report}`;
   };
-  const getLocalStr = (d, opts) => {
+  const getLocalStr = (d) => {
     d = proxify(d);
+    let opts = {};
 
     if (!d.locale) {
       return d.toLocaleString();
     }
 
     if (d.locale?.timeZone) {
-      opts = {...(opts ?? {}), timeZone: d.locale.timeZone };
+      opts = { timeZone: d.locale.timeZone };
     }
 
-    try { return d.toLocaleString(d.locale.locale, opts); }
+    try { return d.toLocaleString(d.locale?.locale, opts); }
     catch(err) { return localeCatcher(d); }
   }
   const doFormat = (d, ...args) => {
@@ -163,7 +164,7 @@ function methodHelpersFactory(proxify) {
       `${timeZone ? `tz:${timeZone}` : ``}` ]
       .filter(v => v).join(`, `);
   };
-  const removeLocaleInfo = (d) => {
+  const removeLocaleInfo = d => {
     d = proxify(d);
     delete d.localeInfo;
   };
@@ -193,7 +194,7 @@ function methodHelpersFactory(proxify) {
       monthName: d => names(d, true),
       weekDay: d => names(d),
       self: d => d,
-      local: (d, opts) => getLocalStr(d, opts),
+      local: d => getLocalStr(d),
       locale: (d, {locale, timeZone} = {}) => getOrSetLocale(d, {locale, timeZone}),
       removeLocale: d => () => removeLocaleInfo(d),
       relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
