@@ -64,6 +64,19 @@ const DateX = dxFactory();
 </script>
 ```
 
+## Usage examples
+```javascript
+// DateX imported and initialized
+const now = DateX();
+const then = DateX(`1997/04/27 01:30`);
+const previousMonth = now.clone.previousMonth;
+console.log(now.differenceFrom(then));
+console.log(previousMonth.local);
+````
+
+For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/es-date-fiddler/Demo/).
+
+
 ## Getters and setters of `DateX`
 
 ### Simple getters/setters are: 
