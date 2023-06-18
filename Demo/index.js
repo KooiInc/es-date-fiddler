@@ -1,3 +1,4 @@
+/* region intialize/start */
 const isDev = location.host.startsWith(`dev.`);
 const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
 import $ from "https://kooiinc.github.io/JQL/Bundle/jql.min.js";
@@ -11,7 +12,7 @@ const { log, logTop } = logFactory(true);
 window.DateX = DateX;
 
 demoNdTest();
-// content and handling
+
 $.delegate(`click`, `h3[id]`, () => {
   $.node(`#content`).scrollIntoView();
   document.documentElement.scrollTop = 0; });
@@ -40,8 +41,11 @@ logTop(`!!
       <a class="gitLink" href="//github.com/KooiInc/es-date-fiddler">
         <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink" alt="github icon">Back to repository @Github
      </a>`);
+/* endregion intialize/start */
 
+/* region demo */
 function demoNdTest() {
+  /* region init */
   const yn = tf => tf ? `Yep` : `Nope`;
   const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
   styleIt();
@@ -68,17 +72,18 @@ function demoNdTest() {
   log(`${toCode(`d1`)} => ${d1}`);
   log(`${toCode(`d2`)} => ${d2}`);
   log(`${toCode(`d3`)} => ${d3}`);
+  /* endregion init  */
 
-  // locale
+  /* region locale */
   log(`!!<h3 id="locale">Locale</h3>`);
   log(`!!<div>
         <p>With <code>DateX</code> you can associate a <i>locale</i> and/or <i>timeZone</i> 
           with its <code>Date</code></p>
         <b>Notes</b><ul class="decimal">  
-        <li>As long as <code>[instance].locale</code> is not set (so not associated with 
-          either <i>locale</i> or <i>timeZone</i>), <i>locale</i> and/or <i>timeZone</i> are considered 
-          <code>undefined</code>, meaning the instance <code>Date</code> will use 
-          <i>your locale</i> and/or <i>your timeZone</i>.</li>  
+        <li>As long as <code>[instance].locale</code> is not set, the <code>DateX</code> instance 
+          is not associated with either <i>locale</i> or <i>timeZone</i>, <i>locale</i> and/or <i>timeZone</i>. 
+          In that case the instance <code>Date</code> uses <i>your locale</i> and/or <i>your timeZone</i>
+          to format/display its <code>Date</code>.</li>  
         <li>When an associated locale can't be used in <code>[instance].local</code> or 
           <code>[instance].format</code> the result of those getters will contain an error
           message (and the locale of the result will be your locale). </li></ul>
@@ -116,9 +121,9 @@ function demoNdTest() {
   log(`!!` + toCode(`invalidLocaleData.removeLocale()`));
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
+  /* endregion locale */
 
-
-  // formatting
+  /* region formatting */
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
   log(`!!<div><b>Note</b>: formatting uses either<ul class="decimal">
       <li>the locale of its <code>DateX</code> instance (no second parameter),</li>
@@ -193,9 +198,10 @@ function demoNdTest() {
   log(`${toCode(`timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
   log(`${toCode(`initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${
     initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss.ms')}`);
+  /* endregion formatting */
 
-  // fiddling
-  log(`!!<h3 id="fiddling">Fiddling (add/subtract to/from the Date at hand)</h3>`);
+  /* region arithmetic */
+  log(`!!<h3 id="fiddling">Arithmetic (add/subtract to/from the Date at hand)</h3>`);
   log(`!!<div><b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are
     <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a></div>`);
   log(
@@ -210,7 +216,7 @@ function demoNdTest() {
     .format(`{<code>d1.subtract(\`2 days, 5 hours)</code> =>} WD MM d yyyy hh:mmi:ss`, defaultLocale));
   log(`${toCode(`DateX().previousYear.nextMonth.local`)} => ${DateX().previousYear.nextMonth.local}`);
 
-  // difference
+  /* region difference */
   log(`!!<h3 id="difference">Difference utility</h3`);
   log(`${toCode(`DateX().differenceFrom('1991/08/27 13:30').full`)}
    <p> => ${DateX().differenceFrom('1991/08/27 13:30').full}</p>`);
@@ -227,8 +233,10 @@ function demoNdTest() {
   log(`!!${toCode(`diffFromThen`)} => <pre>${toJSON(today.differenceFrom(then), true)}</pre>`);
   log(`${toCode(`then.differenceFrom(then).full`)} ${toJSON(then.differenceFrom(then).full)}`);
   log(`${toCode(`then.differenceFrom(then).clean`)} ${then.differenceFrom(then).clean}`);
+  /* endregion difference */
+  /* endregion arithmetic */
 
-  // constructor
+  /* region constructor */
   log(`!!<h3 id="constructor" class="quoted">Constructor</h3`);
   log(`${toCode(`DateX(\`hello\`).ISO`)}
     <p>=> invalid Date returns (proxified) <i>now</i>: ${DateX(`hello`).ISO}</p>`);
@@ -244,8 +252,9 @@ function demoNdTest() {
   log(`${toCode(`const frDate = DateX('2020/03/18 17:00', { locale: 'fr-FR', timeZone: 'Europe/Paris' });
     const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi', frDate.locale.formats)`, true)}
     <p>=> (proxified) Date with locale parameters: ${frDateFormatted}</p>`);
+  /* endregion constructor */
 
-  // customs
+  /* region custom properties */
   log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`);
   const now = DateX();
   const y2000 = now.clone;
@@ -277,8 +286,9 @@ function demoNdTest() {
   log(`${toCode(`y2000.time = {hour: 12, minutes: 13, seconds: 0};\ny2000.timeStr(true);`, true)}<p>=> ${
     y2000.timeStr(true)}</p>`);
   log(`${toCode(`y2000.time`)} => [${y2000.time}]`);
+  /* endregion custom properties */
 
-  // values
+  /* region values */
   log(`!!<h3 id="values">Values</h3`);
   log(`<code>y2000.values()</code> => <p>${JSON.stringify(y2000.values())}</p>`);
   log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
@@ -294,12 +304,16 @@ function demoNdTest() {
   log(`<code>y2000.getUTCHours()</code> ${y2000.getUTCHours()}`);
   log(`<code>y2000.toLocaleString(\`br-BR\`, {timeZone: \`America/Fortaleza\`})</code> <p> => ${
     y2000.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}</p>`);
+  /* endregion values */
 
-  //perf
+  /* region performance */
   log(`!!<h3 id="perfomance">Performance</h3`);
   log(checkPerformance(10_000));
+  /* endregion performance */
 }
+/* endregion demo */
 
+/* region helpers */
 function checkPerformance(nRuns) {
   const start = performance.now();
   for (let i = 0; i < nRuns; i += 1) {
@@ -333,7 +347,6 @@ function tryJSON(content, formatted) {
 }
 
 function styleIt() {
-
   $.editCssRules(
     `code {
       color: green;
@@ -451,7 +464,7 @@ function styleIt() {
     }`,
     `@media (width < 1600px) {
       code.codeblock {
-        width: 50vw;
+        width: 70vw;
       }
       ul#log2screen { max-width: 50vw; }
     }`,
@@ -508,3 +521,4 @@ function styleIt() {
     `.head div { line-height: 1.3rem; }`
   );
 }
+/* endregion helpers */

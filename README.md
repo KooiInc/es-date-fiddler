@@ -122,7 +122,7 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 ### Setters to add or subtract days, years, hours etc.
 The following setters use the following basic syntax for adding or subtracting thing from the date at hand.
 
-```javascript
+```
   yourDateX.[add/subtract](
     "[n year(s)], [n month(s)], [n week(s)], [n day(s)], 
      [n hour(s)], [n minute(s)], [n second(s)], [n millisecond(s)]"
