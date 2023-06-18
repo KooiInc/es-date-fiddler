@@ -120,7 +120,16 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
    - **Note**: `[instance].relocate(...)` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 
 ### Setters to add or subtract days, years, hours etc.
-The following setters use a local derivation of specific library. See [github](https://kooiinc.github.io/datefiddler/Examples/) for a comprehensive examples page.
+The following setters use the following basic syntax for adding or subtracting thing from the date at hand.
+
+```javascript
+  yourDateX.[add/subtract](
+    "[n year(s)], [n month(s)], [n week(s)], [n day(s)], 
+     [n hour(s)], [n minute(s)], [n second(s)], [n millisecond(s)]"
+  );
+```
+
+See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 
 **Notes**:
 * all setters below *change the instance Date*. If one doesn't want that, `clone` the `DateX` instance first, e.g `const nextYear = [instance].clone.nextYear`.
