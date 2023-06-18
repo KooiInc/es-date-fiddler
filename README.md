@@ -120,7 +120,7 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
    - **Note**: `[instance].relocate(...)` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 
 ### Setters to add or subtract days, years, hours etc.
-The following setters use the following basic syntax for adding or subtracting thing from the date at hand.
+The following setters use the following basic syntax for adding or subtracting things from the date at hand.
 
 ```
   yourDateX.[add/subtract](
