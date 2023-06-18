@@ -80,9 +80,9 @@ function demoNdTest() {
         <p>With <code>DateX</code> you can associate a <i>locale</i> and/or <i>timeZone</i> 
           with its <code>Date</code></p>
         <b>Notes</b><ul class="decimal">  
-        <li>As long as <code>[instance].locale</code> is not set, the <code>DateX</code> instance 
-          is not associated with either <i>locale</i> or <i>timeZone</i>, <i>locale</i> and/or <i>timeZone</i>. 
-          In that case the instance <code>Date</code> uses <i>your locale</i> and/or <i>your timeZone</i>
+        <li>As long as <code>[instance].locale</code> is not set, the <code>DateX</code> instance
+          is not associated with either <i>locale</i> or <i>timeZone</i>. 
+          In that case the instance uses <i>your locale</i> and/or <i>your timeZone</i>
           to format/display its <code>Date</code>.</li>  
         <li>When an associated locale can't be used in <code>[instance].local</code> or 
           <code>[instance].format</code> the result of those getters will contain an error
