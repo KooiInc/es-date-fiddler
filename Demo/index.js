@@ -172,7 +172,7 @@ function demoNdTest() {
       const d1Clone = DateX(d1.clone);
       d1Clone.date = { year: 2000, month: 2 };
       const d1CloneFormattedUS = dateFrom_d1.format(
-        "{&lt;code>dateFrom_d1&lt;/code> in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp",
+        "{&lt;code>d1CloneFormattedUS&lt;/code> in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp",
         "l:en-US, tz:America/Los_Angeles" );`, true)}`,
     `${toCode(`d1Clone.local`)} => ${d1Clone.local}`,
     d1CloneFormattedUS,);
