@@ -125,9 +125,10 @@ function demoNdTest() {
 
   /* region formatting */
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
+  log(`!!<div><b>Syntax</b>: ${toCode(`[DateX].format(templateString:string, [otherOptions:string])`)}`);
   log(`!!<div><b>Note</b>: formatting uses either<ul class="decimal">
-      <li>the locale of its <code>DateX</code> instance (no second parameter),</li>
-      <li>the given locale from its second parameter,</li>
+      <li>the locale/timeZone of its <code>DateX</code> instance (no second parameter),</li>
+      <li>the given locale/timeZone from its second parameter,</li>
       <li>the default (your) locale (no locale set and no second parameter), or</li>
       <li>the default (your) locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
     </ul></div>`);
