@@ -5,7 +5,7 @@ function dateDiffFactory() {
     const noStart = isNaN(start);
     const noEnd = isNaN(end);
     if (noStart && !noEnd) {
-      const [message, full, clean] = Array(3).fill(`start and end date are not valid`);
+      const [message, full, clean] = Array(3).fill(`start- and/or end date are not valid`);
       return { error: true, message, full, clean };
     }
 
