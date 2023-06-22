@@ -1,4 +1,4 @@
-/*build time 15-06-2023 11:54:56*/
+/*build time 21-06-2023 08:40:50*/
 exports.DateX = DateXFactory();
 
 function DateXFactory() {
@@ -328,7 +328,7 @@ function dateDiffFactory() {
     const noStart = isNaN(start);
     const noEnd = isNaN(end);
     if (noStart && !noEnd) {
-      const [message, full, clean] = Array(3).fill(`start and end date are not valid`);
+      const [message, full, clean] = Array(3).fill(`start- and/or end date are not valid`);
       return { error: true, message, full, clean };
     }
 
