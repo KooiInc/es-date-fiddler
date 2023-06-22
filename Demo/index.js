@@ -115,7 +115,9 @@ function demoNdTest() {
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
-  log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`)
+  log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
+  log(`!!<div><b>Note</b>: a <code>DateX</code> instance with invalid locale data 
+    stringifies the <code>Date</code> using your locale <i><b>and adds an error message</b></i>:</div>`);
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
   invalidLocaleData.removeLocale();
   log(`!!` + toCode(`invalidLocaleData.removeLocale()`));
@@ -178,7 +180,7 @@ function demoNdTest() {
     `${toCode(`d1Clone.local`)} => ${d1Clone.local}`,
     d1CloneFormattedUS,);
   log(`!!<div><b>Note</b>: a <code>DateX</code> instance with invalid locale data 
-    formats the <code>Date</code> using your locale <i>and adds an error message</i>:</div>`);
+    formats the <code>Date</code> using your locale <i><b>and adds an error message</b></i>:</div>`);
   log( toCode(`invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
     invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
 
