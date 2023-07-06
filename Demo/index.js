@@ -413,7 +413,7 @@ function styleIt() {
       content: '\\21BA';
      }`,
     `body {
-      margin-top: 2rem;
+      margin: 2rem auto auto 2rem;
       font: normal 14px/17px system-ui, verdana, arial;
      }`,
     `.head pre, .head div { font-weight: normal }`,
