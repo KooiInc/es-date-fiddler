@@ -1,4 +1,3 @@
-/*build time 07-07-2023 13:22:32*/
 exports.DateX = DateXFactory();
 
 function DateXFactory() {
