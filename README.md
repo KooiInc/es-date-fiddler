@@ -4,7 +4,7 @@ An ES Date with nifty extensions using ES Proxy
 See [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples. 
 
 ## What is it?
-The datefiddler library delivers an enhanced ES-Date called `DateX`.
+The datefiddler library delivers an enhanced ES-Date called `DateX`. It is using a [class free object oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) coding style.
 
 A `DateX` is a normal ECMAScript `Date` Object. By using `Proxy` functionality one can use a number of additional setters and getters (e.g. for arithmetic, formatting, locale awareness), *as well as* use all regular `Date` functionality. So, to create a `DateX`, instead of `new Date(...)` one uses `DateX(...)`.
 
