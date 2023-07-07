@@ -148,7 +148,8 @@ function methodHelpersFactory(proxify) {
     return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
   }
 
-  return {...({
+  return Object.freeze({
+    ...{
       clone,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
@@ -174,7 +175,8 @@ function methodHelpersFactory(proxify) {
       daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
       isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,
       format: d => (...args) => doFormat(d, ...args),
-    }), ...({
+    },
+    ...{
       addYears: d => (amount = 1) => add2Date(d, `${amount} years`),
       addMonths: d => (amount = 1) => add2Date(d, `${amount} months`),
       addWeeks: d => (amount = 1) => add2Date(d, `${amount * 7} days`),
@@ -189,5 +191,6 @@ function methodHelpersFactory(proxify) {
       yesterday: d => add2Date(d, `subtract, 1 day`),
       add: d => (...what2Add) => add2Date(d, ...what2Add),
       subtract: d => (...what2Subtract) => add2Date(d, ...[`subtract`].concat([what2Subtract]).flat()),
-    })};
+    }
+  });
 }
