@@ -2,7 +2,6 @@
 const isDev = location.host.startsWith(`dev.`);
 const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
 import $ from "https://kooiinc.github.io/JQL/Bundle/jql.min.js";
-if (isDev) { document.title = `#DEV ${document.title}`; }
 if (!/stackblitz/i.test(location)) { console.clear(); }
 const perfNow = performance.now();
 const DateX = isDev
@@ -10,6 +9,11 @@ const DateX = isDev
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 window.DateX = DateX;
+
+if (isDev) {
+  document.title = `##DEV## ${document.title}`;
+  $(`link[rel="icon"]`).replaceWith($.LINK.prop({href: `./demoDevIcon.png`, rel: `icon`}));
+}
 
 demoNdTest();
 
