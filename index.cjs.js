@@ -151,6 +151,7 @@ function methodHelpersFactory(proxify) {
        `${timeZone ? `tz:${timeZone}` : ``}` ]
       .filter(v => v).join(`, `)
     d.localeInfo = {
+      formats,
       ...(locale ? {locale} : {}),
       ...(timeZone ? {timeZone} : {}), };
     return d.localeInfo;
