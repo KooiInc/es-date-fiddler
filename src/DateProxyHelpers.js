@@ -149,7 +149,7 @@ function methodHelpersFactory(proxify) {
     return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
   }
 
-  return Object.freeze({
+  return ({
     ...{
       clone,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
