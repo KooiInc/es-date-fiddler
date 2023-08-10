@@ -4,7 +4,9 @@ function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);
   const proxy = {
     get: ( target, key ) => { return !target[key] && proxied[key]?.(target) || targetGetter(target, key); },
-    set: ( target, key, value ) => { return proxied[key]?.(target, value) || target[key]; }
+    set: ( target, key, value ) => { return proxied[key]?.(target, value) || target[key]; },
+    ownKeys: (target) => Object.getOwnPropertyNames(proxied),
+    has: (target, key) => key in proxied || key in target,
   };
 
   function proxify(date) {
@@ -16,7 +18,7 @@ function DateXFactory() {
     return target[key];
   }
 
-  return function(dateOrLocale, localeInfo) {
+  function exported(dateOrLocale, localeInfo) {
     const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
     const dateIsDate = (dateOrLocale || ``) instanceof Date;
     const maybeDate = dateIsLocaleInfo
@@ -30,7 +32,21 @@ function DateXFactory() {
     }
 
     return proxied;
+  }
+
+  exported.extendWith = function({name, fn, isMethod = false, proxifyResult = false} = {}) {
+    if (!name || !fn || !(fn instanceof Function)) {
+      return console.error(`cannot extend without name and/or fn (function)`);
+    }
+    proxied[name] = dt => isMethod
+      ? (...args) => {
+        dt = proxify(dt);
+        return proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args);
+      }
+      : proxifyResult ? proxify(fn(proxify(dt))) : fn(proxify(dt));
   };
+
+  return exported;
 }
 
 function methodHelpersFactory(proxify) {
@@ -178,7 +194,7 @@ function methodHelpersFactory(proxify) {
     return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
   }
 
-  return Object.freeze({
+  return ({
     ...{
       clone,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
