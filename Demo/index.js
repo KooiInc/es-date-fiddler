@@ -4,47 +4,26 @@ const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
 import $ from "https://kooiinc.github.io/JQL/Bundle/jql.min.js";
 if (!/stackblitz/i.test(location)) { console.clear(); }
 const perfNow = performance.now();
-const DateX = isDev
+const $D = isDev
   ? (await import(devMini(false))).default
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
-window.DateX = DateX;
+window.$D = $D;
 
 if (isDev) {
   document.title = `##DEV## ${document.title}`;
   $(`link[rel="icon"]`).replaceWith($.LINK.prop({href: `./demoDevIcon.png`, rel: `icon`}));
 }
 
-demoNdTest();
-
-$.delegate(`click`, `h3[id]`, () => {
-  $.node(`#content`).scrollIntoView();
-  document.documentElement.scrollTop = 0; });
-$.delegate(`click`, `.content li .linkLike`, evt => {
-  $.node(evt.target.dataset.target).scrollIntoView();
-  document.documentElement.scrollBy(0, -15); });
-const contentDiv = $(
-  `<div class="content" id="content"><h3>Content</h3><ul></ul></div>`,
-  $(`#inits`),
-  $.at.BeforeBegin );
-const ul = contentDiv.find$(`ul`);
-$(`h3[id]`).each(h3 => {
-    const header = $(h3).duplicate();
-    const doQuote = header.hasClass(`quoted`) ? ` class="linkLike quoted"` : `class="linkLike"`;
-    header.find$(`a`).remove();
-    const headerText = header.html();
-    ul.append(`<li><div ${doQuote} data-target="h3#${h3.id}">${headerText.replace(/\(.+\)/, ``)}</div></li>`);
-    $(h3).prop(`title`, `Back to top`);
-});
-
-$(`<div><b>Note</b>: Use <code>DateX</code> in the developer console to experiment with it</div>`,
-  contentDiv, $.at.AfterEnd);
-
 $(`<div class="spacer"></div>`);
+$(`<div class="container">`).append($(`#log2screen`));
 logTop(`!!
       <a class="gitLink" href="//github.com/KooiInc/es-date-fiddler">
         <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink" alt="github icon">Back to repository @Github
      </a>`);
+
+demoNdTest();
+createContent();
 /* endregion intialize/start */
 
 /* region demo */
@@ -56,23 +35,26 @@ function demoNdTest() {
   const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${
     str.replace(/^\s+\b/gm, ``).replace(/^\s{3,}(\W)/gm, `  $1`)
       .replace(/^\s+</gm, `<`)}</code>`;
-  window.DX = DateX;
-  const d1 = DateX({ locale: `en-US`, timeZone: `US/Pacific` });
+  window.DX = $D;
+  const d1 = $D({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.clone;
-  const d3 = DateX(new Date(-200, 2, 18, 12, 0, 30));
+  const d3 = $D(new Date(-200, 2, 18, 12, 0, 30));
   d2.date = { year: 2022, date: 10, month: 12 };
   d2.locale = { locale: `nl-NL`, timeZone: `Europe/Amsterdam` };
-
+  $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
+  $D.extendWith({name: `utc`, fn: dt => $D(dt.ISO, {timeZone: `Etc/Greenwich`, locale: `utc`}) });
+  $D.extendWith({name: `utcOffset`, fn: dt => { return dt.getTimezoneOffset() } });
+  console.log(d1.isTodayOrLaterThen(d2), d1.utc.local, d1.local, d1.utcOffset/60, $D(d1.ISO, {timeZone: `Etc/Greenwich`, locale: `utc`}).local, `isTodayOrLaterThen` in d1);
   log(
     `!!<h1>Demo for es-date-fiddler</h1>`,
     `!!<h2>a proxy to extend and make working with ES <code>Date</code> somewhat easier</h3>`
   );
 
   log(`!!<h3 id="inits">Initialization</h3>`);
-  log(`!!` + toCode(`<span class="comment">// DateX imported</span>
-    const d1 = DateX();
+  log(`!!` + toCode(`<span class="comment">// $D imported (import $D from "[location of module]")</span>
+    const d1 = $D();
     const d2 = d1.clone;
-    const d3 = DateX(new Date(-200, 2, 18, 12, 0, 30));`, true) );
+    const d3 = $D(new Date(-200, 2, 18, 12, 0, 30));`, true) );
   log(`${toCode(`d1`)} => ${d1}`);
   log(`${toCode(`d2`)} => ${d2}`);
   log(`${toCode(`d3`)} => ${d3}`);
@@ -81,36 +63,36 @@ function demoNdTest() {
   /* region locale */
   log(`!!<h3 id="locale">Locale</h3>`);
   log(`!!<div>
-        <p>With <code>DateX</code> you can associate a <i>locale</i> and/or <i>timeZone</i> 
+        <p>With <code>$D</code> you can associate a <i>locale</i> and/or <i>timeZone</i> 
           with its <code>Date</code></p>
         <b>Notes</b><ul class="decimal">  
-        <li>As long as <code>[instance].locale</code> is not set, the <code>DateX</code> instance
+        <li>As long as <code>[instance].locale</code> is not set, the <code>$D</code> instance
           is not associated with either <i>locale</i> or <i>timeZone</i>. 
           In that case the instance uses <i>your locale</i> and/or <i>your timeZone</i>
           to format/display its <code>Date</code>.</li>  
         <li>When an associated locale can't be used in <code>[instance].local</code> or 
           <code>[instance].format</code> the result of those getters will contain an error
           message (and the locale of the result will be your locale). </li></ul>
-        <p>There are several ways to associate locale information with a <code>DateX</code> instance.
+        <p>There are several ways to associate locale information with a <code>$D</code> instance.
         Here are some examples.</p>
       </div>`);
 
   const d2German = d2.clone;
   d2German.locale = { locale: `de-DE`, timeZone: `Europe/Berlin` };
   const d2Dutch = d2.clone.relocate({ locale: `nl-NL`, timeZone: `Europe/Amsterdam` } );
-  const todayAustralia = DateX({timeZone: 'Australia/Darwin', locale: 'en-AU'});
-  const nwZealandTomorrow = DateX(new Date(), {timeZone: 'Pacific/Auckland', locale: 'en-NZ'}).tomorrow;
-  const invalidLocale = DateX({locale: 'somewhere'});
-  const invalidTimezone = DateX({timeZone: 'somewhere'});
-  const invalidLocaleData = DateX({locale: 'somewhere', timeZone: 'somehow'});
+  const todayAustralia = $D({timeZone: 'Australia/Darwin', locale: 'en-AU'});
+  const nwZealandTomorrow = $D(new Date(), {timeZone: 'Pacific/Auckland', locale: 'en-NZ'}).tomorrow;
+  const invalidLocale = $D({locale: 'somewhere'});
+  const invalidTimezone = $D({timeZone: 'somewhere'});
+  const invalidLocaleData = $D({locale: 'somewhere', timeZone: 'somehow'});
   log(`!!` + toCode(`const d2German = d2.clone;
     d2German.locale = { locale: \`de-DE\`, timeZone: \`Europe/Berlin\` };
     const d2Dutch = d2.clone.relocate({ locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` });
-    const toDayAustralia = DateX({timeZone: 'Australia/Darwin', locale: 'en-AU'});
-    const nwZealandTomorrow = DateX(new Date(), {timeZone: 'Pacific/Auckland', locale: 'en-NZ'}).tomorrow;
-    const invalidLocale = DateX({locale: 'somewhere'});
-    const invalidTimezone = DateX({timeZone: 'somewhere'});
-    const invalidLocaleData = DateX({locale: 'somewhere', timeZone: 'somehow'});`, true));
+    const toDayAustralia = $D({timeZone: 'Australia/Darwin', locale: 'en-AU'});
+    const nwZealandTomorrow = $D(new Date(), {timeZone: 'Pacific/Auckland', locale: 'en-NZ'}).tomorrow;
+    const invalidLocale = $D({locale: 'somewhere'});
+    const invalidTimezone = $D({timeZone: 'somewhere'});
+    const invalidLocaleData = $D({locale: 'somewhere', timeZone: 'somehow'});`, true));
   log(toCode(`d2German.local`) + ` => ${d2German.local}`);
   log(toCode(`d2Dutch.local`) + ` => ${d2Dutch.local}`);
   log(toCode(`todayAustralia.local`) + ` => ${todayAustralia.local}`);
@@ -120,7 +102,7 @@ function demoNdTest() {
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
-  log(`!!<div><b>Note</b>: a <code>DateX</code> instance with invalid locale data 
+  log(`!!<div><b>Note</b>: a <code>$D</code> instance with invalid locale data 
     stringifies the <code>Date</code> using your locale <i><b>and adds an error message</b></i>:</div>`);
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
   invalidLocaleData.removeLocale();
@@ -131,9 +113,9 @@ function demoNdTest() {
 
   /* region formatting */
   log(`!!<h3 id="formatting">Formatting (see <a target="_blank" href="https://github.com/KooiInc/dateformat">GitHub</a>)</h3>`);
-  log(`!!<div><b>Syntax</b>: ${toCode(`[DateX].format(templateString:string, [otherOptions:string])`)}`);
+  log(`!!<div><b>Syntax</b>: ${toCode(`[$D].format(templateString:string, [otherOptions:string])`)}`);
   log(`!!<div><b>Note</b>: formatting uses either<ul class="decimal">
-      <li>the locale/timeZone of its <code>DateX</code> instance (no second parameter),</li>
+      <li>the locale/timeZone of its <code>$D</code> instance (no second parameter),</li>
       <li>the given locale/timeZone from its second parameter,</li>
       <li>the default (your) locale (no locale set and no second parameter), or</li>
       <li>the default (your) locale (locale set, but second parameter explicitly <code>undefined</code>)</li>
@@ -147,8 +129,8 @@ function demoNdTest() {
     toCode(`d1.format(\`{2. d1 formatted /w second parameter:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss)&lt/b>&lt/i>\`, <b><i>'l:fr-FR'</i></b>)`)}
     <p>=> ${ d1.format(`{2. d1 formatted /w second parameter:} <i><b>(WD) d MM yyyy (hh:mmi:ss)</b></i>`, 'l:fr-FR')}</p>` );
   log(`${
-    toCode(`DateX().format(\`{3. new instance default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss dp)&lt/b>&lt;/i>\`)`)}
-    <p>=> ${ DateX().format(`{3. new instance default (your) locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss dp)</b></i>`)}</p>` );
+    toCode(`$D().format(\`{3. new instance default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss dp)&lt/b>&lt;/i>\`)`)}
+    <p>=> ${ $D().format(`{3. new instance default (your) locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss dp)</b></i>`)}</p>` );
   log(`${
     toCode(`d1.format(\`{4. d1 default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss dp)&lt/b>&lt;/i>\`, <b><i>undefined</i></b>)`)}
     <p>=> ${ d1.format(`{4. d1 default (your) your locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss dp)</b></i>`, undefined)}</p>` );
@@ -176,14 +158,14 @@ function demoNdTest() {
   const d1CloneFormattedUS = d1Clone.format(
     `{${toCode(`d1CloneFormattedUS`)} in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp`,`l:en-US, tz:America/Los_Angeles`);
   log(`!!${toCode(`
-      const d1Clone = DateX(d1.clone);
+      const d1Clone = $D(d1.clone);
       d1Clone.date = { year: 2000, month: 2 };
       const d1CloneFormattedUS = dateFrom_d1.format(
         "{&lt;code>d1CloneFormattedUS&lt;/code> in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp",
         "l:en-US, tz:America/Los_Angeles" );`, true)}`,
     `${toCode(`d1Clone.local`)} => ${d1Clone.local}`,
     d1CloneFormattedUS,);
-  log(`!!<div><b>Note</b>: a <code>DateX</code> instance with invalid locale data 
+  log(`!!<div><b>Note</b>: a <code>$D</code> instance with invalid locale data 
     formats the <code>Date</code> using your locale <i><b>and adds an error message</b></i>:</div>`);
   log( toCode(`invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
     invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
@@ -193,10 +175,10 @@ function demoNdTest() {
   log(`!!<div><b>Notes</b>:<ul class="decimal">
     <li>The locale of the original is also cloned.</li>
     <li>Time for the result may differ due to daylight saving times</li></ul></div>`);
-  const initial = DateX(new Date(`1999/05/31 14:22:44.142`), { locale: `en-GB` });
+  const initial = $D(new Date(`1999/05/31 14:22:44.142`), { locale: `en-GB` });
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();
-  log(toCode(`const initial = DateX(new Date(\`1999/05/31 14:22:44.142\`), { locale: \`en-GB\` });
+  log(toCode(`const initial = $D(new Date(\`1999/05/31 14:22:44.142\`), { locale: \`en-GB\` });
   <span class="comment">// Clone date/time of [initial] to current date</span>
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();`, true));
@@ -216,26 +198,26 @@ function demoNdTest() {
       .format(`{<code>d1.add(\`5 days, 3 hours\`).nextYear</code>} => d MM yyyy (hh:mmi:ss)`, `l:en-GB`),
     `${toCode(`d1.clone.addYears(-10).local`)} => ${d1.clone.addYears(-10).local}`,
   );
-  const defaultLocale = DateX().locale?.formats;
+  const defaultLocale = $D().locale?.formats;
   log(d1.add(`2 days, 5 hours`)
     .format(`{<code>d1.add(\`2 days, 5 hours\`)</code> =>} WD MM d yyyy hh:mmi:ss`, defaultLocale));
   log(d1.subtract(`2 days`, `5 hours`)
     .format(`{<code>d1.subtract(\`2 days, 5 hours)</code> =>} WD MM d yyyy hh:mmi:ss`, defaultLocale));
-  log(`${toCode(`DateX().previousYear.nextMonth.local`)} => ${DateX().previousYear.nextMonth.local}`);
+  log(`${toCode(`$D().previousYear.nextMonth.local`)} => ${$D().previousYear.nextMonth.local}`);
 
   /* region difference */
   log(`!!<h3 id="difference">Difference utility</h3`);
-  log(`${toCode(`DateX().differenceFrom('1991/08/27 13:30').full`)}
-   <p> => ${DateX().differenceFrom('1991/08/27 13:30').full}</p>`);
-  log(`${toCode(`DateX().differenceFrom(DateX().subtract(\`5 days, 2 hours, 1 minute\`)).clean`)}
+  log(`${toCode(`$D().differenceFrom('1991/08/27 13:30').full`)}
+   <p> => ${$D().differenceFrom('1991/08/27 13:30').full}</p>`);
+  log(`${toCode(`$D().differenceFrom($D().subtract(\`5 days, 2 hours, 1 minute\`)).clean`)}
    <p> => ${
-    DateX().differenceFrom(DateX().subtract(`5 days, 2 hours, 1 minute`)).clean}
+    $D().differenceFrom($D().subtract(`5 days, 2 hours, 1 minute`)).clean}
      (<b>Note</b>:<code>.clean</code> removes zero values) </p>`);
-  const today = DateX();
-  const then = DateX(`2023/07/16`);
+  const today = $D();
+  const then = $D(`2023/07/16`);
   log(`!!${
-    toCode(`const today = DateX();
-      const then = DateX(\`2023/07/16\`);
+    toCode(`const today = $D();
+      const then = $D(\`2023/07/16\`);
       const diffFromThen = today.differenceFrom(then);`, true)}`);
   log(`!!${toCode(`diffFromThen`)} => <pre>${toJSON(today.differenceFrom(then), true)}</pre>`);
   log(`${toCode(`then.differenceFrom(then).full`)} ${toJSON(then.differenceFrom(then).full)}`);
@@ -245,29 +227,29 @@ function demoNdTest() {
 
   /* region constructor */
   log(`!!<h3 id="constructor" class="quoted">Constructor</h3`);
-  log(`${toCode(`DateX(\`hello\`).ISO`)}
-    <p>=> invalid Date returns (proxified) <i>now</i>: ${DateX(`hello`).ISO}</p>`);
-  log(`${toCode(`DateX(\`2012/12/12 00:00:00\`).ISO`)}
-    <p>=> string converted to (proxified) Date (when convertable): ${DateX(`2012/12/12 00:00:00`).ISO}</p>`);
-  log(`${toCode(`DateX().ISO`)}
-    <p>=> no parameters returns (proxified) <i>now</i>: ${DateX().ISO}</p>`);
-  log(`${toCode(`DateX({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local`)}
+  log(`${toCode(`$D(\`hello\`).ISO`)}
+    <p>=> invalid Date returns (proxified) <i>now</i>: ${$D(`hello`).ISO}</p>`);
+  log(`${toCode(`$D(\`2012/12/12 00:00:00\`).ISO`)}
+    <p>=> string converted to (proxified) Date (when convertable): ${$D(`2012/12/12 00:00:00`).ISO}</p>`);
+  log(`${toCode(`$D().ISO`)}
+    <p>=> no parameters returns (proxified) <i>now</i>: ${$D().ISO}</p>`);
+  log(`${toCode(`$D({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local`)}
     <p>=> (proxified) <i>now</i> with locale parameters: ${
-    DateX({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local}</p>`);
-  const frDate = DateX('2020/03/18 17:00', {locale: 'fr-FR', timeZone: 'Europe/Paris' });
+    $D({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local}</p>`);
+  const frDate = $D('2020/03/18 17:00', {locale: 'fr-FR', timeZone: 'Europe/Paris' });
   const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi', frDate.locale.formats);
-  log(`${toCode(`const frDate = DateX('2020/03/18 17:00', { locale: 'fr-FR', timeZone: 'Europe/Paris' });
+  log(`${toCode(`const frDate = $D('2020/03/18 17:00', { locale: 'fr-FR', timeZone: 'Europe/Paris' });
     const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi', frDate.locale.formats)`, true)}
     <p>=> (proxified) Date with locale parameters: ${frDateFormatted}</p>`);
   /* endregion constructor */
 
   /* region custom properties */
   log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`);
-  const now = DateX();
+  const now = $D();
   const y2000 = now.clone;
   y2000.date = { year: 2000, date: 1 };
   log(`!!` + toCode(`
-    const now = DateX();
+    const now = $D();
     const y2000 = now.clone;
     y2000.date = { year: 2000, date: 1 };`, true));
   log(`${toCode(`y2000.local`)} => ${y2000.local}`);
@@ -324,13 +306,13 @@ function demoNdTest() {
 function checkPerformance(nRuns) {
   const start = performance.now();
   for (let i = 0; i < nRuns; i += 1) {
-    const nowX = DateX();
+    const nowX = $D();
     nowX.locale = {locale: `nl-NL`, timeZone: `Europe/Amsterdam`};
     const nowXX = nowX.clone.add(`42 days`);
   }
   const perf = performance.now() - start;
   const perfPerTest = perf/nRuns;
-  return `Created, set locale and cloned a DateX instance ${nRuns.toLocaleString()} times.
+  return `Created, set locale and cloned a $D instance ${nRuns.toLocaleString()} times.
     <br>That took ${
     (perf).toFixed(2)}</b> milliseconds (${perfPerTest.toFixed(6)} ms / iteration).`
 }
@@ -341,7 +323,7 @@ function logFactory(formatJSON = true) {
   const createItem = t => $(`${t}`.startsWith(`!!`) ? `<li class="head">` : `<li>`);
   const logPosition = {top: logContainer.prepend, bottom: logContainer.append};
   const cleanContent = content => !$.IS(content, String, Number) ? toJSON(content) : `${content}`;
-  const writeLogEntry = content => createItem(content).append( $(`<span>${content?.replace(/^!!/, ``)}</span>`) );
+  const writeLogEntry = content => createItem(content).append( $(`<div>${content?.replace(/^!!/, ``)}</div>`) );
   const logItem = (pos = `bottom`) => content => logPosition[pos]( writeLogEntry(cleanContent(content)) );
   return {
     log: (...txt) => txt.forEach( logItem() ),
@@ -353,47 +335,88 @@ function tryJSON(content, formatted) {
   catch(err) {return `Some [Object object] can not be converted to JSON`}
 }
 
+function createContent() {
+  const container = $.node(`.container`)
+  $.delegate(`click`, `h3[id]`, () => {
+    container.scrollTo(0,0);
+  });
+  $.delegate(`click`, `.content li .linkLike`, evt => {
+    const origin = $(evt.target.dataset.target);
+    container.scrollTo(0, origin.dimensions.top - 12);
+  });
+  const contentDiv = $(
+    `<div class="content" id="content"><h3>Content</h3><ul></ul></div>`,
+    $(`#inits`),
+    $.at.BeforeBegin );
+  const ul = contentDiv.find$(`ul`);
+  $(`h3[id]`).each(h3 => {
+    const header = $(h3).duplicate();
+    const doQuote = header.hasClass(`quoted`) ? ` class="linkLike quoted"` : `class="linkLike"`;
+    header.find$(`a`).remove();
+    const headerText = header.html();
+    ul.append(`<li><div ${doQuote} data-target="h3#${h3.id}">${headerText.replace(/\(.+\)/, ``)}</div></li>`);
+    $(h3).prop(`title`, `Back to top`);
+  });
+
+  $(`<p><b>Note</b>: Use <code>$D</code> in the developer console to experiment with it</p>`,
+    contentDiv, $.at.AfterEnd);
+  $.editCssRule(`.bottomSpace { height: ${container.clientHeight}px; }`);
+  $(`#log2screen`).afterMe(`<div class="bottomSpace">`);
+}
+
 function styleIt() {
   $.editCssRules(
+    `body { margin: 0; }`,
+    `.container { position: absolute; inset: 0; overflow-y: auto; }`,
+    `.head div, .head pre, pre {font-weight: normal; color: #777}`,
+    `.head b[id], .head b.header {
+      cursor: pointer;
+      font-size: 1.2em; 
+      line-height: 1.5rem;
+      display: inline-block; 
+      margin-top: 0.5rem
+    }`,
+    `@media (width > 1600px) {
+      code.codeblock {
+        width: 40vw;
+      }
+      ul#log2screen, #log2screen .content { max-width: 40vw; }
+    }`,
+    `@media (width < 1600px) {
+      code.codeblock {
+        width: 70vw;
+      }
+      ul#log2screen, #log2screen .content { max-width: 70vw; }
+    }`,
+    `@media (width < 1024px) {
+      code.codeblock {
+        width: 90vw;
+      }
+      ul#log2screen, #log2screen .content { max-width: 90vw; }
+    }`,
     `code {
       color: green;
       background-color: #eee;
       padding: 2px;
       font-family: monospace;
     }`,
+    `#log2screen h2 { line-height: 1.7rem; }`,
+    `#log2screen li pre { margin-top: 0.2rem; }`,
+    `.ws { white-space: pre-line; }`,
     `code.codeblock {
       display: block;
-      padding: 6px;
-      border: 1px solid #999;
-      margin: 0.5rem 0; 
-      background-color: #eee;
+      background-color: rgb(255, 255, 248);
+      border: 1px dotted rgb(153, 153, 153);
+      color: rgb(81, 76, 125);
+      margin: 1rem 0 0.5rem 0;
+      font-weight: normal;
       white-space: pre-wrap;
+      padding: 2px 6px;
     }`,
-    `h3 {marginTop: 1.5rem;}`,
-    `.thickBorder {
-      border: 5px solid green;
-      borderWidth: 5px;
-      padding: 0.5rem;
-      display: inline-block; 
-    }`,
-    `a.ExternalLink {
-      text-decoration: none;
-      color: rgb(0, 0, 238);
-      background-color: #EEE;
-      padding: 3px;
-      font-weight: bold;
-    }`,
-    `.cmmt {
-      color: #888;
-    }`,
-    `.hidden {display: none;}`,
-    `.attention {color: red; font-size: 1.2em; font-weight: bold;}`,
-    `#log2screen li { 
-      listStyle: '\\2713'; 
-      paddingLeft: 6px; 
-      margin: 0.5rem 0 0 -1.2rem; 
-      font-family: monospace 
-    }`,
+    `code.codeblock .comment { color: rgb(169 156 156); }`,
+    `ul#log2screen {margin: 0 auto;}`,
+    `ul#log2screen li {margin-top: 0.8rem;}`,
+    `ul#log2screen ul.sub li { margin-top: 0.3rem; }`,
     `#log2screen li.head {
       list-style-type: none;
       font-weight: bold;
@@ -401,9 +424,42 @@ function styleIt() {
       margin-bottom: -0.2rem;
       font-family: revert;
     }`,
-    `.err {fontStyle: italic; color: red; }`,
-    `a {text-decoration:none; font-weight:bold;}`,
-    `a:hover {text-decoration: underline;}`,
+    `#log2screen .content ul {
+      margin-left: initial;
+      margin-top: -0.7rem;
+    }`,
+    `#log2screen .content {
+      margin-top: -1rem;
+      color: #000;
+    }`,
+    `#log2screen .content ul li div[data-target]:hover {
+      color: blue;
+    }`,
+    `#log2screen .content {
+      padding: 0.5rem;
+      border-radius: 7px;
+      box-shadow: -2px 1px 12px #aaa;
+      margin-top: 1rem;
+    }`,
+    `#log2screen .content h3 { 
+      margin-top: 0;
+      padding-left: 24px;
+      color: red;
+    }`,
+    `#log2screen .content ul li {
+      margin-left: -1.4rem;
+      margin-top: auto;
+      list-style: '\\27A4';
+      cursor: pointer;
+    }`,
+    `li div p {
+      margin-top: 0.3rem;
+    }`,
+    `#log2screen ul.decimal li {
+      list-style-type: decimal;
+      padding-left: initial;
+      margin: 0.3rem 0px 0px -0.5rem;
+    }`,
     `a[target]:before, a.internalLink:before, a.externalLink:before {
       color: rgba(0,0,238,0.7);
       font-size: 1.1rem;
@@ -416,116 +472,25 @@ function styleIt() {
     `a[data-top]:before, a.internalLink:before, a[target="_top"]:before {
       content: '\\21BA';
      }`,
-    `body {
-      margin: 2rem auto auto 2rem;
-      font: normal 14px/17px system-ui, verdana, arial;
-     }`,
-    `.head pre, .head div { font-weight: normal }`,
-    `code, code.codeblock {
-      background-color: #fffff8;
-      border: 1px dotted #999;
-      color: rgb(81, 76, 125);
-      font-weight: normal;
-      padding: 2px 6px;
-     }`,
-    `#log2screen li.head h2 { line-height: 1.5rem; }`,
-    `#log2screen  li { 
-      margin-top: 0.7rem; 
-      vertical-align: middle;  
-      line-height: 1.4rem; 
-    }`,
-    `#log2screen li p, #log2screen li.head p {
-      margin: 0.6rem 0;
-      font-weight: normal}`,
-    `.quoted:before {
-      content: '\\201C';
-      font-family: "Times New Roman";
-     }`,
-    `.quoted:after {
-      content: '\\201D';
-      font-family: "Times New Roman";
-     }`,
-    `a[target]:before, a.internalLink:before, a.externalLink:before {
-      color: rgba(0,0,238,0.7);
-      font-size: 1.1rem;
-      padding-right: 2px;
-      vertical-align: baseline;
-     }`,
-    `a[target="_blank"]:before {
-      content: '\\2197';
-     }`,
-    `@media (width > 1600px) {
-      code.codeblock {
-        width: 40vw;
-      }
-      ul#log2screen { max-width: 35vw; }
+    `h3[id] {cursor: pointer;}`,
+    `h3[id]:before {
+      content: "🔝";
+      font-size: 1.2rem;
+      color: blue;
+      padding-right: 3px;
     }`,
     `#log2screen .content ul {
       margin-left: initial;
       margin-top: -0.7rem;
+      margin-bottom: 1rem;
     }`,
     `#log2screen .content ul li{
-      margin-left: -1.4rem;
+      margin-left: -1rem;
       margin-top: auto;
+      padding-left: 0.4rem;
       list-style: '\\27A4';
     }`,
-    `@media (width < 1600px) {
-      code.codeblock {
-        width: 70vw;
-      }
-      ul#log2screen { max-width: 50vw; }
-    }`,
-    `h3[id] {
-      cursor: pointer;
-    }`,
-    `h3[id]:not(.quoted):before {
-      content: "↺";
-      color: blue;
-      padding-right: 3px;
-    }`,
-    `h3[id].quoted:before {
-      content: "↺ \\201C";
-      color: blue;
-      padding-right: 3px;
-    }`,
-    `h3[id]:hover {
-      text-decoration: underline;
-    }`,
-    `.content {
-      margin: 0 0 1.5rem 0;
-    }`,
-    `.spacer {
-      position: relative;
-      height: 95vh;
-    }`,
-    `#log2screen a.gitLink img {
-      width: 24px;
-      height: auto;
-      margin-right: 4px;
-      vertical-align: middle;
-    }`,
-    `#log2screen a.gitLink  {
-      font-weight: normal !important;
-    }`,
-    `.linkLike {
-      color: blue;
-      cursor: pointer;
-      display: inline-block;
-      font-family: system-ui;
-      padding: 1px 3px;
-    }`,
-    `.linkLike:hover {
-      background-color: #EEE;
-    }`,
-    `.comment {
-      color: #c0c0c0;
-    }`,
-    `#log2screen ul.decimal li {
-      list-style-type: decimal;
-      padding-left: initial;
-      margin: 0.3rem 0px 0px -0.5rem;
-    }`,
-    `.head div { line-height: 1.3rem; }`
   );
 }
+
 /* endregion helpers */
