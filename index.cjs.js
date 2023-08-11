@@ -1,5 +1,7 @@
-const defaultD = DateXFactory();
-exports = { DateX: defaultD, $D: defaultD, DateXFactory };function DateXFactory() {
+const $D = DateX = DateXFactory();
+module.exports = { DateX, $D, DateXFactory };
+
+function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);
   const proxy = {
     get: ( target, key ) => { return !target[key] && proxied[key]?.(target) || targetGetter(target, key); },
