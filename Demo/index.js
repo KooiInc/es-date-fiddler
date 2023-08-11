@@ -41,10 +41,6 @@ function demoNdTest() {
   const d3 = $D(new Date(-200, 2, 18, 12, 0, 30));
   d2.date = { year: 2022, date: 10, month: 12 };
   d2.locale = { locale: `nl-NL`, timeZone: `Europe/Amsterdam` };
-  $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
-  $D.extendWith({name: `utc`, fn: dt => $D(dt.ISO, {timeZone: `Etc/Greenwich`, locale: `utc`}) });
-  $D.extendWith({name: `utcOffset`, fn: dt => { return dt.getTimezoneOffset() } });
-  console.log(d1.isTodayOrLaterThen(d2), d1.utc.local, d1.local, d1.utcOffset/60, $D(d1.ISO, {timeZone: `Etc/Greenwich`, locale: `utc`}).local, `isTodayOrLaterThen` in d1);
   log(
     `!!<h1>Demo for es-date-fiddler</h1>`,
     `!!<h2>a proxy to extend and make working with ES <code>Date</code> somewhat easier</h3>`
@@ -206,7 +202,7 @@ function demoNdTest() {
   log(`${toCode(`$D().previousYear.nextMonth.local`)} => ${$D().previousYear.nextMonth.local}`);
 
   /* region difference */
-  log(`!!<h3 id="difference">Difference utility</h3`);
+  log(`!!<h3 id="difference">Difference utility</h3>`);
   log(`${toCode(`$D().differenceFrom('1991/08/27 13:30').full`)}
    <p> => ${$D().differenceFrom('1991/08/27 13:30').full}</p>`);
   log(`${toCode(`$D().differenceFrom($D().subtract(\`5 days, 2 hours, 1 minute\`)).clean`)}
@@ -226,7 +222,7 @@ function demoNdTest() {
   /* endregion arithmetic */
 
   /* region constructor */
-  log(`!!<h3 id="constructor" class="quoted">Constructor</h3`);
+  log(`!!<h3 id="constructor" class="quoted">Constructor</h3>`);
   log(`${toCode(`$D(\`hello\`).ISO`)}
     <p>=> invalid Date returns (proxified) <i>now</i>: ${$D(`hello`).ISO}</p>`);
   log(`${toCode(`$D(\`2012/12/12 00:00:00\`).ISO`)}
@@ -278,12 +274,12 @@ function demoNdTest() {
   /* endregion custom properties */
 
   /* region values */
-  log(`!!<h3 id="values">Values</h3`);
+  log(`!!<h3 id="values">Values</h3>`);
   log(`<code>y2000.values()</code> => <p>${JSON.stringify(y2000.values())}</p>`);
   log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
 
   // natives
-  log(`!!<h3 id="natives">Use all native <code>Date</code> methods</h3`);
+  log(`!!<h3 id="natives">Use all native <code>Date</code> methods</h3>`);
   y2000.setHours(y2000.hour - 3);
   log(`<code>y2000.setHours(y2000.hour - 3)</code><p>${toCode(`y2024.getHours()`)} => ${y2000.getHours()}</p>`);
   log(`<code>y2000.getFullYear()</code> ${y2000.getFullYear()}`);
@@ -295,8 +291,72 @@ function demoNdTest() {
     y2000.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}</p>`);
   /* endregion values */
 
+  /* region extend */
+  $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
+  $D.extendWith({name: `localize4TZ`, fn: (dt, timeZoneLabel) =>
+      new Date(new Date().toLocaleString(`en`, {timeZone: timeZoneLabel}))
+        .toLocaleString(`en-CA`, {hourCycle: `h23`}), isMethod: true});
+  $D.extendWith({name: `localeDiff`, fn: (dt, locale) => {
+      const dtClone = dt.clone;
+      const local4TZ = new Date(dtClone.localize4TZ(locale.timeZone));
+      return `${Math.round((local4TZ - dtClone)/360_0000)} hour(s)`;
+    }, isMethod: true });
+  $D.extendWith({name: `utcDistance`, fn: dt => { return dt.getTimezoneOffset() } });
+  $D.extendWith({name: `midNight`, fn: dt => {
+    dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+    return dt.clone; }, proxifyResult: true });
+
+  log(`!!<h3 id="extendCustom">Extend the ‘constructor’</h3>
+    <div>Extra extensions can be created using<br> 
+      <code>$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</div>
+      <ul class="sub"><li><code>fn</code>: the function to use. The function should at least have one parameter,
+      that being the date value of the instance. By default the extension function is added as property 
+      (<code>isMethod</code> false). When <code>isMethod</code> is true, the function 
+      is considered (and callable as) a method and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
+      <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date, 
+      enables chaining. False by default.
+      <br><b>Note</b>: when <code>fn</code> returns the instance date, there's no need to set this value.</li></ul>`);
+  log(`!!<code class="codeblock">$D.extendWith({
+  name: \`isTodayOrLaterThen\`,
+  fn: (dt, nextDt) => +dt >= +nextDt, 
+  isMethod: true });
+  
+$D.extendWith({name: \`utcDistance\`, fn: dt => dt.getTimezoneOffset(); });
+
+$D.extendWith( {
+  name: \`localize4TZ\`, 
+  fn: (dt, timeZoneLabel) => 
+    new Date(new Date().toLocaleString(\`gmt\`, {timeZone: timeZoneLabel}))
+      .toLocaleString(\`en-CA\`, {hourCycle: \`h23\`}), 
+  isMethod: true } );
+
+$D.extendWith( {
+  name: \`localeDiff\`, 
+  fn: (dt, locale) => {
+    const dtClone = dt.clone;
+    const local4TZ = new Date(dtClone.localize4TZ(locale.timeZone));
+    return \`\${Math.round((local4TZ - dtClone) / 360_0000)} hour(s)\`; }, 
+  isMethod: true } );
+
+<span class="comment">// returns instance Date, so chainable</span>
+$D.extendWith({name: \`midNight\`, fn: dt => {
+  dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+  return dt.clone; }, proxifyResult: true });</code>
+  <code>$D().add(\`1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`1 day`).isTodayOrLaterThen($D())}<br>
+  <code>$D().add(\`-1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`-1 day`).isTodayOrLaterThen($D())}<br>
+  <code>$D().utcDistance</code> => ${$D().utcDistance}<br>
+  <code>$D().localeDiff({locale: \`en-NZ\`, timeZone: \`Pacific/Auckland\`})</code> => ${ 
+    $D().relocate({locale: `nl`, timeZone: `Europe/Amsterdam`})
+      .localeDiff({locale: `en-NZ`, timeZone: `Pacific/Auckland`}) }<br>
+  <code>$D().localeDiff({locale: \`en-US\`, timeZone: \`America/New_York\`})</code> => ${
+    $D().relocate({locale: `nl`, timeZone: `Europe/Amsterdam`})
+      .localeDiff({locale: `en-US`, timeZone: `America/New_York`}) }<br>
+  <code>$D().midNight.local</code> => ${
+    $D().midNight.local}<br>`);
+  /* endregion extend */
+
   /* region performance */
-  log(`!!<h3 id="perfomance">Performance</h3`);
+  log(`!!<h3 id="perfomance">Performance</h3>`);
   log(checkPerformance(10_000));
   /* endregion performance */
 }
@@ -401,6 +461,11 @@ function styleIt() {
       font-family: monospace;
     }`,
     `#log2screen h2 { line-height: 1.7rem; }`,
+    `#log2screen li { 
+      listStyle: '\\2713'; 
+      paddingLeft: 6px; 
+      margin: 0.5rem 0 0 -1.2rem;
+    }`,
     `#log2screen li pre { margin-top: 0.2rem; }`,
     `.ws { white-space: pre-line; }`,
     `code.codeblock {
@@ -411,7 +476,7 @@ function styleIt() {
       margin: 1rem 0 0.5rem 0;
       font-weight: normal;
       white-space: pre-wrap;
-      padding: 2px 6px;
+      padding: 8px;
     }`,
     `code.codeblock .comment { color: rgb(169 156 156); }`,
     `ul#log2screen {margin: 0 auto;}`,
