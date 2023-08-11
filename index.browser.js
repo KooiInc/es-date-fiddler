@@ -1,4 +1,5 @@
-window.DateX = DateXFactory();
+window.$D = window.DateX = DateXFactory();
+window.DateXFactory = DateXFactory;
 
 function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);
@@ -135,13 +136,15 @@ function methodHelpersFactory(proxify) {
           : d.toLocaleString(locale, timeZone ? { timeZone } : undefined);
     } catch(err) { return localeCatcher(proxify(d)); }
   };
-  const getOrSetDate = (d, {year, month, date} = {}) => {
+  const getOrSetDate = function(d, {year, month, date} = {}) {
     if ([year, month, date].filter(isDefined).length) {
-    const currentValues = getDate(d);
-    const [y, m, dt] = [year, month, date].map((v, i) => isNaN(parseInt(v)) ? currentValues[i] : +v)
-      d.setFullYear(y);
-      d.setMonth(m);
+      const currentValues = getDate(d);
+      month = isNaN(+month) ? currentValues[1] : +month - 1;
+      const [yy, mm, dt] = [year, month, date].map((v, i) => isNaN(parseInt(v)) ? currentValues[i] : +v);
+      d.setFullYear(yy);
+      d.setMonth(mm);
       d.setDate(dt);
+
       return true;
     }
     return d.getDate();
