@@ -1,5 +1,3 @@
-1. [What is it](`/#what`)
-
 # es-date-fiddler
 An ES Date with nifty extensions using ES Proxy. Furthermore it is programmed in a [class free object oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) coding style.
 
