@@ -38,14 +38,20 @@ function DateXFactory() {
 
   exported.extendWith = function({name, fn, isMethod = false, proxifyResult = false} = {}) {
     if (!name || !fn || !(fn instanceof Function)) {
-      return console.error(`cannot extend without name and/or fn (function)`);
+      return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
     }
-    proxied[name] = dt => isMethod
-      ? (...args) => {
-        dt = proxify(dt);
-        return proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args);
+
+    proxied[name] = dt => {
+      dt = proxify(dt);
+
+      if (dt.localeInfo) {
+        dt.relocate(dt.localeInfo);
       }
-      : proxifyResult ? proxify(fn(proxify(dt))) : fn(proxify(dt));
+
+      return isMethod
+        ? (...args) => proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args)
+        : proxifyResult ? proxify(fn(dt)) : fn(dt);
+    }
   };
 
   return exported;
