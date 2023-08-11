@@ -41,7 +41,7 @@ function dateDiffFactory() {
     const seconds = differenceDate.getUTCSeconds();
     const milliseconds = differenceDate.getUTCMilliseconds();
 
-    const diffs = { years, months, days, hours, minutes, seconds, milliseconds };
+    const diffs = { from: date1, to: date2, years, months, days, hours, minutes, seconds, milliseconds };
     diffs.full = stringify({values: diffs, full: true});
     diffs.clean = stringify({ values: diffs });
     return diffs;
