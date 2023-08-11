@@ -72,11 +72,9 @@ function methodHelpersFactory(proxify) {
 
     return d.localeInfo;
   };
-  const currentLocalTime4TZ = dt => timeZoneID => {
-    timeZoneID = {timeZone: timeZoneID, hourCycle: `h23`};
-    const inTheZone = new Date(new Date().toLocaleString(`en`, timeZoneID));
-    return inTheZone.toLocaleString(`en-CA`, {hourCycle: `h23`});
-  };
+  const currentLocalTime4TZ = dt => timeZoneLabel =>
+    new Date(new Date().toLocaleString(`en`, {timeZone: timeZoneLabel}))
+      .toLocaleString(`en-CA`, {hourCycle: `h23`});
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
     const cloneFrom = proxify(d);
@@ -96,7 +94,7 @@ function methodHelpersFactory(proxify) {
     toDate = proxify(toDate ?? new Date());
     const cloneFrom = proxify(d);
     const {hour, minutes, seconds, ms} = cloneFrom;
-    toDate.time = {hour, minutes, seconds, milliseconds: ms};
+    toDate.time = {hour, minutes, seconds, ms};
 
     if (cloneFrom.locale) {
       toDate.locale = { locale: cloneFrom.locale.locale, timeZone: cloneFrom.locale.timeZone };
@@ -136,20 +134,13 @@ function methodHelpersFactory(proxify) {
           : d.toLocaleString(locale, timeZone ? { timeZone } : undefined);
     } catch(err) { return localeCatcher(proxify(d)); }
   };
-  const getOrSetDate = function(d, {year, month, date} = {}) {
-    if ([year, month, date].filter(isDefined).length) {
-      const currentValues = getDate(d);
-      month = isNaN(+month) ? currentValues[1] : +month - 1;
-      const [yy, mm, dt] = [year, month, date].map((v, i) => isNaN(parseInt(v)) ? currentValues[i] : +v);
-      d.setFullYear(yy);
-      d.setMonth(mm);
-      d.setDate(dt);
-
-      return true;
-    }
-    return d.getDate();
-  };
-  const isDefined = v => !isNaN(parseInt(v));
+  const doSet = (d, values) => Object.getPrototypeOf(values || ``).constructor === Object &&
+    Object.entries(values)
+      .filter( ([, value]) => isNumberAndDefined(value) )
+      .forEach( ([key, value]) => d[`set${key}`](+value)) &&
+    true || false;
+  const getOrSetDate = function(d, values) { return doSet(d, values) || d.getDate(); };
+  const isNumberAndDefined = v => !isNaN(parseInt(v));
   const diffCalculator = dateDiffFactory();
   const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()];
   const getDate = d => [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -158,19 +149,7 @@ function methodHelpersFactory(proxify) {
     const milliSecs = ms ? `.${timeArr.pop()}`.padStart(3, `0`) : ``;
     return `${timeArr.slice(0, 3).map( v => `${v}`.padStart(2, '0')).join(`:`)}${milliSecs}`;
   }
-  const getOrSetTime = function(d,  { hour, minutes, seconds, milliseconds } = {}) {
-    if ([hour, minutes, seconds, milliseconds].filter(isDefined).length) {
-      const currentValues = getTime(d);
-      const [h, m, s, ms] = [hour, minutes, seconds, milliseconds]
-        .map((v, i) => isNaN(parseInt(v)) ? currentValues[i] : +v);
-      d.setHours(h);
-      d.setMinutes(m);
-      d.setSeconds(s);
-      d.setMilliseconds(ms);
-      return true;
-    }
-    return getTime(d);
-  };
+  const getOrSetTime = function(d, values) { return doSet(d, values) || getTime(d); };
   const getDaysInMonth = (year, month) =>
     proxify(new Date(year, month + 1, 1, 0, 0, 0)).yesterday.getDate();
   const getDateX = d => [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -218,13 +197,15 @@ function methodHelpersFactory(proxify) {
       currentLocalTime4TZ,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
-      date: (d, {year, month, date} = {}) => getOrSetDate(d, {year, month, date}),
+      date: (d, {year, month, date} = {}) =>
+        getOrSetDate(d, {FullYear: year, Month: isNumberAndDefined(month) ? month - 1 : month, Date: date}),
       hour: (d, setValue) => setValue && d.setHours(setValue) || d.getHours(),
       minutes: (d, setValue) => setValue && d.setMinutes(setValue) || d.getMinutes(),
       seconds: (d, setValue) => setValue && d.setSeconds(setValue) || d.getSeconds(),
       cloneTimeTo: d => toDate => cloneTimeTo(d, toDate),
       cloneDateTo: d => toDate => cloneDateTo(d, toDate),
-      time: (d, {hour, minutes, seconds, milliseconds} = {}) => getOrSetTime(d, {hour, minutes, seconds, milliseconds}),
+      time: (d, {hour, minutes, seconds, milliseconds} = {}) =>
+        getOrSetTime(d, {Hours: hour, Minutes: minutes, Seconds: seconds, Milliseconds: milliseconds}),
       timeStr: d => (displayMS = false) => getTimeStr(d, displayMS),
       ms: (d, setValue) => setValue && d.setMilliseconds(setValue) || d.getMilliseconds(),
       monthName: d => names(d, true),
