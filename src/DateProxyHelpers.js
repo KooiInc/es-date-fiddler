@@ -20,6 +20,11 @@ function methodHelpersFactory(proxify) {
 
     return d.localeInfo;
   };
+  const currentLocalTime4TZ = dt => timeZoneID => {
+    timeZoneID = {timeZone: timeZoneID, hourCycle: `h23`};
+    const inTheZone = new Date(new Date().toLocaleString(`en`, timeZoneID));
+    return inTheZone.toLocaleString(`en-CA`, {hourCycle: `h23`});
+  };
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
     const cloneFrom = proxify(d);
@@ -89,6 +94,7 @@ function methodHelpersFactory(proxify) {
     }
     return d.getDate();
   };
+  const isDefined = v => !isNaN(parseInt(v));
   const diffCalculator = dateDiffFactory();
   const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()];
   const getDate = d => [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -98,12 +104,14 @@ function methodHelpersFactory(proxify) {
     return `${timeArr.slice(0, 3).map( v => `${v}`.padStart(2, '0')).join(`:`)}${milliSecs}`;
   }
   const getOrSetTime = function(d,  { hour, minutes, seconds, milliseconds } = {}) {
-    if (hour || minutes || seconds || milliseconds) {
-      const [h, m, s, ms] = getTime(d);
-      d.setHours(hour ?? h);
-      d.setMinutes(minutes ?? m);
-      d.setSeconds(seconds ?? s);
-      d.setMilliseconds(milliseconds ?? ms);
+    if ([hour, minutes, seconds, milliseconds].filter(isDefined).length) {
+      const currentValues = getTime(d);
+      const [h, m, s, ms] = [hour, minutes, seconds, milliseconds]
+        .map((v, i) => isNaN(parseInt(v)) ? currentValues[i] : +v);
+      d.setHours(h);
+      d.setMinutes(m);
+      d.setSeconds(s);
+      d.setMilliseconds(ms);
       return true;
     }
     return getTime(d);
@@ -152,6 +160,7 @@ function methodHelpersFactory(proxify) {
   return ({
     ...{
       clone,
+      currentLocalTime4TZ,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
       date: (d, {year, month, date} = {}) => getOrSetDate(d, {year, month, date}),
