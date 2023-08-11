@@ -85,11 +85,12 @@ function methodHelpersFactory(proxify) {
     } catch(err) { return localeCatcher(proxify(d)); }
   };
   const getOrSetDate = (d, {year, month, date} = {}) => {
-    if (year || month || date) {
-    const [y, m, dt] = getDate(d);
-      d.setFullYear(year || y);
-      d.setMonth( (month || m + 1) - 1);
-      d.setDate(date || dt);
+    if ([year, month, date].filter(isDefined).length) {
+    const currentValues = getDate(d);
+    const [y, m, dt] = [year, month, date].map((v, i) => isNaN(parseInt(v)) ? currentValues[i] : +v)
+      d.setFullYear(y);
+      d.setMonth(m);
+      d.setDate(dt);
       return true;
     }
     return d.getDate();
