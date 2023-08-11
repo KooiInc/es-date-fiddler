@@ -164,6 +164,7 @@ that being the date value of the instance. By default the extension function is 
 is considered (and callable as) a method and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
 <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date,
 enables chaining. False by default.
-<br><b>Note</b>: when <code>fn</code> returns the instance date, there's no need to set this value.</li></ul>;
+<br><b>Note</b>: when <code>fn</code> returns the date, there's no need to set this value.
+</li></ul>
 
 The [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) contains examples.
