@@ -36,14 +36,20 @@ function DateXFactory() {
 
   exported.extendWith = function({name, fn, isMethod = false, proxifyResult = false} = {}) {
     if (!name || !fn || !(fn instanceof Function)) {
-      return console.error(`cannot extend without name and/or fn (function)`);
+      return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
     }
-    proxied[name] = dt => isMethod
-      ? (...args) => {
-        dt = proxify(dt);
-        return proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args);
+
+    proxied[name] = dt => {
+      dt = proxify(dt);
+
+      if (dt.localeInfo) {
+        dt.relocate(dt.localeInfo);
       }
-      : proxifyResult ? proxify(fn(proxify(dt))) : fn(proxify(dt));
+
+      return isMethod
+        ? (...args) => proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args)
+        : proxifyResult ? proxify(fn(dt)) : fn(dt);
+    }
   };
 
   return exported;
@@ -64,6 +70,11 @@ function methodHelpersFactory(proxify) {
     }
 
     return d.localeInfo;
+  };
+  const currentLocalTime4TZ = dt => timeZoneID => {
+    timeZoneID = {timeZone: timeZoneID, hourCycle: `h23`};
+    const inTheZone = new Date(new Date().toLocaleString(`en`, timeZoneID));
+    return inTheZone.toLocaleString(`en-CA`, {hourCycle: `h23`});
   };
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
@@ -134,6 +145,7 @@ function methodHelpersFactory(proxify) {
     }
     return d.getDate();
   };
+  const isDefined = v => !isNaN(parseInt(v));
   const diffCalculator = dateDiffFactory();
   const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()];
   const getDate = d => [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -143,12 +155,14 @@ function methodHelpersFactory(proxify) {
     return `${timeArr.slice(0, 3).map( v => `${v}`.padStart(2, '0')).join(`:`)}${milliSecs}`;
   }
   const getOrSetTime = function(d,  { hour, minutes, seconds, milliseconds } = {}) {
-    if (hour || minutes || seconds || milliseconds) {
-      const [h, m, s, ms] = getTime(d);
-      d.setHours(hour ?? h);
-      d.setMinutes(minutes ?? m);
-      d.setSeconds(seconds ?? s);
-      d.setMilliseconds(milliseconds ?? ms);
+    if ([hour, minutes, seconds, milliseconds].filter(isDefined).length) {
+      const currentValues = getTime(d);
+      const [h, m, s, ms] = [hour, minutes, seconds, milliseconds]
+        .map((v, i) => isNaN(parseInt(v)) ? currentValues[i] : +v);
+      d.setHours(h);
+      d.setMinutes(m);
+      d.setSeconds(s);
+      d.setMilliseconds(ms);
       return true;
     }
     return getTime(d);
@@ -197,6 +211,7 @@ function methodHelpersFactory(proxify) {
   return ({
     ...{
       clone,
+      currentLocalTime4TZ,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
       date: (d, {year, month, date} = {}) => getOrSetDate(d, {year, month, date}),
@@ -383,7 +398,7 @@ function dateDiffFactory() {
     const seconds = differenceDate.getUTCSeconds();
     const milliseconds = differenceDate.getUTCMilliseconds();
 
-    const diffs = { years, months, days, hours, minutes, seconds, milliseconds };
+    const diffs = { from: date1, to: date2, years, months, days, hours, minutes, seconds, milliseconds };
     diffs.full = stringify({values: diffs, full: true});
     diffs.clean = stringify({ values: diffs });
     return diffs;
