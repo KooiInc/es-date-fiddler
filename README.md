@@ -1,9 +1,11 @@
+1. [What is it](`#what`)
+
 # es-date-fiddler
 An ES Date with nifty extensions using ES Proxy. Furthermore it is programmed in a [class free object oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) coding style.
 
 See [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples. 
 
-## What is it?
+<h2 id="what">What is it?</h2>
 The datefiddler library by default delivers an enhanced ES-Date constructor, and a factory to create the constructor (named `DateXFactory`). In the following we named it `$D`.
 
 `$D` is a normal ECMAScript `Date` constructor, without the need to use `new`. By using `Proxy` functionality one can use a number of additional setters and getters (e.g. for arithmetic, formatting, locale awareness), *as well as* use all regular `Date` functionality. So, to create a `$D`, instead of `new Date(...)` one uses `$D(...)`.
