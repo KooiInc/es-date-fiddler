@@ -308,10 +308,10 @@ function demoNdTest() {
   $D.extendWith({name: `utcDistance`, fn: dt => { return dt.getTimezoneOffset() } });
   $D.extendWith({name: `midNight`, fn: dt => {
     dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
-    return dt.clone; }, proxifyResult: true });
+    return dt; }, proxifyResult: true });
 
   log(`!!<h3 id="extendCustom">Extend the ‘constructor’</h3>
-    <div>Extra extensions can be created using<br> 
+    <div>Additional extension properties/methods can be created using<br> 
       <code>$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</div>
       <ul class="sub"><li><code>fn</code>: the function to use. The function should at least have one parameter,
       that being the date value of the instance. By default the extension function is added as property 
