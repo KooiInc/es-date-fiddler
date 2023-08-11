@@ -154,7 +154,7 @@ See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 - `yesterday`: subtract one day from the `$D` instance and set its value to the result.
 
 ### Create additonal setters and getters for `$D`
-One can add extra setters/getter (properties/methods) to the constructor using:
+One can create additional setters/getter (properties/methods) to the constructor using:
 
 `$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})`
 
