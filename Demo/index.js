@@ -50,7 +50,11 @@ function demoNdTest() {
   log(`!!` + toCode(`<span class="comment">// $D imported (import $D from "[location of module]")</span>
     const d1 = $D();
     const d2 = d1.clone;
-    const d3 = $D(new Date(-200, 2, 18, 12, 0, 30));`, true) );
+    const d3 = $D(new Date(-200, 2, 18, 12, 0, 30));
+    <span class="comment">// Note: month is *not* zero based here)</span>
+    d2.date = { year: 2022, date: 10, month: 12 };
+    d2.locale = { locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` };`, true) );
+
   log(`${toCode(`d1`)} => ${d1}`);
   log(`${toCode(`d2`)} => ${d2}`);
   log(`${toCode(`d3`)} => ${d3}`);
