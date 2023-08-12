@@ -28,6 +28,6 @@
     "url": "https://github.com/KooiInc/es-date-fiddler/issues"
   },
   "devDependencies": {
-    "esbuild": "^0.17.5"
+    "esbuild": "latest"
   }
 }

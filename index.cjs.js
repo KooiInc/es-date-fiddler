@@ -58,6 +58,9 @@ function DateXFactory() {
 
 function methodHelpersFactory(proxify) {
   const formatter = DateFormatFactory();
+  const isNumberAndDefined = v => !(isNaN(parseInt(v)) && isNaN(+v));
+  const isObj = maybeObj => maybeObj?.constructor === Object;
+  const getNumbers = obj => Object.entries(obj).filter( ([, value]) => isNumberAndDefined(value) );
   const getValues = (d, asArray) => {
     const valueObj = {
       year: d.getFullYear(), month: d.getMonth() + 1, date: d.getDate(),
@@ -134,22 +137,19 @@ function methodHelpersFactory(proxify) {
           : d.toLocaleString(locale, timeZone ? { timeZone } : undefined);
     } catch(err) { return localeCatcher(proxify(d)); }
   };
-  const doSet = (d, values) => Object.getPrototypeOf(values || ``).constructor === Object &&
-    Object.entries(values)
-      .filter( ([, value]) => isNumberAndDefined(value) )
-      .forEach( ([key, value]) => d[`set${key}`](+value)) &&
+  const doSet = (d, values) =>  isObj(values) &&
+    getNumbers(values).forEach( ([key, value]) => d[`set${key}`](value)) &&
     true || false;
-  const getOrSetDate = function(d, values) { return doSet(d, values) || d.getDate(); };
-  const isNumberAndDefined = v => !isNaN(parseInt(v));
-  const diffCalculator = dateDiffFactory();
   const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()];
   const getDate = d => [d.getFullYear(), d.getMonth(), d.getDate()];
+  const getOrSetTime = (d, values) => doSet(d, values) || getTime(d);
+  const getOrSetDate = (d, values) => doSet(d, values) || getDate(d);
+  const diffCalculator = dateDiffFactory();
   const getTimeStr = (d, ms) => {
     const timeArr = getTime(d);
     const milliSecs = ms ? `.${timeArr.pop()}`.padStart(3, `0`) : ``;
     return `${timeArr.slice(0, 3).map( v => `${v}`.padStart(2, '0')).join(`:`)}${milliSecs}`;
   }
-  const getOrSetTime = function(d, values) { return doSet(d, values) || getTime(d); };
   const getDaysInMonth = (year, month) =>
     proxify(new Date(year, month + 1, 1, 0, 0, 0)).yesterday.getDate();
   const getDateX = d => [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -207,6 +207,7 @@ function methodHelpersFactory(proxify) {
       time: (d, {hour, minutes, seconds, milliseconds} = {}) =>
         getOrSetTime(d, {Hours: hour, Minutes: minutes, Seconds: seconds, Milliseconds: milliseconds}),
       timeStr: d => (displayMS = false) => getTimeStr(d, displayMS),
+      dateStr: d => getDate(d).join(`-`),
       ms: (d, setValue) => setValue && d.setMilliseconds(setValue) || d.getMilliseconds(),
       monthName: d => names(d, true),
       weekDay: d => names(d),
