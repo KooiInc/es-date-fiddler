@@ -38,7 +38,7 @@ function demoNdTest() {
   window.DX = $D;
   const d1 = $D({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.clone;
-  const d3 = $D(new Date(-200, 2, 18, 12, 0, 30));
+  const d3 = $D(new Date(200, 2, 18, 12, 0, 30));
   d2.date = { year: 2022, date: 10, month: 12 };
   d2.locale = { locale: `nl-NL`, timeZone: `Europe/Amsterdam` };
   log(
@@ -48,16 +48,19 @@ function demoNdTest() {
 
   log(`!!<h3 id="inits">Initialization</h3>`);
   log(`!!` + toCode(`<span class="comment">// $D imported (import $D from "[location of module]")</span>
-    const d1 = $D();
+    const d1 = $D({ locale: \`en-US\`, timeZone: \`US/Pacific\` });
     const d2 = d1.clone;
-    const d3 = $D(new Date(-200, 2, 18, 12, 0, 30));
+    const d3 = $D(new Date(200, 2, 18, 12, 0, 30));
     <span class="comment">// Note: month is *not* zero based here)</span>
     d2.date = { year: 2022, date: 10, month: 12 };
     d2.locale = { locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` };`, true) );
 
-  log(`${toCode(`d1`)} => ${d1}`);
-  log(`${toCode(`d2`)} => ${d2}`);
-  log(`${toCode(`d3`)} => ${d3}`);
+  log(`${toCode(`d1.local`)} (timeZone: ${d1.locale?.timeZone}) => ${d1.local}<br>${toCode(`d1.dateStr`)} => ${
+    d1.dateStr}<br>${toCode(`d1.timeStr(true)`)} => ${d1.timeStr(true)}`);
+  log(`${toCode(`d2.local`)} (timeZone: ${d2.locale?.timeZone}) => ${d2.local}<br>${toCode(`d2.dateStr`)} => ${
+    d2.dateStr}<br>${toCode(`d2.timeStr(true)`)} => ${d2.timeStr(true)}`);
+  log(`${toCode(`d3.local`)} (no timeZone) => ${d3.local}<br>${toCode(`d3.dateStr`)} => ${
+    d3.dateStr}<br>${toCode(`d3.timeStr(true)`)} => ${d3.timeStr(true)}`)
   /* endregion init  */
 
   /* region locale */
@@ -104,7 +107,8 @@ function demoNdTest() {
   log(toCode(`todayAustralia.dateStr`) + ` => ${todayAustralia.dateStr}`);
   log(toCode(`nwZealandTomorrow.local`) + ` => ${nwZealandTomorrow.local}`);
   log(toCode(`nwZealandTomorrow.dateStr`) + ` => ${nwZealandTomorrow.dateStr}`);
-  log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`)
+  log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`);
+  log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr} (<b>note</b>: ISO 8601 date format)`);
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);

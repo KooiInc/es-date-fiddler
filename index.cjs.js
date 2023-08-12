@@ -60,6 +60,9 @@ function methodHelpersFactory(proxify) {
   const formatter = DateFormatFactory();
   const isNumberAndDefined = v => !(isNaN(parseInt(v)) && isNaN(+v));
   const isObj = maybeObj => maybeObj?.constructor === Object;
+  const zeroPad = (v, n = 2) => `${v}`.padStart(n, `0`);
+  const zeroPadArr = arr => arr.map(v => String(v)?.padStart(2, `0`) ?? v);
+  const isoDateStr = d => zeroPadArr(getDate(d)).join(`-`);
   const getNumbers = obj => Object.entries(obj).filter( ([, value]) => isNumberAndDefined(value) );
   const getValues = (d, asArray) => {
     const valueObj = {
@@ -124,7 +127,7 @@ function methodHelpersFactory(proxify) {
 
     try { return d.toLocaleString(d.locale?.locale, opts); }
     catch(err) { return localeCatcher(d); }
-  }
+  };
   const doFormat = (d, ...args) => {
     d = proxify(d);
     const [ locale, timeZone ] = [ d.locale, d.timeZone ];
@@ -140,13 +143,13 @@ function methodHelpersFactory(proxify) {
   const doSet = (d, values) =>  isObj(values) &&
     getNumbers(values).forEach( ([key, value]) => d[`set${key}`](value)) &&
     true || false;
-  const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()];
-  const getDate = d => [d.getFullYear(), d.getMonth(), d.getDate()];
+  const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()??0];
+  const getDate = d => [d.getFullYear(), (d.getMonth() + 1), d.getDate()];
   const getTimeStr = (d, ms) => {
-    const timeArr = getTime(d);
-    const milliSecs = ms ? `.${timeArr.pop()}`.padStart(3, `0`) : ``;
-    return `${timeArr.slice(0, 3).map( v => `${v}`.padStart(2, '0')).join(`:`)}${milliSecs}`;
-  }
+    const timeArr = getTime(d)
+      .reduce(( acc, v, i) => [...acc, i < 3 ? zeroPad(v) : zeroPad(v, 3)], []);
+    return `${timeArr.slice(0, 3).join(`:`)}${ms ? `.${timeArr.slice(-1)}` : ``}`;
+  };
   const getOrSetTime = (d, values) => doSet(d, values) || getTime(d);
   const getOrSetDate = (d, values) => doSet(d, values) || getDate(d);
   const diffCalculator = dateDiffFactory();
@@ -189,16 +192,20 @@ function methodHelpersFactory(proxify) {
   const names = function(d, month) {
     d = proxify(d);
     return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
-  }
-  const dateWithLocale = d => {
-    const formatter = new Intl.DateTimeFormat(d.localeInfo.locale || `en`, {
-      year: `numeric`,
-      month: `2-digit`,
-      day: `2-digit`,
-      timeZone: d.localeInfo.timeZone || `gmt`
-    });
-    return formatter.format(d);
-  }
+  };
+  const dateStrWithLocale = d => {
+    try {
+      const formatter = new Intl.DateTimeFormat(d.localeInfo.locale || `en`, {
+        year: `numeric`,
+        month: `2-digit`,
+        day: `2-digit`,
+        timeZone: d.localeInfo.timeZone || `utc`
+      });
+      return formatter.format(d);
+    } catch(err) {
+      return isoDateStr(d);
+    }
+  };
 
   return ({
     ...{
@@ -216,7 +223,7 @@ function methodHelpersFactory(proxify) {
       time: (d, {hour, minutes, seconds, milliseconds} = {}) =>
         getOrSetTime(d, {Hours: hour, Minutes: minutes, Seconds: seconds, Milliseconds: milliseconds}),
       timeStr: d => (displayMS = false) => getTimeStr(d, displayMS),
-      dateStr: d => d.localeInfo && dateWithLocale(d) || getDate(d).join(`-`),
+      dateStr: d => d.localeInfo && dateStrWithLocale(d) || isoDateStr(d),
       ms: (d, setValue) => setValue && d.setMilliseconds(setValue) || d.getMilliseconds(),
       monthName: d => names(d, true),
       weekDay: d => names(d),
