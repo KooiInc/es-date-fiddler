@@ -109,7 +109,10 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
   - **Note**: `[instance].cloneTimeTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
+- `dateStr`: get the date part from the instance date as string (**note** when locale information is 
+   associated with the instance, will be the local format cf that locale).
 - `isLeapYear`: calculates and returns if the `$D` instance is a leap year (return true or false)
+- `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).
 - `values`(asArray: boolean): returns the values (year, month etc.) either as `Object` or as `Array`.
 - `ISO`: short for `.toISOString()`, so returns the ISO string representation of the `$D` instance
 
@@ -119,6 +122,7 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `locale`:  `[instance].locale = /* Object literal. One or both of */ { locale: [locale], timeZone: [timeZone] }`.
   - **Note**: when the locale of a `$D` instance is not set ones current locale is used.
   - **Note**: it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), some stringify-getters (`format, local`) will show an error message in the resulting string. [See also](https://betterprogramming.pub/formatting-dates-with-the-datetimeformat-object-9c808dc58604), or [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+- `reLocate(newLocale: Object: {locale: string, timeZone: string})`: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance.
 - `removeLocale()`: remove all associated locale information from the `$D` instance.  
 - `format(template: string, options: string)`: format the date (locale specific) using a template string. This uses a specific library. See [Github](https://github.com/KooiInc/dateformat) for all about the syntax.
 - `differenceFrom(someDate: Date | $D)`: calculates the difference from `somedate` in years, months, days, hours, minutes, seconds and milliseconds. See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for a few examples.
