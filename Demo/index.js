@@ -72,7 +72,10 @@ function demoNdTest() {
           to format/display its <code>Date</code>.</li>  
         <li>When an associated locale can't be used in <code>[instance].local</code> or 
           <code>[instance].format</code> the result of those getters will contain an error
-          message (and the locale of the result will be your locale). </li></ul>
+          message (and the locale of the result will be your locale). </li>
+        <li>The locale information is also used with the <code>dateStr</code> property. 
+        If such information is available (especially the timeZone) the string value
+        returned will be in the dates' local format.</li></ul>
         <p>There are several ways to associate locale information with a <code>$D</code> instance.
         Here are some examples.</p>
       </div>`);
@@ -94,9 +97,13 @@ function demoNdTest() {
     const invalidTimezone = $D({timeZone: 'somewhere'});
     const invalidLocaleData = $D({locale: 'somewhere', timeZone: 'somehow'});`, true));
   log(toCode(`d2German.local`) + ` => ${d2German.local}`);
+  log(toCode(`d2German.dateStr`) + ` => ${d2German.dateStr}`);
   log(toCode(`d2Dutch.local`) + ` => ${d2Dutch.local}`);
+  log(toCode(`d2Dutch.dateStr`) + ` => ${d2Dutch.dateStr}`);
   log(toCode(`todayAustralia.local`) + ` => ${todayAustralia.local}`);
+  log(toCode(`todayAustralia.dateStr`) + ` => ${todayAustralia.dateStr}`);
   log(toCode(`nwZealandTomorrow.local`) + ` => ${nwZealandTomorrow.local}`);
+  log(toCode(`nwZealandTomorrow.dateStr`) + ` => ${nwZealandTomorrow.dateStr}`);
   log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`)
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)

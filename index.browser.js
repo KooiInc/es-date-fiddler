@@ -142,14 +142,14 @@ function methodHelpersFactory(proxify) {
     true || false;
   const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()];
   const getDate = d => [d.getFullYear(), d.getMonth(), d.getDate()];
-  const getOrSetTime = (d, values) => doSet(d, values) || getTime(d);
-  const getOrSetDate = (d, values) => doSet(d, values) || getDate(d);
-  const diffCalculator = dateDiffFactory();
   const getTimeStr = (d, ms) => {
     const timeArr = getTime(d);
     const milliSecs = ms ? `.${timeArr.pop()}`.padStart(3, `0`) : ``;
     return `${timeArr.slice(0, 3).map( v => `${v}`.padStart(2, '0')).join(`:`)}${milliSecs}`;
   }
+  const getOrSetTime = (d, values) => doSet(d, values) || getTime(d);
+  const getOrSetDate = (d, values) => doSet(d, values) || getDate(d);
+  const diffCalculator = dateDiffFactory();
   const getDaysInMonth = (year, month) =>
     proxify(new Date(year, month + 1, 1, 0, 0, 0)).yesterday.getDate();
   const getDateX = d => [d.getFullYear(), d.getMonth(), d.getDate()];
@@ -190,6 +190,15 @@ function methodHelpersFactory(proxify) {
     d = proxify(d);
     return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
   }
+  const dateWithLocale = d => {
+    const formatter = new Intl.DateTimeFormat(d.localeInfo.locale || `en`, {
+      year: `numeric`,
+      month: `2-digit`,
+      day: `2-digit`,
+      timeZone: d.localeInfo.timeZone || `gmt`
+    });
+    return formatter.format(d);
+  }
 
   return ({
     ...{
@@ -207,7 +216,7 @@ function methodHelpersFactory(proxify) {
       time: (d, {hour, minutes, seconds, milliseconds} = {}) =>
         getOrSetTime(d, {Hours: hour, Minutes: minutes, Seconds: seconds, Milliseconds: milliseconds}),
       timeStr: d => (displayMS = false) => getTimeStr(d, displayMS),
-      dateStr: d => getDate(d).join(`-`),
+      dateStr: d => d.localeInfo && dateWithLocale(d) || getDate(d).join(`-`),
       ms: (d, setValue) => setValue && d.setMilliseconds(setValue) || d.getMilliseconds(),
       monthName: d => names(d, true),
       weekDay: d => names(d),
