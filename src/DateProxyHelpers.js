@@ -8,6 +8,8 @@ function methodHelpersFactory(proxify) {
   const formatter = DateFormatFactory();
   const isNumberAndDefined = v => !(isNaN(parseInt(v)) && isNaN(+v));
   const isObj = maybeObj => maybeObj?.constructor === Object;
+  const offset2Number = dtStr => +(dtStr.slice(dtStr.indexOf(`+`)+1).replace(`:`, ``)) || 0;
+  const getTimezone = dt => dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
   const zeroPad = (v, n = 2) => `${v}`.padStart(n, `0`);
   const zeroPadArr = arr => arr.map(v => String(v)?.padStart(2, `0`) ?? v);
   const isoDateStr = d => zeroPadArr(getDate(d)).join(`-`);
@@ -26,9 +28,9 @@ function methodHelpersFactory(proxify) {
 
     return d.localeInfo;
   };
-  const currentLocalTime4TZ = dt => timeZoneLabel =>
-    new Date(new Date().toLocaleString(`en`, {timeZone: timeZoneLabel}))
-      .toLocaleString(`en-CA`, {hourCycle: `h23`});
+  const localizedDT = dt =>
+      new Date( new Date(dt.toLocaleString(`en`, {timeZone: dt.localeInfo?.timeZone || `utc`}))
+        .toLocaleString(`en-CA`, {hourCycle: `h23`}) );
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
     const cloneFrom = proxify(d);
@@ -154,11 +156,25 @@ function methodHelpersFactory(proxify) {
       return isoDateStr(d);
     }
   };
+  const hasDST = dt => {
+    const timeZone = getTimezone(dt);
+    const dt1 = new Date(dt.getFullYear(), 0, 1, 14);
+    const dt2 = new Date(new Date(dt1).setMonth(6));
+    const fmt = Intl.DateTimeFormat(`en-CA`, {
+      year: `numeric`,
+      timeZone: timeZone,
+      timeZoneName: "shortOffset",
+    });
+    const [fmt1, fmt2] = [fmt.format(dt1), fmt.format(dt2)];
+    return offset2Number(fmt1) - offset2Number(fmt2) !== 0;
+  };
 
   return ({
     ...{
       clone,
-      currentLocalTime4TZ,
+      localizedDT,
+      hasDST,
+      getTimezone,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
       date: (d, {year, month, date} = {}) =>
