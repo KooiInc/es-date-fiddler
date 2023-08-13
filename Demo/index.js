@@ -78,7 +78,9 @@ function demoNdTest() {
           message (and the locale of the result will be your locale). </li>
         <li>The locale information is also used with the <code>dateStr</code> property. 
         If such information is available (especially the timeZone) the string value
-        returned will be in the dates' local format.</li></ul>
+        returned will be in the dates' local format.</li>
+        <li><b>Note</b>: you can check the locale information from the examples hereafter 
+        @<a target="_blank" href="https://time.is/">time.is</a></li></ul>
         <p>There are several ways to associate locale information with a <code>$D</code> instance.
         Here are some examples.</p>
       </div>`);
@@ -528,6 +530,21 @@ function styleIt() {
       margin-top: -1rem;
       color: #000;
     }`,
+    `a.gitLink img { vertical-align: middle; margin-right: 0.5rem;}`,
+    `a {text-decoration:none; font-weight:bold;}`,
+    `a:hover {text-decoration: underline;}`,
+    `a[target]:before, a.internalLink:before, a.externalLink:before {
+      color: rgba(0,0,238,0.7);
+      font-size: 1.1rem;
+      padding-right: 2px;
+      vertical-align: baseline;
+     }`,
+    `a[target="_blank"]:before, a.externalLink:before {
+      content: '\\2197';
+     }`,
+    `a[data-top]:before, a.internalLink:before, a[target="_top"]:before {
+      content: '\\21BA';
+     }`,
     `#log2screen .content ul li div[data-target]:hover {
       color: blue;
     }`,
