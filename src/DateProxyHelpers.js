@@ -28,9 +28,11 @@ function methodHelpersFactory(proxify) {
 
     return d.localeInfo;
   };
-  const localizedDT = dt =>
-      new Date( new Date(dt.toLocaleString(`en`, {timeZone: dt.localeInfo?.timeZone || `utc`}))
-        .toLocaleString(`en-CA`, {hourCycle: `h23`}) );
+  const localizedDT = dt => {
+    const tz = dt.localeInfo || {timeZone: getTimeZone};
+    return proxify(new Date( new Date(dt.toLocaleString(`en`, tz))
+        .toLocaleString(`en-CA`, {hourCycle: `h23`}) )).relocate(tz);
+  };
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
     const cloneFrom = proxify(d);
