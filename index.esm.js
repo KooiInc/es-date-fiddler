@@ -5,8 +5,8 @@ export { dx as default, DateXFactory };
 function DateXFactory() {
   const proxied = methodHelpersFactory(proxify);
   const proxy = {
-    get: ( target, key ) => { return !target[key] && proxied[key]?.(target) || targetGetter(target, key); },
-    set: ( target, key, value ) => { return proxied[key]?.(target, value) || target[key]; },
+    get: ( target, key ) => { return !target[key] ? proxied[key]?.(target) : targetGetter(target, key); },
+    set: ( target, key, value ) => { return proxied[key] ? proxied[key](target, value) : target[key]; },
     ownKeys: (target) => Object.getOwnPropertyNames(proxied),
     has: (target, key) => key in proxied || key in target,
   };
