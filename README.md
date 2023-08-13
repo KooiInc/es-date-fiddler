@@ -97,13 +97,8 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `locale`: returns the internal value of locale (if it is set, otherwise `undefined`). See additional getters/setters for setter.
 
 ### Additional getters are
-- `local`: `[instance].local`: `tolocalestring()` equivalent, but 
-  - when `[instance].locale` is set, will use that (so `toLocaleString(locale, {timeZone})`)
-- `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' locale
-- `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' locale
-- `self`: returns the original `Date` as a plain ES `Date`
 - `clone`: clones the `$D` instance to a new `$D`
-   - **Note**: `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).   
+  - **Note**: `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
   - **Note**: `[instance].cloneDateTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
@@ -111,10 +106,20 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
 - `dateStr`: get the date part from the instance date as string.
   - **Note** when locale information is associated with the instance, will be formatted cf that locale.
-- `isLeapYear`: calculates and returns if the `$D` instance is a leap year (return true or false)
+- `getTimezone`: retrieves the time zone of the instance date (either the associated - or the local time zone).
+- `hasDST`: determine if the instance date timeZone is within a Daylight Saving Time zone.
+  - **Note**: this uses the instances' associated locale information or the current local timeZone of the instance date.
+- `isLeapYear`: calculates and returns if the `$D` instance is a leap year (return true or false).
+- `ISO`: short for `.toISOString()`, so returns the ISO string representation of the `$D` instance
+- `local`: `[instance].local`: `tolocalestring()` equivalent, but 
+  - when `[instance].locale` is set, will use that (so `toLocaleString(locale, {timeZone})`)
+- `localizedDT`: retrieve the local date/time for the either the instances' associated time zone or the local time zone (the latter is not very usefull). May be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). This is especially useful for determining the time for a date in a remote time zone.
+- `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' locale
+- `self`: returns the original `Date` as a plain ES `Date`.
 - `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).
 - `values`(asArray: boolean): returns the values (year, month etc.) either as `Object` or as `Array`.
-- `ISO`: short for `.toISOString()`, so returns the ISO string representation of the `$D` instance
+- `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' locale
+
 
 ### Additional getter and/or setters are:
 - `date`: `[instance].date = /* Object literal. One or more of */ { year, month, date };`
