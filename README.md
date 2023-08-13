@@ -110,7 +110,7 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
   - **Note**: `[instance].cloneTimeTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
 - `dateStr`: get the date part from the instance date as string.
-  - **Note** when locale information is associated with the instance, will be formatted cf that locale).
+  - **Note** when locale information is associated with the instance, will be formatted cf that locale.
 - `isLeapYear`: calculates and returns if the `$D` instance is a leap year (return true or false)
 - `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).
 - `values`(asArray: boolean): returns the values (year, month etc.) either as `Object` or as `Array`.
