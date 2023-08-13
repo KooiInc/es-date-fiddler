@@ -107,6 +107,10 @@ function demoNdTest() {
   log(toCode(`todayAustralia.dateStr`) + ` => ${todayAustralia.dateStr}`);
   log(toCode(`nwZealandTomorrow.local`) + ` => ${nwZealandTomorrow.local}`);
   log(toCode(`nwZealandTomorrow.dateStr`) + ` => ${nwZealandTomorrow.dateStr}`);
+  log(toCode(`nwZealandTomorrow.getTimezone`) + ` => ${nwZealandTomorrow.getTimezone}`);
+  log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()`) + ` => ${
+    $D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()}`);
+  log(toCode(`$D().getTimezone`) + ` (your local time zone) => ${$D().getTimezone}`);
   log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`);
   log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr} (<b>note</b>: ISO 8601 date format)`);
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
@@ -309,14 +313,22 @@ function demoNdTest() {
   /* region extend */
   $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
   $D.extendWith({name: `localize4TZ`, fn: (dt, timeZoneLabel) =>
-      new Date(new Date().toLocaleString(`en`, {timeZone: timeZoneLabel}))
-        .toLocaleString(`en-CA`, {hourCycle: `h23`}), isMethod: true});
+      new Date( dt.toLocaleString(`en`, {timeZone: timeZoneLabel}).toLocaleString(`en-CA`, {hourCycle: `h23`}) ),
+      isMethod: true, proxifyResult: true});
   $D.extendWith({name: `localeDiff`, fn: (dt, locale) => {
       const dtClone = dt.clone;
       const local4TZ = new Date(dtClone.localize4TZ(locale.timeZone));
       return `${Math.round((local4TZ - dtClone)/360_0000)} hour(s)`;
     }, isMethod: true });
-  $D.extendWith({name: `utcDistance`, fn: dt => { return dt.getTimezoneOffset() } });
+  $D.extendWith({name: `utcDiff`, fn: dt => {
+      const dtClone = dt.clone;
+      const tz = {timeZone: dtClone.locale?.timeZone || `utc`};
+      const utcDiff = dt.utcDistance * -1;
+      const local4TZ = dtClone.localize4TZ(tz.timeZone).add(`${utcDiff} minutes, 1 second`);
+      let diff = dt.differenceFrom(local4TZ);
+      diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
+      return `UTC difference for ${tz.timeZone}: ${diff}`;
+    } });
   $D.extendWith({name: `midNight`, fn: dt => {
     dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
     return dt; }, proxifyResult: true });
