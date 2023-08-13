@@ -110,6 +110,10 @@ function demoNdTest() {
   log(toCode(`nwZealandTomorrow.getTimezone`) + ` => ${nwZealandTomorrow.getTimezone}`);
   log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()`) + ` => ${
     $D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()}`);
+  log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).hasDST`) + ` => ${
+    $D().relocate({timeZone: 'Australia/Darwin'}).hasDST}`);
+  log(toCode(`d2Dutch.hasDST`) + ` => ${d2Dutch.hasDST}`);
+  log(toCode(`nwZealandTomorrow.hasDST`) + ` => ${nwZealandTomorrow.hasDST}`);
   log(toCode(`$D().getTimezone`) + ` (your local time zone) => ${$D().getTimezone}`);
   log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`);
   log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr} (<b>note</b>: ISO 8601 date format)`);
