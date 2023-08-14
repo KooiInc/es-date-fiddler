@@ -81,9 +81,10 @@ function methodHelpersFactory(proxify) {
     return d.localeInfo;
   };
   const localizedDT = dt => {
-    const tz = dt.localeInfo || {timeZone: getTimeZone};
-    return proxify(new Date( new Date(dt.toLocaleString(`en`, tz))
-        .toLocaleString(`en-CA`, {hourCycle: `h23`}) )).relocate(tz);
+    dt = proxify(dt);
+    const tz = {timeZone: getTimezone(dt), hour12: false};
+    const newDT = proxify( new Date( new Date(dt.toLocaleString(`en`, tz)) ) );
+    return newDT;
   };
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
