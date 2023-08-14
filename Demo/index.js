@@ -211,19 +211,21 @@ function demoNdTest() {
   /* endregion formatting */
 
   /* region arithmetic */
-  log(`!!<h3 id="fiddling">Arithmetic (add/subtract to/from the Date at hand)</h3>`);
-  log(`!!<div><b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are
-    <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a></div>`);
+  const exampleDate = $D().relocate({locale: `en-GB`, timeZone: `Europe/London`});
+  const exampleDateFormatted = exampleDate.add(`5 days, 3 hours`).nextYear
+    .format(`{<code>exampleDate.add(\`5 days, 3 hours\`).nextYear</code>}:  MM d yyyy (hh:mmi:ss)`);
+  log(`!!<h3 id="fiddling">Arithmetic (add/subtract to/from the Date at hand)</h3>
+  <div><b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are
+  <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a></div>
+  <code class="codeblock">const exampleDate = $D().relocate({locale: \`en-GB\`, timeZone: \`Europe/London\`});
+const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
+  .format(\`{&lt;code>exampleDate.add(\`5 days, 3 hours\`).nextYear&lt;/code>}: MM d yyyy (hh:mmi:ss)\`);`);
   log(
-    d1.add(`5 days, 3 hours`).nextYear
-      .format(`{<code>d1.add(\`5 days, 3 hours\`).nextYear</code>} => d MM yyyy (hh:mmi:ss)`, `l:en-GB`),
-    `${toCode(`d1.clone.addYears(-10).local`)} => ${d1.clone.addYears(-10).local}`,
+    `${toCode(`exampleDateFormatted`)} => ${exampleDateFormatted}`,
+    `${toCode(`exampleDate.clone.addYears(-10).local`)} => ${exampleDate.clone.addYears(-10).local}`,
   );
-  const defaultLocale = $D().locale?.formats;
-  log(d1.add(`2 days, 5 hours`)
-    .format(`{<code>d1.add(\`2 days, 5 hours\`)</code> =>} WD MM d yyyy hh:mmi:ss`, defaultLocale));
-  log(d1.subtract(`2 days`, `5 hours`)
-    .format(`{<code>d1.subtract(\`2 days, 5 hours)</code> =>} WD MM d yyyy hh:mmi:ss`, defaultLocale));
+  log(`${toCode(`exampleDate.subtract(\`5 days, 3 hours, 1 year\`).local`)} => ${
+    exampleDate.subtract(`5 days, 3 hours, 1 year`).local}`);
   log(`${toCode(`$D().previousYear.nextMonth.local`)} => ${$D().previousYear.nextMonth.local}`);
 
   /* region difference */
