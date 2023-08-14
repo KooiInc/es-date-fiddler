@@ -168,7 +168,8 @@ function demoNdTest() {
     const d2Brazil = d2French.clone;
     d2French.locale = {locale: \`fr-FR\`, timeZone: \`Europe/Paris\`};
     d2Brazil.locale = { locale: \`pt-BR\`, timeZone: \`America/Fortaleza\` };
-    const d2EnFrancais = d2French.format(\`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\` );
+    const d2EnFrancais = d2French
+      .format(\`{&lt;i>En français&lt;/i>} => d MM yyyy (hh:mmi:ss)\` );
     const d2BrazilFormatted = d2Brazil.format(\`WD d MM yyyy hh:mmi:ss\)`, true));
   log(`${toCode(`d2French.locale`)} => ${toJSON(d2French.locale)}`);
   log(`${toCode(`d2EnFrancais`)} => ${d2EnFrancais}`);
@@ -177,16 +178,17 @@ function demoNdTest() {
   const d1Clone = d1.clone;
   d1Clone.date = { year: 2000, month: 2 };
   const d1CloneFormattedUS = d1Clone.format(
-    `{${toCode(`d1CloneFormattedUS`)} in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp`,`l:en-US, tz:America/Los_Angeles`);
+    `{in Los Angeles (US): } 
+      WD MM d yyyy hh:mmi:ss dp`,`l:en-US, tz:America/Los_Angeles`);
   log(`!!${toCode(`
       const d1Clone = $D(d1.clone);
       d1Clone.date = { year: 2000, month: 2 };
-      const d1CloneFormattedUS = dateFrom_d1.format(
-        "{&lt;code>d1CloneFormattedUS&lt;/code> in Los Angeles (US) =>} WD MM d yyyy hh:mmi:ss dp",
-        "l:en-US, tz:America/Los_Angeles" );`, true)}`,
+      const d1CloneFormattedUS = dateFrom_d1.format( 
+          \`{in Los Angeles (US): } WD MM d yyyy hh:mmi:ss dp\`,
+          \`l:en-US, tz:America/Los_Angeles\` );`, true)}`,
     `${toCode(`d1Clone.local`)} => ${d1Clone.local}`,
-    d1CloneFormattedUS,);
-  log(`!!<div><b>Note</b>: a <code>$D</code> instance with invalid locale data 
+    `<code>d1CloneFormattedUS</code> => ${d1CloneFormattedUS}`,);
+  log(`!!<div><b>Note</b>: a <code>$D</code> instance with invalid locale data
     formats the <code>Date</code> using your locale <i><b>and adds an error message</b></i>:</div>`);
   log( toCode(`invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
     invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
@@ -320,18 +322,27 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
 
   /* region extend */
   $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
-  $D.extendWith({name: `localize4TZ`, fn: (dt, timeZoneLabel) =>
-      new Date( dt.toLocaleString(`en`, {timeZone: timeZoneLabel}).toLocaleString(`en-CA`, {hourCycle: `h23`}) ),
-      isMethod: true, proxifyResult: true});
-  $D.extendWith({name: `localeDiff`, fn: (dt, locale) => {
-      const dtClone = dt.clone;
-      const local4TZ = new Date(dtClone.localize4TZ(locale.timeZone));
-      return `${Math.round((local4TZ - dtClone)/360_0000)} hour(s)`;
+  $D.extendWith({name: `utcDistanceHours`, fn: dt => {
+    const timeZone = dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const fmt = Intl.DateTimeFormat(`en-CA`, {
+      year: `numeric`,
+      timeZone: timeZone,
+      timeZoneName: "shortOffset",
+    });
+    let distance = fmt.format(dt).match(/[+-]\d+$/);
+    return !distance ? 0 : distance.shift();  }
+  });
+  $D.extendWith({name: `localeDiff`, fn: (dt, timeZone) => {
+      const cloned = dt.clone;
+      const localized = cloned.clone.relocate({timeZone}).localizedDT;
+      localized.time = cloned.time = {milliseconds: 0};
+      const sign = localized.isTodayOrLaterThen(dt) ? `+` : `-`;
+      return `${sign}${cloned.differenceFrom(localized).clean}`;
     }, isMethod: true });
   $D.extendWith({name: `utcDiff`, fn: dt => {
       const dtClone = dt.clone;
       const tz = {timeZone: dtClone.locale?.timeZone || `utc`};
-      const utcDiff = dt.utcDistance * -1;
+      const utcDiff = dt.getTimezoneOffset() * -1;
       const local4TZ = dtClone.localize4TZ(tz.timeZone).add(`${utcDiff} minutes, 1 second`);
       let diff = dt.differenceFrom(local4TZ);
       diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
@@ -356,22 +367,28 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   fn: (dt, nextDt) => +dt >= +nextDt, 
   isMethod: true });
   
-$D.extendWith({name: \`utcDistance\`, fn: dt => dt.getTimezoneOffset(); });
+// locale aware 'getTimezoneOffset'  
+$D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
+    const timeZone = dt.localeInfo?.timeZone || 
+      Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const fmt = Intl.DateTimeFormat(\`en-CA\`, {
+      year: \`numeric\`,
+      timeZone: timeZone,
+      timeZoneName: \`shortOffset\`,
+    });
+    let distance = fmt.format(dt).match(/[+-]\\d+$/);
+    return !distance ? 0 : distance.shift();  }
+  });
 
-$D.extendWith( {
-  name: \`localize4TZ\`, 
-  fn: (dt, timeZoneLabel) => 
-    new Date(new Date().toLocaleString(\`gmt\`, {timeZone: timeZoneLabel}))
-      .toLocaleString(\`en-CA\`, {hourCycle: \`h23\`}), 
-  isMethod: true } );
-
-$D.extendWith( {
-  name: \`localeDiff\`, 
-  fn: (dt, locale) => {
-    const dtClone = dt.clone;
-    const local4TZ = new Date(dtClone.localize4TZ(locale.timeZone));
-    return \`\${Math.round((local4TZ - dtClone) / 360_0000)} hour(s)\`; }, 
-  isMethod: true } );
+// time difference between your place and the given time zone
+ $D.extendWith({name: \`localeDiff\`, fn: (dt, timeZone) => {
+      const cloned = dt.clone;
+      const localized = cloned.clone.relocate({timeZone}).localizedDT;
+      // milliseconds pollute the difference, discard
+      localized.time = cloned.time = {milliseconds: 0};
+      const sign = localized.isTodayOrLaterThen(dt) ? \`+\` : \`-\`;
+      return \`\${sign}\${cloned.differenceFrom(localized).clean}\`;
+    }, isMethod: true });
 
 <span class="comment">// returns instance Date, so chainable</span>
 $D.extendWith({name: \`midNight\`, fn: dt => {
@@ -379,15 +396,16 @@ $D.extendWith({name: \`midNight\`, fn: dt => {
   return dt.clone; }, proxifyResult: true });</code>
   <code>$D().add(\`1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`1 day`).isTodayOrLaterThen($D())}<br>
   <code>$D().add(\`-1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`-1 day`).isTodayOrLaterThen($D())}<br>
-  <code>$D().utcDistance</code> => ${$D().utcDistance}<br>
-  <code>$D().localeDiff({locale: \`en-NZ\`, timeZone: \`Pacific/Auckland\`})</code> => ${ 
-    $D().relocate({locale: `nl`, timeZone: `Europe/Amsterdam`})
-      .localeDiff({locale: `en-NZ`, timeZone: `Pacific/Auckland`}) }<br>
-  <code>$D().localeDiff({locale: \`en-US\`, timeZone: \`America/New_York\`})</code> => ${
-    $D().relocate({locale: `nl`, timeZone: `Europe/Amsterdam`})
-      .localeDiff({locale: `en-US`, timeZone: `America/New_York`}) }<br>
-  <code>$D().midNight.local</code> => ${
-    $D().midNight.local}<br>`);
+  <code>$D().utcDistanceHours</code> => ${$D().utcDistanceHours}<br>
+  <code>$D().relocate({locale: \`gmt\`, timeZone: \`Europe/Greenwich\`}).utcDistanceHours</code> => ${$D().relocate({locale: `gmt`, timeZone: `utc`}).utcDistanceHours}<br>
+  <code>$D().relocate({timeZone: \`America/New_York\`}).utcDistanceHours</code> => ${$D().relocate({locale: `en-US`, timeZone: `America/New_York`}).utcDistanceHours}<br>
+  <code>$D().localeDiff(\`Pacific/Auckland\`)</code> => ${ 
+    $D().localeDiff(`Pacific/Auckland`) }<br>
+  <code>$D().localeDiff(\`America/New_York\`)</code> => ${
+    $D().localeDiff(`America/New_York`) }<br>
+  <code>$D().localeDiff(\`Asia/Kolkata\`)</code> => ${
+    $D().localeDiff(`Asia/Kolkata`) }<br>
+  <code>$D().midNight.local</code> => ${$D().midNight.local}<br>`);
   /* endregion extend */
 
   /* region performance */
@@ -430,6 +448,30 @@ function tryJSON(content, formatted) {
   catch(err) {return `Some [Object object] can not be converted to JSON`}
 }
 
+function codeBlocks2Code() {
+  const codeReplacements = new Map( [
+    [`<`, `&lt;`],
+    [`>`, `&gt;`],
+    [`&`, a => `&amp;${a[1]}`],
+    [`linebreak`, `\n<br>`],
+    [`reducebreaks`, `\n\n`] ] );
+  const allBlocks = $.nodes(`.codeblock`);
+  $.nodes(`code:not(.codeBlock)`).forEach( cd => $(cd).addClass(`inline`));
+  allBlocks.forEach(block => {
+    block.querySelectorAll(`span.comment`).forEach(cmmnt => {
+      cmmnt.replaceWith($.text(cmmnt.textContent));
+    });
+    block = $(block);
+    block.addClass(`language-javascript`).removeClass(`codeblock`);
+
+    const pre = $.virtual(`<pre class="language-javascript line-numbers">${
+      block.HTML.get(1).trim()
+        .replace(/&[^lgtamp;]/g, codeReplacements.get(`&`))}</pre>`);
+    block.replaceWith(pre);
+  });
+  Prism.highlightAll();
+}
+
 function createContent() {
   const container = $.node(`.container`)
   $.delegate(`click`, `h3[id]`, () => {
@@ -457,6 +499,7 @@ function createContent() {
     contentDiv, $.at.AfterEnd);
   $.editCssRule(`.bottomSpace { height: ${container.clientHeight}px; }`);
   $(`#log2screen`).afterMe(`<div class="bottomSpace">`);
+  codeBlocks2Code();
 }
 
 function styleIt() {
@@ -489,7 +532,7 @@ function styleIt() {
       }
       ul#log2screen, #log2screen .content { max-width: 90vw; }
     }`,
-    `code {
+    `code.inline {
       color: green;
       background-color: #eee;
       padding: 2px;
