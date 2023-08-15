@@ -11,6 +11,28 @@ function DateXFactory() {
     has: (target, key) => key in proxied || key in target,
   };
 
+  function extendWith({name, fn, isMethod = false, proxifyResult = false} = {}) {
+    if (!name || !fn || !(fn instanceof Function)) {
+      return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
+    }
+
+    proxied[name] = dt => {
+      dt = proxify(dt);
+
+      if (dt.localeInfo) {
+        dt.relocate(dt.localeInfo);
+      }
+
+      return isMethod
+        ? (...args) => proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args)
+        : proxifyResult ? proxify(fn(dt)) : fn(dt);
+    }
+  }
+
+  function now() {
+    return xDateFn();
+  }
+
   function proxify(date) {
     return new Proxy(date, proxy);
   }
@@ -36,23 +58,10 @@ function DateXFactory() {
     return proxied;
   }
 
-  xDateFn.extendWith = function({name, fn, isMethod = false, proxifyResult = false} = {}) {
-    if (!name || !fn || !(fn instanceof Function)) {
-      return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
-    }
-
-    proxied[name] = dt => {
-      dt = proxify(dt);
-
-      if (dt.localeInfo) {
-        dt.relocate(dt.localeInfo);
-      }
-
-      return isMethod
-        ? (...args) => proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args)
-        : proxifyResult ? proxify(fn(dt)) : fn(dt);
-    }
-  };
+  Object.defineProperties(xDateFn, {
+    now: { get() { return now(); } },
+    extendWith: { get() { return extendWith; } },
+  });
 
   return xDateFn;
 }
