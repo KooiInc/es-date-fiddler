@@ -150,6 +150,7 @@ See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 **Notes**:
 * all setters below *change the instance Date*. If one doesn't want that, `clone` the `$D` instance first, e.g `const nextYear = [instance].clone.nextYear`.
 * all setters below can be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript), e.g. `[instance].nextYear.add("15 days").subtract("2 hours, 30 minutes")`.
+* for convenience the `$D` constructor has the property (getter) `now` to create an instance with the current `Date`. `$D.now` is equivalent to `$D()`. 
 ---
 - `add(...things2Add: string | string[])`: add [things2Add] to the `$D` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].add("1 day, 5 hours")` or `[instance].add("1 day", "5 hours")` 
 - `subtract(...things2Subtract: string | string[])`: subtract [things2Add] from the `$D` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].subtract("1 day, 5 hours")` or `[instance].subtract("1 day", "5 hours")`.
@@ -172,13 +173,11 @@ One can create additional setters/getter (properties/methods) to the constructor
 
 `$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})`
 
-<ul class="sub"><li><code>fn</code>: the function to use. The function should at least have one parameter,
-that being the date value of the instance. By default the extension function is added as property
-(<code>isMethod</code> false). When <code>isMethod</code> is true, the function
-is considered (and callable as) a method and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
-<li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date,
-enables chaining. False by default.
-<br><b>Note</b>: when <code>fn</code> returns the date, there's no need to set this value.
-</li></ul>
+- `fn: Function`: the function to use. The function signature is `[fn](date, [one or more arguments])`. 
+  The [date] parameter is the instance date, which within the function [fn] will be available as a `$D` instance
+- `isMethod: boolean`
+  by default the extension function is added as property (getter) when `isMethod` is `false`. When `isMethod` is `true`, the function is considered (and callable) as a method and can receive parameters (`[instance][name](dateValue, ...args)`).
+- `proxifyResult: boolean`: When `true` ***and*** `fn` returns the instance date, enables chaining by returning a `$D` instance. Default value is `false`. May be useful when one is not sure the return value will be the
+   actual instance instead of a 'plain' `Date`.
 
 The [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) contains examples.
