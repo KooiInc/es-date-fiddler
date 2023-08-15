@@ -71,20 +71,18 @@ function demoNdTest() {
           with its <code>Date</code></p>
         <b>Notes</b><ul class="decimal">  
         <li>As long as <code>[instance].locale</code> is not set, the <code>$D</code> instance
-          is not associated with either <i>locale</i> or <i>timeZone</i>. 
-          In that case the instance uses <i>your locale</i> and/or <i>your timeZone</i>
-          to format/display its <code>Date</code>.</li>  
+          Date is associated with your locale (like a usual Date instance, 
+          your time zone is currently <i>${yourZone}</i>).</li>  
         <li>The locale will be checked when associated with a <code>$D</code> instance.
         If the locale is not valid, an error will be logged to the console, and the
-        instance locale will be removed (meaning the instance date will be within
-        your locale (your time zone is <i>${yourZone}</i>).</li>
+        instances' locale will be empty.</li>
         <li>The locale information is also used with the <code>dateStr</code> property. 
         If such information is available (especially the timeZone) the string value
         returned will be in the dates' local format.</li>
         <li><b>Note</b>: you can check the locale information from the examples hereafter 
         @<a target="_blank" href="https://time.is/">time.is</a></li></ul>
-        <p>There are several ways to associate locale information with a <code>$D</code> instance.
-        Here are some examples.</p>
+        <p><br>There are several ways to associate (and make use of) locale information 
+        with a <code>$D</code> instance. Here are some examples.</p>
       </div>`);
 
   const d2German = d2.clone;
@@ -114,13 +112,9 @@ function demoNdTest() {
   log(toCode(`nwZealandTomorrow.getTimezone`) + ` => ${nwZealandTomorrow.getTimezone}`);
   log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()`) + ` => ${
     $D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()}`);
-  log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).hasDST`) + ` => ${
-    $D().relocate({timeZone: 'Australia/Darwin'}).hasDST}`);
-  log(toCode(`d2Dutch.hasDST`) + ` => ${d2Dutch.hasDST}`);
   log(toCode(`nwZealandTomorrow.hasDST`) + ` => ${nwZealandTomorrow.hasDST}`);
   log(toCode(`$D().getTimezone`) + ` (your local time zone) => ${$D().getTimezone}`);
   log(toCode(`d2German.removeLocale().local`) + ` => ${d2German.removeLocale().local}`);
-  log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`);
   log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr}`);
   log(toCode(`invalidLocale.dateISOStr`) + `=> ${invalidLocale.dateISOStr}`);
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
@@ -128,8 +122,12 @@ function demoNdTest() {
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
-  log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
-  log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
+
+  log(`!!<div><b>Note</b>: the <code>hasDST</code> getter answers the question if 
+      Daylight Saving Time is used within the associated time zone</div>`);
+  log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).hasDST`) + ` => ${
+    $D().relocate({timeZone: 'Australia/Darwin'}).hasDST}`);
+  log(toCode(`d2Dutch.hasDST`) + ` => ${d2Dutch.hasDST}`);
   /* endregion locale */
 
   /* region formatting */
@@ -387,6 +385,8 @@ $D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
  $D.extendWith({name: \`localeDiff\`, fn: (dt, timeZone) => {
       const cloned = dt.clone.localizedDT;
       const localized = dt.clone.relocate({timeZone}).localizedDT;
+      // milliseconds possibly influence the difference calculation 
+      // and are not relevant here, so discard
       localized.time = cloned.time = {milliseconds: 0};
       const sign = cloned === localized ? \`\` : localized.isTodayOrLaterThen(cloned) ? \`+\` : \`-\`;
       return \`\${sign}\${cloned.differenceFrom(localized).clean}\`;
