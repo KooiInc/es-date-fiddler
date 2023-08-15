@@ -18,10 +18,10 @@ if (isDev) {
 $(`<div class="spacer"></div>`);
 $(`<div class="container">`).append($(`#log2screen`));
 logTop(`!!
-      <a class="gitLink" href="//github.com/KooiInc/es-date-fiddler">
-        <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink" alt="github icon">Back to repository @Github
-     </a>`);
-
+    <a class="gitLink" href="//github.com/KooiInc/es-date-fiddler">
+      <img src="//github.githubassets.com/favicons/favicon.png" class="gitLink" alt="github icon">Back to repository @Github
+    </a>`);
+styleIt();
 demoNdTest();
 createContent();
 /* endregion intialize/start */
@@ -31,7 +31,6 @@ function demoNdTest() {
   /* region init */
   const yn = tf => tf ? `Yep` : `Nope`;
   const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
-  styleIt();
   const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${
     str.replace(/^\s+\b/gm, ``).replace(/^\s{3,}(\W)/gm, `  $1`)
       .replace(/^\s+</gm, `<`)}</code>`;
@@ -47,11 +46,11 @@ function demoNdTest() {
   );
 
   log(`!!<h3 id="inits">Initialization</h3>`);
-  log(`!!` + toCode(`<span class="comment">// $D imported (import $D from "[location of module]")</span>
+  log(`!!` + toCode(`// $D imported (import $D from "[location of module]")
     const d1 = $D({ locale: \`en-US\`, timeZone: \`US/Pacific\` });
     const d2 = d1.clone;
     const d3 = $D(new Date(200, 2, 18, 12, 0, 30));
-    <span class="comment">// Note: month is *not* zero based here)</span>
+// Note: month is *not* zero based here)
     d2.date = { year: 2022, date: 10, month: 12 };
     d2.locale = { locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` };`, true) );
 
@@ -200,7 +199,7 @@ function demoNdTest() {
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();
   log(toCode(`const initial = $D(new Date(\`1999/05/31 14:22:44.142\`), { locale: \`en-GB\` });
-  <span class="comment">// Clone date/time of [initial] to current date</span>
+  // Clone date/time of [initial] to current date
   const dateCloned = initial.cloneDateTo();
   const timeCloned = initial.cloneTimeTo();`, true));
   log(`${toCode(`initial.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${initial.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
@@ -390,7 +389,7 @@ $D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
       return \`\${sign}\${cloned.differenceFrom(localized).clean}\`;
     }, isMethod: true });
 
-<span class="comment">// returns instance Date, so chainable</span>
+// returns instance Date, so chainable
 $D.extendWith({name: \`midNight\`, fn: dt => {
   dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
   return dt.clone; }, proxifyResult: true });</code>
@@ -401,13 +400,13 @@ $D.extendWith({name: \`midNight\`, fn: dt => {
   <code>$D().relocate({timeZone: \`America/New_York\`}).utcDistanceHours</code> => ${$D().relocate({locale: `en-US`, timeZone: `America/New_York`}).utcDistanceHours}<br>
   <code>$D().localeDiff(\`Pacific/Auckland\`)</code> => ${ 
     $D().localeDiff(`Pacific/Auckland`) }<br>
-  <code>$D().localeDiff(\`America/New_York\`)</code> => ${
-    $D().localeDiff(`America/New_York`) }<br>
-  <code>$D().localeDiff(\`Asia/Kolkata\`)</code> => ${
-    $D().localeDiff(`Asia/Kolkata`) }<br>
+  <code>$D.now.localeDiff(\`America/New_York\`)</code> => ${
+    $D.now.localeDiff(`America/New_York`) }<br>
+  <code>$D.now.localeDiff(\`Asia/Kolkata\`)</code> => ${
+    $D.now.localeDiff(`Asia/Kolkata`) }<br>
   <code>$D({timeZone: \`Asia/Kolkata\`}).localeDiff(\`America/New_York\`)</code> => ${
     $D({timeZone: `Asia/Kolkata`}).localeDiff(`America/New_York`) }<br>
-  <code>$D().midNight.local</code> => ${$D().midNight.local}<br>`);
+  <code>$D.now.midNight.local</code> => ${$D.now.midNight.local}<br>`);
   /* endregion extend */
 
   /* region performance */
@@ -458,11 +457,8 @@ function codeBlocks2Code() {
     [`linebreak`, `\n<br>`],
     [`reducebreaks`, `\n\n`] ] );
   const allBlocks = $.nodes(`.codeblock`);
-  $.nodes(`code:not(.codeBlock)`).forEach( cd => $(cd).addClass(`inline`));
+  $.nodes(`code:not(.codeblock)`).forEach( cd => $(cd).addClass(`inline`));
   allBlocks.forEach(block => {
-    block.querySelectorAll(`span.comment`).forEach(cmmnt => {
-      cmmnt.replaceWith($.text(cmmnt.textContent));
-    });
     block = $(block);
     block.addClass(`language-javascript`).removeClass(`codeblock`);
 
@@ -471,11 +467,13 @@ function codeBlocks2Code() {
         .replace(/&[^lgtamp;]/g, codeReplacements.get(`&`))}</pre>`);
     block.replaceWith(pre);
   });
-  Prism.highlightAll();
+  return Prism.highlightAll();
 }
 
 function createContent() {
-  const container = $.node(`.container`)
+  $(`.loading`).remove();
+  codeBlocks2Code();
+  const container = $.node(`.container`);
   $.delegate(`click`, `h3[id]`, () => {
     container.scrollTo(0,0);
   });
@@ -496,12 +494,10 @@ function createContent() {
     ul.append(`<li><div ${doQuote} data-target="h3#${h3.id}">${headerText.replace(/\(.+\)/, ``)}</div></li>`);
     $(h3).prop(`title`, `Back to top`);
   });
-
-  $(`<p><b>Note</b>: Use <code>$D</code> in the developer console to experiment with it</p>`,
+  $(`<p><b>Note</b>: Use <code class="inline">$D</code> in the developer console to experiment with it</p>`,
     contentDiv, $.at.AfterEnd);
-  $.editCssRule(`.bottomSpace { height: ${container.clientHeight}px; }`);
-  $(`#log2screen`).afterMe(`<div class="bottomSpace">`);
-  codeBlocks2Code();
+  $.editCssRule(`.bottomSpace { height: ${Math.floor(container.clientHeight/2)}px; }`);
+  $(`#log2screen`).afterMe(`<div class="bottomSpace"></div>`);
 }
 
 function styleIt() {
