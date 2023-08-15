@@ -21,33 +21,33 @@ function methodHelpersFactory(proxify) {
       seconds: d.getSeconds(), milliseconds: d.getMilliseconds() };
     return asArray ? Object.values(valueObj) : valueObj;
   };
-  const getOrSetLocale = (d, {locale, timeZone} = {}) => {
-    if ( locale || timeZone) {
-      d.localeInfo = createLocaleInfo(d, {locale, timeZone});
-    }
-
-    return d.localeInfo;
-  };
   const localizedDT = dt => {
-    dt = proxify(dt);
     const tz = {timeZone: getTimezone(dt), hour12: false};
-    const newDT = proxify( new Date( new Date(dt.toLocaleString(`en`, tz)) ) );
-    return newDT;
+    let dtNew;
+    try {
+      return proxify(new Date(new Date(dt.toLocaleString(`en`, tz))));
+    }
+    catch(err) {
+      console.error(`Can't retrieve localized date/time value for ${tz.timeZone}: ${err.message}`);
+      return proxify(dt);
+    }
   };
+  const cloneDateTimeError = (Time) => console.error(`clone${Time ? `Time` : `Date`}To: no toDate given`);
   const cloneDateTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
     const cloneFrom = proxify(d);
-
     if (toDate) {
-      const {year, month, date} = cloneFrom;
+      const [year, month, date] = cloneFrom.date;
       toDate.date = {year, month, date};
 
       if (cloneFrom.locale) {
         toDate.locale = { locale: cloneFrom.locale.locale, timeZone: cloneFrom.locale.timeZone };
       }
-    }
 
-    return toDate;
+      return toDate;
+    }
+    cloneDateTimeError();
+    return cloneFrom;
   };
   const cloneTimeTo = (d, toDate) => {
     toDate = proxify(toDate ?? new Date());
@@ -57,9 +57,10 @@ function methodHelpersFactory(proxify) {
 
     if (cloneFrom.locale) {
       toDate.locale = { locale: cloneFrom.locale.locale, timeZone: cloneFrom.locale.timeZone };
+      return toDate;
     }
-
-    return toDate;
+    cloneDateTimeError(1);
+    return cloneFrom;
   };
   const localeCatcher = function(dProxified) {
     const formats = getFormats(dProxified);
@@ -78,86 +79,100 @@ function methodHelpersFactory(proxify) {
       opts = { timeZone: d.locale.timeZone };
     }
 
-    try { return d.toLocaleString(d.locale?.locale, opts); }
-    catch(err) { return localeCatcher(d); }
+    return d.toLocaleString(d.locale?.locale, opts);
   };
   const doFormat = (d, ...args) => {
     d = proxify(d);
     const [ locale, timeZone ] = [ d.locale, d.timeZone ];
     const formats = getFormats(d);
+    return args.length === 1
+      ? formatter(d, args[0], formats || undefined)
+      : args.length
+        ? formatter(d, ...args)
+        : d.toLocaleString(locale || [], timeZone ? { timeZone } : undefined);
+  };
+  const reportLocaleError = errLocale =>
+    console.error(`invalid locale (time zone: "${errLocale.timeZone}", locale: "${
+      errLocale.locale}"), removed associated locale information`);
+  const validateLocale = (dt, noProxyReturn = false) => {
+    if (!dt.localeInfo) { return true; }
+    dt = `values` in dt ? dt : proxify(dt);
+
     try {
-      return args.length === 1
-        ? formatter(d, args[0], formats)
-        : args.length
-          ? formatter(d, ...args)
-          : d.toLocaleString(locale, timeZone ? { timeZone } : undefined);
-    } catch(err) { return localeCatcher(proxify(d)); }
+      const test = new Date(dt).toLocaleString(dt.localeInfo.locale ?? [], {timeZone: dt.localeInfo.timeZone});
+      return dt;
+    } catch (err) {
+      reportLocaleError(dt.localeInfo);
+      return dt.removeLocale();
+    }
   };
   const doSet = (d, values) =>  isObj(values) &&
     getNumbers(values).forEach( ([key, value]) => d[`set${key}`](value)) &&
     true || false;
   const getTime = d => [d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds()??0];
   const getDate = d => [d.getFullYear(), (d.getMonth() + 1), d.getDate()];
-  const getTimeStr = (d, ms) => {
-    const timeArr = getTime(d)
-      .reduce(( acc, v, i) => [...acc, i < 3 ? zeroPad(v) : zeroPad(v, 3)], []);
-    return `${timeArr.slice(0, 3).join(`:`)}${ms ? `.${timeArr.slice(-1)}` : ``}`;
-  };
   const getOrSetTime = (d, values) => doSet(d, values) || getTime(d);
   const getOrSetDate = (d, values) => doSet(d, values) || getDate(d);
   const diffCalculator = dateDiffFactory();
   const getDaysInMonth = (year, month) =>
     proxify(new Date(year, month + 1, 1, 0, 0, 0)).yesterday.getDate();
   const getDateX = d => [d.getFullYear(), d.getMonth(), d.getDate()];
-  const clone = d => proxify(new Date(d));
+  const clone = d => {
+    const newD = proxify(new Date(d));
+    newD.relocate(d.localeInfo ?? {timezone: getTimezone(d)});
+    return newD;
+  };
   const dateAdd = dateAddFactory();
   const add2Date = (d, ...terms) => proxify(dateAdd(d, ...terms));
+  const getOrSetLocale = (d, {locale, timeZone} = {}) => {
+    if ( locale || timeZone) {
+      d.localeInfo = createLocaleInfo(d, {locale, timeZone});
+      validateLocale(d);
+    }
+
+    return d.localeInfo ?? {};
+  };
+  const getFormats = d => {
+    const [locale, timeZone] = [ d.localeInfo?.locale, d.localeInfo?.timeZone];
+    return [
+      `${locale ? `l:${locale}` : ``}`,
+      `${timeZone ? `tz:${timeZone}` : ``}` ]
+      .filter(v => v).join(`, `)?.trim();
+  };
   const createLocaleInfo = function(d, {locale, timeZone } = {}) {
     [locale, timeZone] = [
-      locale || d.localeInfo?.locale, timeZone || d.localeInfo?.timeZone];
+      locale || d.localeInfo?.locale, timeZone || d.localeInfo?.timeZone || getTimezone(d)];
     const formats = [
        `${locale ? `l:${locale}` : ``}`,
        `${timeZone ? `tz:${timeZone}` : ``}` ]
       .filter(v => v).join(`, `)
     d.localeInfo = {
-      formats,
       ...(locale ? {locale} : {}),
       ...(timeZone ? {timeZone} : {}), };
+    d.localeInfo.formats = getFormats(d);
     return d.localeInfo;
   };
-  const getFormats = d => {
-    d = proxify(d);
-    const [locale, timeZone] = [ d.localeInfo?.locale, d.localeInfo?.timeZone];
-    return [
-      `${locale ? `l:${locale}` : ``}`,
-      `${timeZone ? `tz:${timeZone}` : ``}` ]
-      .filter(v => v).join(`, `);
-  };
+
   const removeLocaleInfo = d => {
-    d = proxify(d);
+    //d = proxify(d);
     delete d.localeInfo;
+    return proxify(d);
   };
   const reLocate = function(d, locale, timeZone) {
-    d = proxify(d);
-    d.locale = {locale, timeZone};
-    return d;
+    getOrSetLocale(d, {locale, timeZone} || d.localeInfo);
+    return proxify(d);
   };
   const names = function(d, month) {
     d = proxify(d);
     return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
   };
-  const dateStrWithLocale = d => {
-    try {
-      const formatter = new Intl.DateTimeFormat(d.localeInfo.locale || `en`, {
-        year: `numeric`,
-        month: `2-digit`,
-        day: `2-digit`,
-        timeZone: d.localeInfo.timeZone || `utc`
-      });
-      return formatter.format(d);
-    } catch(err) {
-      return isoDateStr(d);
-    }
+  const dateStr = d => {
+    return d.toLocaleDateString().split(/[-\/]/).map(v => zeroPad(v)).join(`-`);
+  };
+  const getTimeStr = (d, ms) => {
+    const timeArr = getTime(d)
+      .reduce(( acc, v, i) => [...acc, i < 3 ? zeroPad(v) : zeroPad(v, 3)], []);
+    return `${timeArr.slice(0, 3).join(`:`)}${ms ? `.${timeArr.slice(-1)}` : ``}`;
   };
   const hasDST = dt => {
     const timeZone = getTimezone(dt);
@@ -178,6 +193,8 @@ function methodHelpersFactory(proxify) {
       localizedDT,
       hasDST,
       getTimezone,
+      validateLocale,
+      dateStr,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
       date: (d, {year, month, date} = {}) =>
@@ -190,7 +207,7 @@ function methodHelpersFactory(proxify) {
       time: (d, {hour, minutes, seconds, milliseconds} = {}) =>
         getOrSetTime(d, {Hours: hour, Minutes: minutes, Seconds: seconds, Milliseconds: milliseconds}),
       timeStr: d => (displayMS = false) => getTimeStr(d, displayMS),
-      dateStr: d => d.localeInfo && dateStrWithLocale(d) || isoDateStr(d),
+      dateISOStr: d => isoDateStr(d),
       ms: (d, setValue) => setValue && d.setMilliseconds(setValue) || d.getMilliseconds(),
       monthName: d => names(d, true),
       weekDay: d => names(d),
