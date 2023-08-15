@@ -106,6 +106,7 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
 - `dateStr`: get the date part from the instance date as string.
   - **Note** when locale information is associated with the instance, will be formatted cf that locale.
+- `dateISOStr`: get the date part from the instance date as ISO 8601 string (yyyy-mm-dd).
 - `getTimezone`: retrieves the time zone of the instance date (either the associated - or the local time zone).
 - `hasDST`: determine if the instance date timeZone is within a Daylight Saving Time zone.
   - **Note**: this uses the instances' associated locale information or the current local timeZone of the instance date.
