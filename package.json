@@ -1,7 +1,7 @@
 {
   "name": "es-date-fiddler",
   "type": "module",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "private": false,
   "main": "./index.esm.js",
   "description": "ES Date helper",
