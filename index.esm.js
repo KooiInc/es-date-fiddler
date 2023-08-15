@@ -20,7 +20,7 @@ function DateXFactory() {
     return target[key];
   }
 
-  function exported(dateOrLocale, localeInfo) {
+  function xDateFn(dateOrLocale, localeInfo) {
     const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
     const dateIsDate = (dateOrLocale || ``) instanceof Date;
     const maybeDate = dateIsLocaleInfo
@@ -36,7 +36,7 @@ function DateXFactory() {
     return proxied;
   }
 
-  exported.extendWith = function({name, fn, isMethod = false, proxifyResult = false} = {}) {
+  xDateFn.extendWith = function({name, fn, isMethod = false, proxifyResult = false} = {}) {
     if (!name || !fn || !(fn instanceof Function)) {
       return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
     }
@@ -54,5 +54,5 @@ function DateXFactory() {
     }
   };
 
-  return exported;
+  return xDateFn;
 }
