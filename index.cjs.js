@@ -245,7 +245,6 @@ function methodHelpersFactory(proxify) {
       localizedDT,
       hasDST,
       getTimezone,
-      validateLocale,
       dateStr,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
