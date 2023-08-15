@@ -378,10 +378,8 @@ $D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
     return !distance ? 0 : distance.shift();  }
   });
 
-/* 
-   difference between the local time (as determined by the
-   instance locale) and the time in the given time zone
- */
+ //  difference between the local time (as determined by the
+ // instance locale) and the time in the given time zone
  $D.extendWith({name: \`localeDiff\`, fn: (dt, timeZone) => {
       const cloned = dt.clone.localizedDT;
       const localized = dt.clone.relocate({timeZone}).localizedDT;
