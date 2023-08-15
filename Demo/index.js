@@ -64,6 +64,7 @@ function demoNdTest() {
   /* endregion init  */
 
   /* region locale */
+  const yourZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   log(`!!<h3 id="locale">Locale</h3>`);
   log(`!!<div>
         <p>With <code>$D</code> you can associate a <i>locale</i> and/or <i>timeZone</i> 
@@ -73,9 +74,10 @@ function demoNdTest() {
           is not associated with either <i>locale</i> or <i>timeZone</i>. 
           In that case the instance uses <i>your locale</i> and/or <i>your timeZone</i>
           to format/display its <code>Date</code>.</li>  
-        <li>When an associated locale can't be used in <code>[instance].local</code> or 
-          <code>[instance].format</code> the result of those getters will contain an error
-          message (and the locale of the result will be your locale). </li>
+        <li>The locale will be checked when associated with a <code>$D</code> instance.
+        If the locale is not valid, an error will be logged to the console, and the
+        instance locale will be removed (meaning the instance date will be within
+        your locale (your time zone is <i>${yourZone}</i>).</li>
         <li>The locale information is also used with the <code>dateStr</code> property. 
         If such information is available (especially the timeZone) the string value
         returned will be in the dates' local format.</li>
@@ -117,17 +119,15 @@ function demoNdTest() {
   log(toCode(`d2Dutch.hasDST`) + ` => ${d2Dutch.hasDST}`);
   log(toCode(`nwZealandTomorrow.hasDST`) + ` => ${nwZealandTomorrow.hasDST}`);
   log(toCode(`$D().getTimezone`) + ` (your local time zone) => ${$D().getTimezone}`);
+  log(toCode(`d2German.removeLocale().local`) + ` => ${d2German.removeLocale().local}`);
   log(toCode(`invalidLocale.locale`) + ` => ${toJSON(invalidLocale.locale)}`);
-  log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr} (<b>note</b>: ISO 8601 date format)`);
+  log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr}`);
+  log(toCode(`invalidLocale.dateISOStr`) + `=> ${invalidLocale.dateISOStr}`);
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
-  log(`!!<div><b>Note</b>: a <code>$D</code> instance with invalid locale data 
-    stringifies the <code>Date</code> using your locale <i><b>and adds an error message</b></i>:</div>`);
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
-  invalidLocaleData.removeLocale();
-  log(`!!` + toCode(`invalidLocaleData.removeLocale()`));
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
   /* endregion locale */
@@ -333,10 +333,10 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     return !distance ? 0 : distance.shift();  }
   });
   $D.extendWith({name: `localeDiff`, fn: (dt, timeZone) => {
-      const cloned = dt.clone;
-      const localized = cloned.clone.relocate({timeZone}).localizedDT;
+      const cloned = dt.clone.localizedDT;
+      const localized = dt.clone.relocate({timeZone}).localizedDT;
       localized.time = cloned.time = {milliseconds: 0};
-      const sign = localized.isTodayOrLaterThen(dt) ? `+` : `-`;
+      const sign = cloned === localized ? `` : localized.isTodayOrLaterThen(cloned) ? `+` : `-`;
       return `${sign}${cloned.differenceFrom(localized).clean}`;
     }, isMethod: true });
   $D.extendWith({name: `utcDiff`, fn: dt => {
@@ -380,13 +380,15 @@ $D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
     return !distance ? 0 : distance.shift();  }
   });
 
-// time difference between your place and the given time zone
+/* 
+   difference between the local time (as determined by the
+   instance locale) and the time in the given time zone
+ */
  $D.extendWith({name: \`localeDiff\`, fn: (dt, timeZone) => {
-      const cloned = dt.clone;
-      const localized = cloned.clone.relocate({timeZone}).localizedDT;
-      // milliseconds pollute the difference, discard
+      const cloned = dt.clone.localizedDT;
+      const localized = dt.clone.relocate({timeZone}).localizedDT;
       localized.time = cloned.time = {milliseconds: 0};
-      const sign = localized.isTodayOrLaterThen(dt) ? \`+\` : \`-\`;
+      const sign = cloned === localized ? \`\` : localized.isTodayOrLaterThen(cloned) ? \`+\` : \`-\`;
       return \`\${sign}\${cloned.differenceFrom(localized).clean}\`;
     }, isMethod: true });
 
@@ -405,6 +407,8 @@ $D.extendWith({name: \`midNight\`, fn: dt => {
     $D().localeDiff(`America/New_York`) }<br>
   <code>$D().localeDiff(\`Asia/Kolkata\`)</code> => ${
     $D().localeDiff(`Asia/Kolkata`) }<br>
+  <code>$D({timeZone: \`Asia/Kolkata\`}).localeDiff(\`America/New_York\`)</code> => ${
+    $D({timeZone: `Asia/Kolkata`}).localeDiff(`America/New_York`) }<br>
   <code>$D().midNight.local</code> => ${$D().midNight.local}<br>`);
   /* endregion extend */
 
