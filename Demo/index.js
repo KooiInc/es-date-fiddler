@@ -335,7 +335,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     $D.validateLocale({timeZone: "Asia/Shanghai"})}`);
   log(`${toCode(`$D.validateLocale({locale: "nope", timeZone: "Asia/Shanghai"})`)} => ${
     $D.validateLocale({locale: "nope", timeZone: "Asia/Shanghai"})}`);
-  log(`${toCode(`$D.validateLocale({locale: "en", timeZone: ""ToTheMoon/AndBack""})`)} => ${
+  log(`${toCode(`$D.validateLocale({locale: "en", timeZone: "ToTheMoon/AndBack"})`)} => ${
     $D.validateLocale({locale: "en", timeZone: "ToTheMoon/AndBack"})}`);
   log(`${toCode(`$D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})`)} => ${
     $D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})}`);
