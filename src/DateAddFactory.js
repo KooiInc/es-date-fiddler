@@ -34,7 +34,7 @@ function dateAddFactory() {
         return a.toLowerCase().split(/\s/)
           .map(v => {
             v = v.trim();
-            return +v ? subtract ? -v : +v : v;
+            return parseInt(v) ? subtract ? -v : +v : v;
           });
       });
   }
