@@ -168,7 +168,14 @@ See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 - `tomorrow`: add one day to the `$D` instance and set its value to the result. 
 - `yesterday`: subtract one day from the `$D` instance and set its value to the result.
 
-### Create additonal setters and getters for `$D`
+## Instance utilities
+
+### now, validateLocale
+- `now`: (getter) as may be expected, delivers an instance from the current date. It is equivalent to `$D(()`.
+- `validatedLocale(locale: Object {locale, timeZone})`: 
+   validate a `locale` string, a `timeZone` label or both
+
+### `extendWith`: create additonal setters and getters for `$D`
 One can create additional setters/getter (properties/methods) to the constructor using:
 
 `$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})`
