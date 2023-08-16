@@ -3,7 +3,6 @@ const isDev = location.host.startsWith(`dev.`);
 const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
 import $ from "https://kooiinc.github.io/JQL/Bundle/jql.min.js";
 if (!/stackblitz/i.test(location)) { console.clear(); }
-const perfNow = performance.now();
 const $D = isDev
   ? (await import(devMini(false))).default
   : (await import("../Bundle/index.esm.min.js")).default;
@@ -63,24 +62,25 @@ function demoNdTest() {
   /* endregion init  */
 
   /* region locale */
-  const yourZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const yourZone = Intl.DateTimeFormat().resolvedOptions();
   log(`!!<h3 id="locale">Locale</h3>`);
   log(`!!<div>
-        <p>With <code>$D</code> you can associate a <i>locale</i> and/or <i>timeZone</i> 
+        <p>With <code>$D</code> you can associate a <i>locale</i> and/or <i>timeZone</i>
           with its <code>Date</code></p>
-        <b>Notes</b><ul class="decimal">  
+        <b>Notes</b><ul class="decimal">
         <li>As long as <code>[instance].locale</code> is not set, the <code>$D</code> instance
-          Date is associated with your locale (like a usual Date instance, 
-          your time zone is currently <i>${yourZone}</i>).</li>  
-        <li>The locale will be checked when associated with a <code>$D</code> instance.
-        If the locale is not valid, an error will be logged to the console, and the
-        instances' locale will be empty.</li>
-        <li>The locale information is also used with the <code>dateStr</code> property. 
-        If such information is available (especially the timeZone) the string value
-        returned will be in the dates' local format.</li>
-        <li><b>Note</b>: you can check the locale information from the examples hereafter 
+          Date is associated with your locale (like a regular <code>Date instance</code>).
+          Your locale is currently <code>{locale: ${yourZone.locale}, timeZone: ${
+            yourZone.timeZone}}</code>).</li>
+        <li>when associated with a <code>$D</code> instance the locale provided will be validated.
+        If it is not valid, an error is logged to the console, and the instances' locale will be
+        reverted to your locale.</li>
+        <li>The locale information is also used with the <code>dateStr</code> property.
+        If such information is available the string value returned will be in the instance dates'
+        local format.</li>
+        <li><b>Note</b>: you can check the locale information from the examples hereafter
         @<a target="_blank" href="https://time.is/">time.is</a></li></ul>
-        <p><br>There are several ways to associate (and make use of) locale information 
+        <p><br>There are several ways to associate (and make use of) locale information
         with a <code>$D</code> instance. Here are some examples.</p>
       </div>`);
 
@@ -102,6 +102,8 @@ function demoNdTest() {
     const invalidLocaleData = $D({locale: 'somewhere', timeZone: 'somehow'});`, true));
   log(toCode(`d2German.local`) + ` => ${d2German.local}`);
   log(toCode(`d2German.dateStr`) + ` => ${d2German.dateStr}`);
+  log(`!!<div><b>Note</b>: You can retrieve a date string as ISO 8601 date string using the <code>dateISOStr</code> getter
+    <br>${toCode(`d2German.dateISOStr`)} => ${d2German.dateISOStr}`);
   log(toCode(`d2Dutch.local`) + ` => ${d2Dutch.local}`);
   log(toCode(`d2Dutch.dateStr`) + ` => ${d2Dutch.dateStr}`);
   log(toCode(`todayAustralia.local`) + ` => ${todayAustralia.local}`);
@@ -111,19 +113,18 @@ function demoNdTest() {
   log(toCode(`nwZealandTomorrow.getTimezone`) + ` => ${nwZealandTomorrow.getTimezone}`);
   log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()`) + ` => ${
     $D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()}`);
-  log(toCode(`nwZealandTomorrow.hasDST`) + ` => ${nwZealandTomorrow.hasDST}`);
   log(toCode(`$D().getTimezone`) + ` (your local time zone) => ${$D().getTimezone}`);
   log(toCode(`d2German.removeLocale().local`) + ` => ${d2German.removeLocale().local}`);
   log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr}`);
-  log(toCode(`invalidLocale.dateISOStr`) + `=> ${invalidLocale.dateISOStr}`);
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
   log(toCode(`invalidTimezone.local`) + ` => ${invalidTimezone.local}`);
   log(toCode(`invalidLocaleData.locale`) + ` => ${toJSON(invalidLocaleData.locale)}`);
   log(toCode(`invalidLocaleData.local`) + ` => ${invalidLocaleData.local}`);
 
-  log(`!!<div><b>Note</b>: the <code>hasDST</code> getter answers the question if 
+  log(`!!<div><b>Note</b>: the <code>hasDST</code> getter answers the question if
       Daylight Saving Time is used within the associated time zone</div>`);
+  log(toCode(`nwZealandTomorrow.hasDST`) + ` => ${nwZealandTomorrow.hasDST}`);
   log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).hasDST`) + ` => ${
     $D().relocate({timeZone: 'Australia/Darwin'}).hasDST}`);
   log(toCode(`d2Dutch.hasDST`) + ` => ${d2Dutch.hasDST}`);
@@ -175,18 +176,18 @@ function demoNdTest() {
   const d1Clone = d1.clone;
   d1Clone.date = { year: 2000, month: 2 };
   const d1CloneFormattedUS = d1Clone.format(
-    `{in Los Angeles (US): } 
+    `{in Los Angeles (US): }
       WD MM d yyyy hh:mmi:ss dp`,`l:en-US, tz:America/Los_Angeles`);
   log(`!!${toCode(`
       const d1Clone = $D(d1.clone);
       d1Clone.date = { year: 2000, month: 2 };
-      const d1CloneFormattedUS = dateFrom_d1.format( 
+      const d1CloneFormattedUS = dateFrom_d1.format(
           \`{in Los Angeles (US): } WD MM d yyyy hh:mmi:ss dp\`,
           \`l:en-US, tz:America/Los_Angeles\` );`, true)}`,
     `${toCode(`d1Clone.local`)} => ${d1Clone.local}`,
     `<code>d1CloneFormattedUS</code> => ${d1CloneFormattedUS}`,);
   log(`!!<div><b>Note</b>: a <code>$D</code> instance with invalid locale data
-    formats the <code>Date</code> using your locale <i><b>and adds an error message</b></i>:</div>`);
+    formats the <code>Date</code> using your locale:</div>`);
   log( toCode(`invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
     invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
 
@@ -269,11 +270,11 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`);
   const now = $D();
   const y2000 = now.clone;
-  y2000.date = { year: 2000, date: 1 };
+  y2000.date = { year: 2000 };
   log(`!!` + toCode(`
     const now = $D();
     const y2000 = now.clone;
-    y2000.date = { year: 2000, date: 1 };`, true));
+    y2000.date = { year: 2000 };`, true));
   log(`${toCode(`y2000.local`)} => ${y2000.local}`);
   log(`${toCode(`y2000.daysInMonth`)} => ${
     y2000.monthName} ${y2000.year} has ${y2000.daysInMonth} days`);
@@ -317,56 +318,49 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     y2000.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}</p>`);
   /* endregion values */
 
+  /* region now & validateLocale */
+  log(`<h3 id="utilities">Utilities: now, validateLocale</h3>
+    <div><code>now</code>, as you may have expected, delivers an instance from the current date.</div>
+    <div>With <code>validateLocale</code> you can validate a <code>locale</code>, a <code>timeZone</code> label
+    or both</div>`);
+  log(`${toCode(`$D.now.local`)} => ${$D.now.local}`);
+  log(`${toCode(`$D.now.weekDay`)} => ${$D.now.weekDay}`);
+  log(`${toCode(`$D.now.relocate({locale: "en-GB"}).format("{Hi! It's} WD {(again)}")`)} => ${
+    $D.now.relocate({locale: "en-GB"}).format("{Hi! It's} WD {(again)}")}`);
+  log(`${toCode(`$D.validateLocale({locale: "invalid!"})`)} => ${$D.validateLocale({locale: "invalid!"})}`);
+  log(`${toCode(`$D.validateLocale({locale: "en-GB"})`)} => ${$D.validateLocale({locale: "en-GB"})}`);
+  log(`${toCode(`$D.validateLocale({timeZone: "ToTheMoon/AndBack"})`)} => ${
+    $D.validateLocale({timeZone: "ToTheMoon/AndBack"})}`);
+  log(`${toCode(`$D.validateLocale({timeZone: "Asia/Shanghai"})`)} => ${
+    $D.validateLocale({timeZone: "Asia/Shanghai"})}`);
+  log(`${toCode(`$D.validateLocale({locale: "nope", timeZone: "Asia/Shanghai"})`)} => ${
+    $D.validateLocale({locale: "nope", timeZone: "Asia/Shanghai"})}`);
+  log(`${toCode(`$D.validateLocale({locale: "en", timeZone: ""ToTheMoon/AndBack""})`)} => ${
+    $D.validateLocale({locale: "en", timeZone: "ToTheMoon/AndBack"})}`);
+  log(`${toCode(`$D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})`)} => ${
+    $D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})}`);
+  /* endregion now & validateLocale */
+  
   /* region extend */
-  $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
-  $D.extendWith({name: `utcDistanceHours`, fn: dt => {
-    const timeZone = dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const fmt = Intl.DateTimeFormat(`en-CA`, {
-      year: `numeric`,
-      timeZone: timeZone,
-      timeZoneName: "shortOffset",
-    });
-    let distance = fmt.format(dt).match(/[+-]\d+$/);
-    return !distance ? 0 : distance.shift();  }
-  });
-  $D.extendWith({name: `localeDiff`, fn: (dt, timeZone) => {
-      const cloned = dt.clone.localizedDT;
-      const localized = dt.clone.relocate({timeZone}).localizedDT;
-      localized.time = cloned.time = {milliseconds: 0};
-      const sign = cloned === localized ? `` : localized.isTodayOrLaterThen(cloned) ? `+` : `-`;
-      return `${sign}${cloned.differenceFrom(localized).clean}`;
-    }, isMethod: true });
-  $D.extendWith({name: `utcDiff`, fn: dt => {
-      const dtClone = dt.clone;
-      const tz = {timeZone: dtClone.locale?.timeZone || `utc`};
-      const utcDiff = dt.getTimezoneOffset() * -1;
-      const local4TZ = dtClone.localize4TZ(tz.timeZone).add(`${utcDiff} minutes, 1 second`);
-      let diff = dt.differenceFrom(local4TZ);
-      diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
-      return `UTC difference for ${tz.timeZone}: ${diff}`;
-    } });
-  $D.extendWith({name: `midNight`, fn: dt => {
-    dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
-    return dt; }, proxifyResult: true });
-
-  log(`!!<h3 id="extendCustom">Extend the ‘constructor’</h3>
-    <div>Additional extension properties/methods can be created using<br> 
+  extendHelper();
+  log(`!!<h3 id="extendCustom">Utilities: Extend the ‘constructor’</h3>
+    <div>Additional extension properties/methods can be created using<br>
       <code>$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</div>
       <ul class="sub"><li><code>fn</code>: the function to use. The function should at least have one parameter,
-      that being the date value of the instance. By default the extension function is added as property 
-      (<code>isMethod</code> false). When <code>isMethod</code> is true, the function 
+      that being the date value of the instance. By default the extension function is added as property
+      (<code>isMethod</code> false). When <code>isMethod</code> is true, the function
       is considered (and callable as) a method and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
-      <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date, 
+      <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date,
       enables chaining. False by default.
       <br><b>Note</b>: when <code>fn</code> returns the instance date, there's no need to set this value.</li></ul>`);
   log(`!!<code class="codeblock">$D.extendWith({
   name: \`isTodayOrLaterThen\`,
-  fn: (dt, nextDt) => +dt >= +nextDt, 
+  fn: (dt, nextDt) => +dt >= +nextDt,
   isMethod: true });
-  
-// locale aware 'getTimezoneOffset'  
+
+// locale aware 'getTimezoneOffset'
 $D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
-    const timeZone = dt.localeInfo?.timeZone || 
+    const timeZone = dt.localeInfo?.timeZone ||
       Intl.DateTimeFormat().resolvedOptions().timeZone;
     const fmt = Intl.DateTimeFormat(\`en-CA\`, {
       year: \`numeric\`,
@@ -382,7 +376,7 @@ $D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
  $D.extendWith({name: \`localeDiff\`, fn: (dt, timeZone) => {
       const cloned = dt.clone.localizedDT;
       const localized = dt.clone.relocate({timeZone}).localizedDT;
-      // milliseconds possibly influence the difference calculation 
+      // milliseconds possibly influence the difference calculation
       // and are not relevant here, so discard
       localized.time = cloned.time = {milliseconds: 0};
       const sign = cloned === localized ? \`\` : localized.isTodayOrLaterThen(cloned) ? \`+\` : \`-\`;
@@ -398,20 +392,20 @@ $D.extendWith({name: \`midNight\`, fn: dt => {
   <code>$D().utcDistanceHours</code> => ${$D().utcDistanceHours}<br>
   <code>$D().relocate({locale: \`gmt\`, timeZone: \`Europe/Greenwich\`}).utcDistanceHours</code> => ${$D().relocate({locale: `gmt`, timeZone: `utc`}).utcDistanceHours}<br>
   <code>$D().relocate({timeZone: \`America/New_York\`}).utcDistanceHours</code> => ${$D().relocate({locale: `en-US`, timeZone: `America/New_York`}).utcDistanceHours}<br>
-  <code>$D().localeDiff(\`Pacific/Auckland\`)</code> => ${ 
+  <code>$D().localeDiff(\`Pacific/Auckland\`)</code> => ${
     $D().localeDiff(`Pacific/Auckland`) }<br>
-  <code>$D.now.localeDiff(\`America/New_York\`)</code> => ${
-    $D.now.localeDiff(`America/New_York`) }<br>
-  <code>$D.now.localeDiff(\`Asia/Kolkata\`)</code> => ${
-    $D.now.localeDiff(`Asia/Kolkata`) }<br>
-  <code>$D({timeZone: \`Asia/Kolkata\`}).localeDiff(\`America/New_York\`)</code> => ${
-    $D({timeZone: `Asia/Kolkata`}).localeDiff(`America/New_York`) }<br>
-  <code>$D.now.midNight.local</code> => ${$D.now.midNight.local}<br>`);
+  <code>$D().localeDiff(\`America/New_York\`)</code> => ${
+    $D().localeDiff(`America/New_York`) }<br>
+  <code>$D.now.localeDiff(\`Asia/Calcutta\`)</code> => ${
+    $D().localeDiff(`Asia/Calcutta`) }<br>
+  <code>$D({timeZone: \`Asia/Calcutta\`}).localeDiff(\`America/New_York\`)</code> => ${
+    $D({timeZone: `Asia/Calcutta`}).localeDiff(`America/New_York`) }<br>
+  <code>$D().midNight.local</code> => ${$D().midNight.local}<br>`);
   /* endregion extend */
 
   /* region performance */
   log(`!!<h3 id="perfomance">Performance</h3>`);
-  log(checkPerformance(10_000));
+  log(checkPerformance(1_500));
   /* endregion performance */
 }
 /* endregion demo */
@@ -420,15 +414,14 @@ $D.extendWith({name: \`midNight\`, fn: dt => {
 function checkPerformance(nRuns) {
   const start = performance.now();
   for (let i = 0; i < nRuns; i += 1) {
-    const nowX = $D();
-    nowX.locale = {locale: `nl-NL`, timeZone: `Europe/Amsterdam`};
-    const nowXX = nowX.clone.add(`42 days`);
+    $D({locale: `nl-NL`, timeZone: `Europe/Amsterdam`}).clone.add(`42 days`);
   }
   const perf = performance.now() - start;
-  const perfPerTest = perf/nRuns;
-  return `Created, set locale and cloned a $D instance ${nRuns.toLocaleString()} times.
-    <br>That took ${
-    (perf).toFixed(2)}</b> milliseconds (${perfPerTest.toFixed(6)} ms / iteration).`
+  const perfPerTest = perf/nRuns/1000;
+  return `${nRuns.toLocaleString()} times
+    <code>$D({locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\`}).clone.add(\`42 days\`)</code> ...
+    <br>... took ${
+    (perf).toFixed(2)}</b> milliseconds (${perfPerTest.toFixed(6)} seconds / iteration).`;
 }
 
 function logFactory(formatJSON = true) {
@@ -446,7 +439,7 @@ function logFactory(formatJSON = true) {
 
 function tryJSON(content, formatted) {
   try { return formatted ? `<pre>${JSON.stringify(content, null, 2)}</pre>` : JSON.stringify(content); }
-  catch(err) {return `Some [Object object] can not be converted to JSON`}
+  catch(err) { return `Some [Object object] can not be converted to JSON`; }
 }
 
 function codeBlocks2Code() {
@@ -500,16 +493,52 @@ function createContent() {
   $(`#log2screen`).afterMe(`<div class="bottomSpace"></div>`);
 }
 
+function extendHelper() {
+  $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
+  $D.extendWith({name: `utcDistanceHours`, fn: dt => {
+      const timeZone = dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const fmt = Intl.DateTimeFormat(`en-CA`, {
+        year: `numeric`,
+        timeZone: timeZone,
+        timeZoneName: "shortOffset",
+      });
+      let distance = fmt.format(dt).match(/[+-]\d+$/);
+      return !distance ? 0 : distance.shift();  }
+  });
+  $D.extendWith({name: `localeDiff`, fn: (dt, timeZone) => {
+      const cloned = dt.clone.localizedDT;
+      const localized = dt.clone.relocate({timeZone}).localizedDT;
+      localized.time = cloned.time = {milliseconds: 0};
+      const sign = cloned === localized ? `` : localized.isTodayOrLaterThen(cloned) ? `+` : `-`;
+      return `${sign}${cloned.differenceFrom(localized).clean}`;
+    }, isMethod: true });
+  $D.extendWith({name: `utcDiff`, fn: dt => {
+      const dtClone = dt.clone;
+      const tz = {timeZone: dtClone.locale?.timeZone || `utc`};
+      const utcDiff = dt.getTimezoneOffset() * -1;
+      const local4TZ = dtClone.localize4TZ(tz.timeZone).add(`${utcDiff} minutes, 1 second`);
+      let diff = dt.differenceFrom(local4TZ);
+      diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
+      return `UTC difference for ${tz.timeZone}: ${diff}`;
+    } });
+  $D.extendWith({name: `midNight`, fn: dt => {
+      dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+      return dt; }, proxifyResult: true });
+}
+
 function styleIt() {
   $.editCssRules(
-    `body { margin: 0; }`,
+    `body {
+      margin: 0;
+      font: normal 12px/16px verdana, arial;
+    }`,
     `.container { position: absolute; inset: 0; overflow-y: auto; }`,
     `.head div, .head pre, pre {font-weight: normal; color: #777}`,
     `.head b[id], .head b.header {
       cursor: pointer;
-      font-size: 1.2em; 
+      font-size: 1.2em;
       line-height: 1.5rem;
-      display: inline-block; 
+      display: inline-block;
       margin-top: 0.5rem
     }`,
     `@media (width > 1600px) {
@@ -537,9 +566,9 @@ function styleIt() {
       font-family: monospace;
     }`,
     `#log2screen h2 { line-height: 1.7rem; }`,
-    `#log2screen li { 
-      listStyle: '\\2713'; 
-      paddingLeft: 6px; 
+    `#log2screen li {
+      listStyle: '\\2713';
+      paddingLeft: 6px;
       margin: 0.5rem 0 0 -1.2rem;
     }`,
     `#log2screen li pre { margin-top: 0.2rem; }`,
@@ -597,7 +626,7 @@ function styleIt() {
       box-shadow: -2px 1px 12px #aaa;
       margin-top: 1rem;
     }`,
-    `#log2screen .content h3 { 
+    `#log2screen .content h3 {
       margin-top: 0;
       padding-left: 24px;
       color: red;
@@ -628,7 +657,10 @@ function styleIt() {
     `a[data-top]:before, a.internalLink:before, a[target="_top"]:before {
       content: '\\21BA';
      }`,
-    `h3[id] {cursor: pointer;}`,
+    `h3[id] {
+      cursor: pointer;
+      margin-top: 1.2rem;
+    }`,
     `h3[id]:before {
       content: "🔝";
       font-size: 1.2rem;
