@@ -325,8 +325,8 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     or both</div>`);
   log(`${toCode(`$D.now.local`)} => ${$D.now.local}`);
   log(`${toCode(`$D.now.weekDay`)} => ${$D.now.weekDay}`);
-  log(`${toCode(`$D.now.relocate({locale: "en-GB"}).format("{Hi! It's} WD {(again)}")`)} => ${
-    $D.now.relocate({locale: "en-GB"}).format("{Hi! It's} WD {(again)}")}`);
+  log(`${toCode(`$D.now.relocate({locale: "en-GB"}).format("{Hi! Time flies! It's} WD {again}")`)} => ${
+    $D.now.relocate({locale: "en-GB"}).format("{Hi! Time flies! It's} WD {again}")}`);
   log(`${toCode(`$D.validateLocale({locale: "invalid!"})`)} => ${$D.validateLocale({locale: "invalid!"})}`);
   log(`${toCode(`$D.validateLocale({locale: "en-GB"})`)} => ${$D.validateLocale({locale: "en-GB"})}`);
   log(`${toCode(`$D.validateLocale({timeZone: "ToTheMoon/AndBack"})`)} => ${
