@@ -3,7 +3,7 @@ const dx = DateXFactory();
 export { dx as default, DateXFactory };
 
 function DateXFactory() {
-  const proxied = methodHelpersFactory(proxify);
+  let proxied = Object.freeze(methodHelpersFactory(proxify));
   const proxy = {
     get: ( target, key ) => { return !target[key] ? proxied[key]?.(target) : targetGetter(target, key); },
     set: ( target, key, value ) => { return proxied[key] ? proxied[key](target, value) : target[key]; },
@@ -16,17 +16,18 @@ function DateXFactory() {
       return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
     }
 
-    proxied[name] = dt => {
-      dt = proxify(dt);
-
-      if (dt.localeInfo) {
-        dt.relocate(dt.localeInfo);
+    proxied = Object.freeze({...proxied, [name]: dt => {
+        dt = proxify(dt);
+        
+        if (dt.localeInfo) {
+          dt.relocate(dt.localeInfo);
+        }
+        
+        return isMethod
+          ? (...args) => proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args)
+          : proxifyResult ? proxify(fn(dt)) : fn(dt);
       }
-
-      return isMethod
-        ? (...args) => proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args)
-        : proxifyResult ? proxify(fn(dt)) : fn(dt);
-    }
+    });
   }
 
   function now() {
