@@ -27,6 +27,7 @@ function DateXFactory() {
           : proxifyResult ? proxify(fn(dt)) : fn(dt);
       }
     });
+    console.log(`✔ created '${name}' ${isMethod ? `method` : `getter`}`);
   }
 
   function now() {
