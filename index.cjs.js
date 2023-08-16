@@ -32,6 +32,10 @@ function DateXFactory() {
     return xDateFn();
   }
 
+  function validateLocale({locale, timeZone} = {}) {
+    return xDateFn().localeValidator({locale, timeZone});
+  }
+
   function proxify(date) {
     return new Proxy(date, proxy);
   }
@@ -60,12 +64,14 @@ function DateXFactory() {
   Object.defineProperties(xDateFn, {
     now: { get() { return now(); } },
     extendWith: { get() { return extendWith; } },
+    validateLocale: {get() { return validateLocale; } },
   });
 
   return xDateFn;
 }
 
 function methodHelpersFactory(proxify) {
+  let shouldValidate = true;
   const formatter = DateFormatFactory();
   const isNumberAndDefined = v => !(isNaN(parseInt(v)) && isNaN(+v));
   const isObj = maybeObj => maybeObj?.constructor === Object;
@@ -83,7 +89,7 @@ function methodHelpersFactory(proxify) {
     return asArray ? Object.values(valueObj) : valueObj;
   };
   const localizedDT = dt => {
-    const tz = {timeZone: getTimezone(dt), hour12: false};
+    const tz = {timeZone: getTimezone(dt), hourCycle: `h23`};
     let dtNew;
     try {
       return proxify(new Date(new Date(dt.toLocaleString(`en`, tz))));
@@ -123,11 +129,6 @@ function methodHelpersFactory(proxify) {
     cloneDateTimeError(1);
     return cloneFrom;
   };
-  const localeCatcher = function(dProxified) {
-    const formats = getFormats(dProxified);
-    const report = formats?.replace(/l:/, `locale: `).replace(/tz:/, `timeZone: `);
-    return dProxified.toLocaleString() + ` !!invalid locale info => ${report}`;
-  };
   const getLocalStr = (d) => {
     d = proxify(d);
     let opts = {};
@@ -136,36 +137,28 @@ function methodHelpersFactory(proxify) {
       return d.toLocaleString();
     }
 
+    const {locale, timeZone} = d.locale;
+
     if (d.locale?.timeZone) {
       opts = { timeZone: d.locale.timeZone };
     }
 
-    return d.toLocaleString(d.locale?.locale, opts);
+    return d.toLocaleString(locale, opts);
   };
   const doFormat = (d, ...args) => {
     d = proxify(d);
-    const [ locale, timeZone ] = [ d.locale, d.timeZone ];
-    const formats = getFormats(d);
+    let locale, timeZone, formats;
+    if (d.locale) {
+      locale = d.locale.locale;
+      timeZone = d.locale.timeZone;
+      formats = d.formats;
+    }
+
     return args.length === 1
-      ? formatter(d, args[0], formats || undefined)
+      ? formatter(d, args[0], formats)
       : args.length
         ? formatter(d, ...args)
         : d.toLocaleString(locale || [], timeZone ? { timeZone } : undefined);
-  };
-  const reportLocaleError = errLocale =>
-    console.error(`invalid locale (time zone: "${errLocale.timeZone}", locale: "${
-      errLocale.locale}"), removed associated locale information`);
-  const validateLocale = (dt, noProxyReturn = false) => {
-    if (!dt.localeInfo) { return true; }
-    dt = `values` in dt ? dt : proxify(dt);
-
-    try {
-      const test = new Date(dt).toLocaleString(dt.localeInfo.locale ?? [], {timeZone: dt.localeInfo.timeZone});
-      return dt;
-    } catch (err) {
-      reportLocaleError(dt.localeInfo);
-      return dt.removeLocale();
-    }
   };
   const doSet = (d, values) =>  isObj(values) &&
     getNumbers(values).forEach( ([key, value]) => d[`set${key}`](value)) &&
@@ -178,49 +171,51 @@ function methodHelpersFactory(proxify) {
   const getDaysInMonth = (year, month) =>
     proxify(new Date(year, month + 1, 1, 0, 0, 0)).yesterday.getDate();
   const getDateX = d => [d.getFullYear(), d.getMonth(), d.getDate()];
-  const clone = d => {
-    const newD = proxify(new Date(d));
-    newD.relocate(d.localeInfo ?? {timezone: getTimezone(d)});
-    return newD;
-  };
+  const clone = d => proxify(new Date(d)).relocate(d.localeInfo);
   const dateAdd = dateAddFactory();
   const add2Date = (d, ...terms) => proxify(dateAdd(d, ...terms));
-  const getOrSetLocale = (d, {locale, timeZone} = {}) => {
-    if ( locale || timeZone) {
-      d.localeInfo = createLocaleInfo(d, {locale, timeZone});
-      validateLocale(d);
+  const reportLocaleError = errLocale =>
+    console.error(`invalid locale (time zone: "${errLocale.timeZone}", locale: "${
+      errLocale.locale}"), associated your locale instead`);
+  const validateLocale = (locale, timeZone, logError = true) => {
+    try {
+      return Intl.DateTimeFormat(locale, {timeZone: timeZone}).resolvedOptions();
+    } catch (err) {
+      logError && reportLocaleError({locale, timeZone});
+      return Intl.DateTimeFormat().resolvedOptions();
+    }
+  };
+  const formats = (locale, timeZone) => [
+    `${locale && (!(Array.isArray(locale) && locale.length < 1))? `l:${locale}` : ``}`,
+    `${timeZone ? `tz:${timeZone}` : ``}`]
+    .filter(v => v).join(`,`);
+  const createLocaleInfo = function(d, { locale, timeZone } = {}) {
+    if (locale || timeZone) {
+      const resolved = validateLocale(locale || [], timeZone);
+      d.localeInfo = {
+        locale: resolved?.locale || navigator?.language || `en`,
+        timeZone: resolved?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+      d.formats = formats(d.localeInfo.locale, d.localeInfo.timeZone);
     }
 
-    return d.localeInfo ?? {};
+    return d.localeInfo ?? undefined;
   };
-  const getFormats = d => {
-    const [locale, timeZone] = [ d.localeInfo?.locale, d.localeInfo?.timeZone];
-    return [
-      `${locale ? `l:${locale}` : ``}`,
-      `${timeZone ? `tz:${timeZone}` : ``}` ]
-      .filter(v => v).join(`, `)?.trim();
-  };
-  const createLocaleInfo = function(d, {locale, timeZone } = {}) {
-    [locale, timeZone] = [
-      locale || d.localeInfo?.locale, timeZone || d.localeInfo?.timeZone || getTimezone(d)];
-    const formats = [
-       `${locale ? `l:${locale}` : ``}`,
-       `${timeZone ? `tz:${timeZone}` : ``}` ]
-      .filter(v => v).join(`, `)
-    d.localeInfo = {
-      ...(locale ? {locale} : {}),
-      ...(timeZone ? {timeZone} : {}), };
-    d.localeInfo.formats = getFormats(d);
+  const getOrSetLocale = (d, {locale, timeZone, validate = true} = {}) => {
+    if ( locale || timeZone) {
+      d.localeInfo = createLocaleInfo(d, {locale, timeZone, validate});
+    }
+
     return d.localeInfo;
   };
-
   const removeLocaleInfo = d => {
-    //d = proxify(d);
     delete d.localeInfo;
     return proxify(d);
   };
-  const reLocate = function(d, locale, timeZone) {
-    getOrSetLocale(d, {locale, timeZone} || d.localeInfo);
+  const reLocate = function(d, locale, timeZone, validate) {
+    if (locale || timeZone) {
+      getOrSetLocale(d, {locale, timeZone} || d.localeInfo);
+    }
     return proxify(d);
   };
   const names = function(d, month) {
@@ -228,7 +223,20 @@ function methodHelpersFactory(proxify) {
     return d.format(month ? `MM` : `WD`, `l:${d.locale?.locale || `utc`}`);
   };
   const dateStr = d => {
-    return d.toLocaleDateString().split(/[-\/]/).map(v => zeroPad(v)).join(`-`);
+    let opts = {};
+    d = proxify(d);
+
+    if (!d.locale) {
+      return d.toLocaleDateString();
+    }
+
+    const {locale, timeZone} = d.locale;
+
+    if (d.locale?.timeZone) {
+      opts = { timeZone: d.locale.timeZone };
+    }
+
+    return d.toLocaleDateString(locale, opts);
   };
   const getTimeStr = (d, ms) => {
     const timeArr = getTime(d)
@@ -247,6 +255,20 @@ function methodHelpersFactory(proxify) {
     const [fmt1, fmt2] = [fmt.format(dt1), fmt.format(dt2)];
     return offset2Number(fmt1) - offset2Number(fmt2) !== 0;
   };
+  const localeValidator = () => ({locale, timeZone} = {}) => {
+    if (!locale && !timeZone) { return false; }
+
+    const validated = validateLocale(locale, timeZone, false);
+
+    if (locale && !timeZone) {
+      return validated.locale === locale;
+    }
+    if (timeZone && !locale) {
+      return timeZone === validated.timeZone;
+    }
+
+    return validated.locale === locale && timeZone === validated.timeZone;
+  };
 
   return ({
     ...{
@@ -255,6 +277,7 @@ function methodHelpersFactory(proxify) {
       hasDST,
       getTimezone,
       dateStr,
+      localeValidator,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
       date: (d, {year, month, date} = {}) =>
@@ -500,7 +523,7 @@ function dateAddFactory() {
         return a.toLowerCase().split(/\s/)
           .map(v => {
             v = v.trim();
-            return +v ? subtract ? -v : +v : v;
+            return parseInt(v) ? subtract ? -v : +v : v;
           });
       });
   }

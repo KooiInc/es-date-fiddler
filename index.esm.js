@@ -33,6 +33,10 @@ function DateXFactory() {
     return xDateFn();
   }
 
+  function validateLocale({locale, timeZone} = {}) {
+    return xDateFn().localeValidator({locale, timeZone});
+  }
+
   function proxify(date) {
     return new Proxy(date, proxy);
   }
@@ -61,6 +65,7 @@ function DateXFactory() {
   Object.defineProperties(xDateFn, {
     now: { get() { return now(); } },
     extendWith: { get() { return extendWith; } },
+    validateLocale: {get() { return validateLocale; } },
   });
 
   return xDateFn;
