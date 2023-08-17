@@ -272,6 +272,7 @@ function methodHelpersFactory(proxify, validateLocale) {
       hasDST,
       getTimezone,
       dateStr,
+      locale2Formats: (d) => formats(d.localeInfo?.locale, d.localeInfo?.timeZone),
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
       date: (d, {year, month, date} = {}) =>
