@@ -2,7 +2,7 @@ const $D = DateX = DateXFactory();
 module.exports = { DateX, $D, DateXFactory };
 
 function DateXFactory() {
-  let proxied = Object.freeze(methodHelpersFactory(proxify));
+  let proxied = Object.freeze(methodHelpersFactory(proxify, localeValidator));
   const proxy = {
     get: ( target, key ) => { return !target[key] ? proxied[key]?.(target) : targetGetter(target, key); },
     set: ( target, key, value ) => { return proxied[key] ? proxied[key](target, value) : target[key]; },
@@ -29,13 +29,31 @@ function DateXFactory() {
     });
     console.log(`✔ created '${name}' ${isMethod ? `method` : `getter`}`);
   }
+  
+  function localeValidator(locale, timeZone, logError = true) {
+    const reportLocaleError = errLocale =>
+      console.error(`invalid locale (time zone: "${errLocale.timeZone}", locale: "${
+        errLocale.locale}"), associated your locale instead`);
+    try {
+      return Intl.DateTimeFormat(locale, {timeZone: timeZone}).resolvedOptions();
+    } catch (err) {
+      logError && reportLocaleError({locale, timeZone});
+      return Intl.DateTimeFormat().resolvedOptions();
+    }
+  }
 
   function now() {
     return xDateFn();
   }
 
   function validateLocale({locale, timeZone} = {}) {
-    return xDateFn().localeValidator({locale, timeZone});
+    if (!locale && !timeZone) { return false; }
+    const validated = localeValidator(locale, timeZone, false);
+    
+    if (locale && !timeZone) { return validated.locale === locale; }
+    if (timeZone && !locale) { return timeZone === validated.timeZone; }
+
+    return validated.locale === locale && timeZone === validated.timeZone;
   }
 
   function proxify(date) {
@@ -72,7 +90,7 @@ function DateXFactory() {
   return xDateFn;
 }
 
-function methodHelpersFactory(proxify) {
+function methodHelpersFactory(proxify, validateLocale) {
   let shouldValidate = true;
   const formatter = DateFormatFactory();
   const isNumberAndDefined = v => !(isNaN(parseInt(v)) && isNaN(+v));
@@ -176,17 +194,6 @@ function methodHelpersFactory(proxify) {
   const clone = d => proxify(new Date(d)).relocate(d.localeInfo);
   const dateAdd = dateAddFactory();
   const add2Date = (d, ...terms) => proxify(dateAdd(d, ...terms));
-  const reportLocaleError = errLocale =>
-    console.error(`invalid locale (time zone: "${errLocale.timeZone}", locale: "${
-      errLocale.locale}"), associated your locale instead`);
-  const validateLocale = (locale, timeZone, logError = true) => {
-    try {
-      return Intl.DateTimeFormat(locale, {timeZone: timeZone}).resolvedOptions();
-    } catch (err) {
-      logError && reportLocaleError({locale, timeZone});
-      return Intl.DateTimeFormat().resolvedOptions();
-    }
-  };
   const formats = (locale, timeZone) => [
     `${locale && (!(Array.isArray(locale) && locale.length < 1))? `l:${locale}` : ``}`,
     `${timeZone ? `tz:${timeZone}` : ``}`]
@@ -257,20 +264,6 @@ function methodHelpersFactory(proxify) {
     const [fmt1, fmt2] = [fmt.format(dt1), fmt.format(dt2)];
     return offset2Number(fmt1) - offset2Number(fmt2) !== 0;
   };
-  const localeValidator = () => ({locale, timeZone} = {}) => {
-    if (!locale && !timeZone) { return false; }
-
-    const validated = validateLocale(locale, timeZone, false);
-
-    if (locale && !timeZone) {
-      return validated.locale === locale;
-    }
-    if (timeZone && !locale) {
-      return timeZone === validated.timeZone;
-    }
-
-    return validated.locale === locale && timeZone === validated.timeZone;
-  };
 
   return ({
     ...{
@@ -279,7 +272,6 @@ function methodHelpersFactory(proxify) {
       hasDST,
       getTimezone,
       dateStr,
-      localeValidator,
       year: (d, setValue) => setValue && d.setFullYear(setValue) || d.getFullYear(),
       month: (d, setValue) => setValue && d.setMonth(v - 1) || d.getMonth() + 1,
       date: (d, {year, month, date} = {}) =>

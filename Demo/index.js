@@ -115,6 +115,7 @@ function demoNdTest() {
     $D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()}`);
   log(toCode(`$D().getTimezone`) + ` (your local time zone) => ${$D().getTimezone}`);
   log(toCode(`d2German.removeLocale().local`) + ` => ${d2German.removeLocale().local}`);
+  log(toCode(`d2German.locale`) + ` => ${d2German.removeLocale().locale}`);
   log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr}`);
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
