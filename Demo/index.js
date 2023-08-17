@@ -261,9 +261,9 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     <p>=> (proxified) <i>now</i> with locale parameters: ${
     $D({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local}</p>`);
   const frDate = $D('2020/03/18 17:00', {locale: 'fr-FR', timeZone: 'Europe/Paris' });
-  const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi', frDate.locale.formats);
+  const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi');
   log(`${toCode(`const frDate = $D('2020/03/18 17:00', { locale: 'fr-FR', timeZone: 'Europe/Paris' });
-    const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi', frDate.locale.formats)`, true)}
+    const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi')`, true)}
     <p>=> (proxified) Date with locale parameters: ${frDateFormatted}</p>`);
   /* endregion constructor */
 
