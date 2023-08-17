@@ -60,6 +60,36 @@ function demoNdTest() {
   log(`${toCode(`d3.local`)} (no timeZone) => ${d3.local}<br>${toCode(`d3.dateStr`)} => ${
     d3.dateStr}<br>${toCode(`d3.timeStr(true)`)} => ${d3.timeStr(true)}`)
   /* endregion init  */
+  
+  /* region constructor */
+  log(`!!<h3 id="constructor" class="quoted">Constructor</h3>
+    <div>The constructor (here <code>$D</code> has the signature:<br><br>
+    <code>$D([dateOrLocale: Date | string | {locale, timeZone}], [localeInfo: {locale, timeZone}])</code>
+    </div><br>
+    <ul class="sub">
+      <li><code>dateOrLocale</code> can be a regular Date (<code>new Date(...)</code>), a (valid)
+      date string (<code>\`2022/07/18\`</code>) or an Object with locale information
+      (one of or both, e.g. <code>{locale: \`en-CA\`, timeZone: \`America/Toronto\`}</code>). If it's a string and no date can
+      be inferred from it, the current date ('now') will be the instances' Date. If it's an Object
+      the current date with the locale parameters from the Object will be the instances' Date.</li>
+      <li><code>localeInfo</code> When the first parameter is a Date or a date string, the second
+        parameter can be used to associate locale information with that Date (see next chapter).</li>
+    </ul><br><b>Examples</b>`);
+  log(`${toCode(`$D(\`hello\`).ISO`)}
+    <p>=> invalid date string returns <i>now</i>: ${$D(`hello`).ISO}</p>`);
+  log(`${toCode(`$D(\`2012/12/12 00:00:00\`).ISO`)}
+    <p>=> string converted to: ${$D(`2012/12/12 00:00:00`).ISO}</p>`);
+  log(`${toCode(`$D().ISO`)}
+    <p>=> no parameters returns <i>now</i>: ${$D().ISO}</p>`);
+  log(`${toCode(`$D({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local`)}
+    <p>=> <i>now</i> with locale parameters: ${
+    $D({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local}</p>`);
+  const frDate = $D('2020/03/18 17:00', {locale: 'fr-FR', timeZone: 'Europe/Paris' });
+  const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi');
+  log(`${toCode(`const frDate = $D('2020/03/18 17:00', { locale: 'fr-FR', timeZone: 'Europe/Paris' });
+    const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi')`, true)}
+    <p>=> Instance with locale parameters formatted: ${frDateFormatted}</p>`);
+  /* endregion constructor */
 
   /* region locale */
   const yourZone = Intl.DateTimeFormat().resolvedOptions();
@@ -248,24 +278,6 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   log(`${toCode(`then.differenceFrom(then).clean`)} ${then.differenceFrom(then).clean}`);
   /* endregion difference */
   /* endregion arithmetic */
-
-  /* region constructor */
-  log(`!!<h3 id="constructor" class="quoted">Constructor</h3>`);
-  log(`${toCode(`$D(\`hello\`).ISO`)}
-    <p>=> invalid Date returns (proxified) <i>now</i>: ${$D(`hello`).ISO}</p>`);
-  log(`${toCode(`$D(\`2012/12/12 00:00:00\`).ISO`)}
-    <p>=> string converted to (proxified) Date (when convertable): ${$D(`2012/12/12 00:00:00`).ISO}</p>`);
-  log(`${toCode(`$D().ISO`)}
-    <p>=> no parameters returns (proxified) <i>now</i>: ${$D().ISO}</p>`);
-  log(`${toCode(`$D({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local`)}
-    <p>=> (proxified) <i>now</i> with locale parameters: ${
-    $D({locale: 'fr-FR', timeZone: 'Europe/Paris' }).local}</p>`);
-  const frDate = $D('2020/03/18 17:00', {locale: 'fr-FR', timeZone: 'Europe/Paris' });
-  const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi');
-  log(`${toCode(`const frDate = $D('2020/03/18 17:00', { locale: 'fr-FR', timeZone: 'Europe/Paris' });
-    const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi')`, true)}
-    <p>=> (proxified) Date with locale parameters: ${frDateFormatted}</p>`);
-  /* endregion constructor */
 
   /* region custom properties */
   log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`);
