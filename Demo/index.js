@@ -63,7 +63,7 @@ function demoNdTest() {
   
   /* region constructor */
   log(`!!<h3 id="constructor" class="quoted">Constructor</h3>
-    <div>The constructor (here <code>$D</code> has the signature:<br><br>
+    <div>The constructor (here <code>$D</code>) has the signature:<br><br>
     <code>$D([dateOrLocale: Date | string | {locale, timeZone}], [localeInfo: {locale, timeZone}])</code>
     </div><br>
     <ul class="sub">
