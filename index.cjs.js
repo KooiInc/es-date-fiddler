@@ -2,12 +2,12 @@ const $D = DateX = DateXFactory();
 module.exports = { DateX, $D, DateXFactory };
 
 function DateXFactory() {
-  let proxied = Object.freeze(methodHelpersFactory(proxify, localeValidator));
+  let extensionGettersAndSetters = Object.freeze(methodHelpersFactory(proxify, localeValidator));
   const proxy = {
-    get: ( target, key ) => { return !target[key] ? proxied[key]?.(target) : targetGetter(target, key); },
-    set: ( target, key, value ) => { return proxied[key] ? proxied[key](target, value) : target[key]; },
-    ownKeys: (target) => Object.getOwnPropertyNames(proxied),
-    has: (target, key) => key in proxied || key in target,
+    get: ( target, key ) => { return !target[key] ? extensionGettersAndSetters[key]?.(target) : targetGetter(target, key); },
+    set: ( target, key, value ) => { return extensionGettersAndSetters[key] ? extensionGettersAndSetters[key](target, value) : target[key]; },
+    ownKeys: (target) => Object.getOwnPropertyNames(extensionGettersAndSetters),
+    has: (target, key) => key in extensionGettersAndSetters || key in target,
   };
 
   function extendWith({name, fn, isMethod = false, proxifyResult = false} = {}) {
@@ -15,7 +15,7 @@ function DateXFactory() {
       return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
     }
 
-    proxied = Object.freeze({...proxied, [name]: dt => {
+    extensionGettersAndSetters = Object.freeze({...extensionGettersAndSetters, [name]: dt => {
         dt = proxify(dt);
         
         if (dt.localeInfo) {
