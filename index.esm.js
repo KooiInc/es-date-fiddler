@@ -86,6 +86,7 @@ function DateXFactory() {
     now: { get() { return now(); } },
     extendWith: { get() { return extendWith; } },
     validateLocale: {get() { return validateLocale; } },
+    ownFns: { get() { return Object.getOwnPropertyDescriptors( extensionGettersAndSetters ) } }
   });
 
   return xDateFn;
