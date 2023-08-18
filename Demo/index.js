@@ -29,6 +29,7 @@ createContent();
 function demoNdTest() {
   /* region init */
   const xtndFN4Display = (xtnd => xtnd.slice(xtnd.indexOf(`{`) + 2, -1).trim())(String(extendHelper));
+  const dtst = $D();
   const yn = tf => tf ? `Yep` : `Nope`;
   const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
   const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${
@@ -314,8 +315,11 @@ function demoNdTest() {
   const exampleDateFormatted = exampleDate.add(`5 days, 3 hours`).nextYear
     .format(`{<code>exampleDate.add(\`5 days, 3 hours\`).nextYear</code>}:  MM d yyyy (hh:mmi:ss)`);
   log(`!!<h3 id="fiddling">Arithmetic (add/subtract to/from the Date at hand)</h3>
-  <div><b>Note</b>: add/subtract and aggregates like ${toCode(`nextYear`)} are
-  <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a></div>
+  <div><b>Notes</b></div><ul class="sub">
+    <li>add/subtract and all aggregates like ${toCode(`.nextYear`)}, ${toCode(`.tomorrow`)} are
+      <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a></li>
+    <li>add/subtract and all aggregates <i>change</i> the instance Date</li>
+  </ul>
   <code class="codeblock">const exampleDate = $D().relocate({locale: \`en-GB\`, timeZone: \`Europe/London\`});
 const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   .format(\`{&lt;code>exampleDate.add(\`5 days, 3 hours\`).nextYear&lt;/code>}: MM d yyyy (hh:mmi:ss)\`);`);
@@ -387,6 +391,26 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   log(`${toCode(`$D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})`)} => ${
     $D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})}`);
   /* endregion now & validateLocale */
+  
+  /* region all extension names */
+    log(`!!<h3 id="allNames">List of default instance extension getters/setters</h3>
+      <p>You can retrieve the names of all getters/setters (properties/methods) using
+      <code>Object.getOwnPropertyNames($D())</code>. When you added properties/methods
+      with <code>$D.extendWith</code>, they will also show up in the list. Here are
+      all <i>initial</i> (say: predefined) keys of any instance.</p>
+      <div><b>Notes:</b></div>
+      <ul class="sub">
+        <li>A <i>mutating getter method</i> is called with parameter(s) and changes the instance date
+        (e.g. <code>[instance].add(\`4 years\`)</code>)</li>
+        <li>A <i>mutating getter</i> changes the instance date and retrieves it
+        (e.g. <code>[instance].tomorrow</code>)</li>
+        <li>A <i>getter method</i> is called with parameters(s) and retrieves a (calculated) value
+        of the instance (e.g. <code>[instance].time(true)</code>)</li>
+        <li>A <i>getter</i> retrieves a (calculated) value of the instance (e.g. <code>[instance].isDST</code>)</li>
+        <li>A <i>setter and getter</i> either retrieves a value or can be used to <i>assign</i> a value
+        (e.g. <code>[instance].hour = 4</code>)</li>
+        ${getInitialExtensions()}</ul>`);
+  /* endregion all extension names */
   
   /* region performance */
   log(`!!<h3 id="perfomance">Performance</h3>`);
@@ -520,6 +544,56 @@ $D.extendWith({name: `midNight`, fn: dt => {
   dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
   return dt; }, proxifyResult: true });
 }
+
+function getInitialExtensions() {
+  return `<li class="head"><h3>The list</b>: <code>[$D instance].</code></h3></li>
+    <li><b>add</b> (mutating getter method, chainable)</li>
+    <li><b>addDays</b> (mutating getter method, chainable)</li>
+    <li><b>addMonths</b> (mutating getter method, chainable)</li>
+    <li><b>addWeeks</b> (mutating getter method, chainable)</li>
+    <li><b>addYears</b> (mutating getter method, chainable)</li>
+    <li><b>clone</b> (getter, chainable)</li>
+    <li><b>cloneDateTo</b> (method, chainable)</li>
+    <li><b>cloneTimeTo</b> (method, chainable)</li>
+    <li><b>date</b> (setter and getter, getter chainable)</li>
+    <li><b>dateISOStr</b> (getter)</li>
+    <li><b>dateStr</b> (getter)</li>
+    <li><b>daysInMonth</b> (getter)</li>
+    <li><b>differenceFrom</b> (getter method)</li>
+    <li><b>format</b> (getter method)</li>
+    <li><b>getTimezone</b> (getter)</li>
+    <li><b>hasDST</b> (getter)</li>
+    <li><b>hour</b> (setter and getter, chainable)</li>
+    <li><b>isLeapYear</b> (getter)</li>
+    <li><b>ISO</b> (getter)</li>
+    <li><b>local</b> (getter)</li>
+    <li><b>locale</b> (setter and getter)</li>
+    <li><b>locale2Formats</b> (getter)</li>
+    <li><b>localizedDT</b> (getter, chainable)</li>
+    <li><b>minutes</b> (setter and getter, getter chainable)</li>
+    <li><b>month</b> (setter and getter, getter chainable)</li>
+    <li><b>monthName</b> (getter)</li>
+    <li><b>ms</b> (setter and getter, getter chainable)</li>
+    <li><b>nextMonth</b> (mutating getter, chainable)</li>
+    <li><b>nextWeek</b> (mutating getter, chainable)</li>
+    <li><b>nextYear</b> (mutating getter, chainable)</li>
+    <li><b>previousMonth</b> (mutating getter, chainable)</li>
+    <li><b>previousWeek</b> (mutating getter, chainable)</li>
+    <li><b>previousYear</b> (mutating getter, chainable)</li>
+    <li><b>relocate</b> (setter method, chainable)</li>
+    <li><b>removeLocale</b> (setter method, chainable)</li>
+    <li><b>seconds</b> (setter and getter, getter chainable)</li>
+    <li><b>self</b> (getter)</li>
+    <li><b>subtract</b> (mutating getter method, chainable)</li>
+    <li><b>time</b> (setter and getter, getter chainable)</li>
+    <li><b>timeStr</b> (getter method)</li>
+    <li><b>tomorrow</b> (mutating getter, chainable)</li>
+    <li><b>values</b> (getter)</li>
+    <li><b>weekDay</b> (getter)</li>
+    <li><b>year</b> (setter and getter, getter chainable)</li>
+    <li><b>yesterday</b> (mutating getter, chainable)</li>`;
+}
+
 /* endregion helpers */
 
 /* region styling */
