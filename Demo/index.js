@@ -8,8 +8,6 @@ const $D = isDev
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 window.$D = $D;
-const xtnd = extendHelper.toString();
-//console.log(xtnd.slice(xtnd.indexOf(`{`) + 2, -1).trim());
 
 if (isDev) {
   document.title = `##DEV## ${document.title}`;
@@ -30,6 +28,7 @@ createContent();
 /* region demo */
 function demoNdTest() {
   /* region init */
+  const xtndFN4Display = (xtnd => xtnd.slice(xtnd.indexOf(`{`) + 2, -1).trim())(String(extendHelper));
   const yn = tf => tf ? `Yep` : `Nope`;
   const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
   const toCode = (str, block) => `<code${block ? ` class="codeblock"` : ``}>${
@@ -141,7 +140,7 @@ function demoNdTest() {
       <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date,
       enables chaining. False by default.
       <br><b>Note</b>: when <code>fn</code> returns the instance date, there's no need to set this value.</li></ul>`);
-  log(`!!<code class="codeblock">${xtnd.slice(xtnd.indexOf(`{`) + 2, -1).trim()}</code>`);
+  log(`!!<code class="codeblock">${xtndFN4Display}</code>`);
   log(`<code>$D().add(\`1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`1 day`).isTodayOrLaterThen($D())}<br>
   <code>$D().add(\`-1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`-1 day`).isTodayOrLaterThen($D())}<br>
   <code>$D().utcDistanceHours</code> => ${$D().utcDistanceHours}<br>
@@ -475,7 +474,7 @@ function createContent() {
   });
   $(`<p><b>Note</b>: Use <code class="inline">$D</code> in the developer console to experiment with it</p>`,
     contentDiv, $.at.AfterEnd);
-  $.editCssRule(`.bottomSpace { height: ${Math.floor(container.clientHeight/2)}px; }`);
+  $.editCssRule(`.bottomSpace { height: ${container.clientHeight}px; }`);
   $(`#log2screen`).afterMe(`<div class="bottomSpace"></div>`);
 }
 
@@ -495,7 +494,7 @@ $D.extendWith({name: `utcDistanceHours`, fn: dt => {
 });
 
 // difference between the local time (as determined by the
-// instance locale) and the time in the given time zone
+// instance locale) and the time in the [timeZone] parameter
 $D.extendWith({name: `localeDiff`, fn: (dt, timeZone) => {
   const cloned = dt.clone.localizedDT;
   const localized = dt.clone.relocate({timeZone}).localizedDT;
