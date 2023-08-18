@@ -8,6 +8,8 @@ const $D = isDev
   : (await import("../Bundle/index.esm.min.js")).default;
 const { log, logTop } = logFactory(true);
 window.$D = $D;
+const xtnd = extendHelper.toString();
+//console.log(xtnd.slice(xtnd.indexOf(`{`) + 2, -1).trim());
 
 if (isDev) {
   document.title = `##DEV## ${document.title}`;
@@ -54,18 +56,17 @@ function demoNdTest() {
     d2.locale = { locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` };`, true) );
 
   log(`${toCode(`d1.local`)} (timeZone: ${d1.locale?.timeZone}) => ${d1.local}<br>${toCode(`d1.dateStr`)} => ${
-    d1.dateStr}<br>${toCode(`d1.timeStr(true)`)} => ${d1.timeStr(true)}`);
+    d1.dateStr}<br>${toCode(`d1.timeStr()`)} => ${d1.timeStr()}`);
   log(`${toCode(`d2.local`)} (timeZone: ${d2.locale?.timeZone}) => ${d2.local}<br>${toCode(`d2.dateStr`)} => ${
     d2.dateStr}<br>${toCode(`d2.timeStr(true)`)} => ${d2.timeStr(true)}`);
   log(`${toCode(`d3.local`)} (no timeZone) => ${d3.local}<br>${toCode(`d3.dateStr`)} => ${
-    d3.dateStr}<br>${toCode(`d3.timeStr(true)`)} => ${d3.timeStr(true)}`)
+    d3.dateStr}<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`)
   /* endregion init  */
   
   /* region constructor */
   log(`!!<h3 id="constructor" class="quoted">Constructor</h3>
-    <div>The constructor (here <code>$D</code>) has the signature:<br><br>
-    <code>$D([dateOrLocale: Date | string | {locale, timeZone}], [localeInfo: {locale, timeZone}])</code>
-    </div><br>
+    <div>The constructor (here <code>$D</code>) has the signature:</div>
+    <p><code>$D([dateOrLocale: Date | string | {locale, timeZone}], [localeInfo: {locale, timeZone}])</code></p>
     <ul class="sub">
       <li><code>dateOrLocale</code> can be a regular Date (<code>new Date(...)</code>), a (valid)
       date string (<code>\`2022/07/18\`</code>) or an Object with locale information
@@ -73,7 +74,8 @@ function demoNdTest() {
       be inferred from it, the current date ('now') will be the instances' Date. If it's an Object
       the current date with the locale parameters from the Object will be the instances' Date.</li>
       <li><code>localeInfo</code> When the first parameter is a Date or a date string, the second
-        parameter can be used to associate locale information with that Date (see next chapter).</li>
+        parameter can be used to associate locale information with that Date (see
+        <span data-target="#locale">Locale</span>).</li>
     </ul><br><b>Examples</b>`);
   log(`${toCode(`$D(\`hello\`).ISO`)}
     <p>=> invalid date string returns <i>now</i>: ${$D(`hello`).ISO}</p>`);
@@ -90,6 +92,71 @@ function demoNdTest() {
     const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi')`, true)}
     <p>=> Instance with locale parameters formatted: ${frDateFormatted}</p>`);
   /* endregion constructor */
+  
+  /* region extensions */
+  log(`!!<h3 id="customprops">Extension getters / setters</h3>`);
+  const now = $D();
+  const y2000 = now.clone;
+  y2000.date = { year: 2000 };
+  log(`!!` + toCode(`
+    const now = $D();
+    const y2000 = now.clone;
+    y2000.date = { year: 2000 };`, true));
+  log(`${toCode(`y2000.local`)} => ${y2000.local}`);
+  log(`${toCode(`y2000.year`)} => ${y2000.year}`);
+  log(`${toCode(`y2000.daysInMonth`)} => ${
+    y2000.monthName} ${y2000.year} has ${y2000.daysInMonth} days`);
+  log(`${toCode(`now.isLeapYear`)} => Is this year (${now.year}) is a leap year? ${yn(now.isLeapYear)}`);
+  log(`${toCode(`y2000.isLeapYear`)} => Is year ${y2000.year} a leap year? ${yn(y2000.isLeapYear)}`);
+  log(`<code>y2000.timeStr()</code> => ${y2000.timeStr()}`);
+  log(`<code>y2000.timeStr(true)</code> => ${y2000.timeStr(true)}`);
+  log(`<code>y2000.hour</code> => ${y2000.hour}`);
+  y2000.hour = 22;
+  log(`<code>y2000.hour = 22;</code><p>${toCode(`y2000.hour`)} => ${y2000.hour}</p>`);
+  log(`${toCode(`y2000.monthName`)} => ${y2000.monthName}`);
+  log(`${toCode(`y2000.weekDay`)} => ${y2000.weekDay}`);
+  const chinese = y2000.clone;
+  chinese.locale = { locale:`zh-Hant`, timeZone: `Asia/Shanghai` };
+  log(`!!` + toCode(`const chinese = y2000.clone;
+  chinese.locale = { locale: \`zh-Hant\`, timeZone: \`Asia/Shanghai\` };`, true));
+  log(`${toCode(`chinese.local`)} => ${chinese.local}`);
+  log(`${toCode(`chinese.monthName`)} => ${chinese.monthName}`);
+  log(`${toCode(`chinese.weekDay`)} => ${chinese.weekDay}`);
+  y2000.time = {hour: 12, minutes: 13, seconds: 0};
+  log(`${toCode(`y2000.time = {hour: 12, minutes: 13, seconds: 0};\ny2000.timeStr(true);`, true)}<p>=> ${
+    y2000.timeStr(true)}</p>`);
+  log(`<code>y2000.minutes</code> => ${y2000.minutes}`);
+  log(`${toCode(`y2000.time`)} => [${y2000.time}]`);
+  /* endregion  extensions */
+  
+  /* region extend */
+  extendHelper();
+  log(`!!<h3 id="extendCustom">Utilities: add extensions to the constructor dynamically</h3>
+    <div>Additional extension properties/methods can be created using</div>
+      <p><code>$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</p>
+      <ul class="sub"><li><code>fn</code>: the function to use. The function should at least have one parameter,
+      that being the date value of the instance. By default the extension function is added as property
+      (<code>isMethod</code> false). When <code>isMethod</code> is true, the function
+      is considered (and callable as) a method and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
+      <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date,
+      enables chaining. False by default.
+      <br><b>Note</b>: when <code>fn</code> returns the instance date, there's no need to set this value.</li></ul>`);
+  log(`!!<code class="codeblock">${xtnd.slice(xtnd.indexOf(`{`) + 2, -1).trim()}</code>`);
+  log(`<code>$D().add(\`1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`1 day`).isTodayOrLaterThen($D())}<br>
+  <code>$D().add(\`-1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`-1 day`).isTodayOrLaterThen($D())}<br>
+  <code>$D().utcDistanceHours</code> => ${$D().utcDistanceHours}<br>
+  <code>$D().relocate({locale: \`gmt\`, timeZone: \`Europe/Greenwich\`}).utcDistanceHours</code> => ${$D().relocate({locale: `gmt`, timeZone: `utc`}).utcDistanceHours}<br>
+  <code>$D().relocate({timeZone: \`America/New_York\`}).utcDistanceHours</code> => ${$D().relocate({locale: `en-US`, timeZone: `America/New_York`}).utcDistanceHours}<br>
+  <code>$D().localeDiff(\`Pacific/Auckland\`)</code> => ${
+    $D().localeDiff(`Pacific/Auckland`) }<br>
+  <code>$D().localeDiff(\`America/New_York\`)</code> => ${
+    $D().localeDiff(`America/New_York`) }<br>
+  <code>$D.now.localeDiff(\`Asia/Calcutta\`)</code> => ${
+    $D().localeDiff(`Asia/Calcutta`) }<br>
+  <code>$D({timeZone: \`Asia/Calcutta\`}).localeDiff(\`America/New_York\`)</code> => ${
+    $D({timeZone: `Asia/Calcutta`}).localeDiff(`America/New_York`) }<br>
+  <code>$D().midNight.local</code> => ${$D().midNight.local}<br>`);
+  /* endregion extend */
 
   /* region locale */
   const yourZone = Intl.DateTimeFormat().resolvedOptions();
@@ -222,7 +289,9 @@ function demoNdTest() {
   log( toCode(`invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')`) + `<p>=> ${
     invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
 
-  // cloning
+  /* endregion formatting */
+  
+  /* region clone date or time part */
   log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
   log(`!!<div><b>Notes</b>:<ul class="decimal">
     <li>The locale of the original is also cloned.</li>
@@ -232,14 +301,14 @@ function demoNdTest() {
   const timeCloned = initial.cloneTimeTo();
   log(toCode(`const initial = $D(new Date(\`1999/05/31 14:22:44.142\`), { locale: \`en-GB\` });
   // Clone date/time of [initial] to current date
-  const dateCloned = initial.cloneDateTo();
-  const timeCloned = initial.cloneTimeTo();`, true));
+  const dateCloned = initial.cloneDateTo(new Date());
+  const timeCloned = initial.cloneTimeTo(new Date());`, true));
   log(`${toCode(`initial.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${initial.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
-  log(`${toCode(`dateCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${dateCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
-  log(`${toCode(`timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${timeCloned.format('dd/mm/yyyy hh:mmi:ss.ms')}`);
-  log(`${toCode(`initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss.ms')`)} => ${
-    initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss.ms')}`);
-  /* endregion formatting */
+  log(`${toCode(`dateCloned.format('dd/mm/yyyy hh:mmi:ss')`)} => ${dateCloned.format('dd/mm/yyyy hh:mmi:ss')}`);
+  log(`${toCode(`timeCloned.format('dd/mm/yyyy hh:mmi:ss')`)} => ${timeCloned.format('dd/mm/yyyy hh:mmi:ss')}`);
+  log(`${toCode(`initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss')`)} => ${
+    initial.cloneDateTo(new Date('2000/1/1 22:33:44')).format('dd/mm/yyyy hh:mmi:ss')}`);
+  /* endregion clone date or time part */
 
   /* region arithmetic */
   const exampleDate = $D().relocate({locale: `en-GB`, timeZone: `Europe/London`});
@@ -278,40 +347,6 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   log(`${toCode(`then.differenceFrom(then).clean`)} ${then.differenceFrom(then).clean}`);
   /* endregion difference */
   /* endregion arithmetic */
-
-  /* region custom properties */
-  log(`!!<h3 id="customprops">Custom properties (get / set)</h3>`);
-  const now = $D();
-  const y2000 = now.clone;
-  y2000.date = { year: 2000 };
-  log(`!!` + toCode(`
-    const now = $D();
-    const y2000 = now.clone;
-    y2000.date = { year: 2000 };`, true));
-  log(`${toCode(`y2000.local`)} => ${y2000.local}`);
-  log(`${toCode(`y2000.daysInMonth`)} => ${
-    y2000.monthName} ${y2000.year} has ${y2000.daysInMonth} days`);
-  log(`${toCode(`now.isLeapYear`)} => Is this year (${now.year}) is a leap year? ${yn(now.isLeapYear)}`);
-  log(`${toCode(`y2000.isLeapYear`)} => Is year ${y2000.year} a leap year? ${yn(y2000.isLeapYear)}`);
-  log(`<code>y2000.timeStr()</code> => ${y2000.timeStr()}`);
-  log(`<code>y2000.timeStr(true)</code> => ${y2000.timeStr(true)}`);
-  log(`<code>y2000.hour</code> => ${y2000.hour}`);
-  y2000.hour = 22;
-  log(`<code>y2000.hour = 22;</code><p>${toCode(`y2000.hour`)} => ${y2000.hour}</p>`);
-  log(`${toCode(`y2000.monthName`)} => ${y2000.monthName}`);
-  log(`${toCode(`y2000.weekDay`)} => ${y2000.weekDay}`);
-  const chinese = y2000.clone;
-  chinese.locale = { locale:`zh-Hant`, timeZone: `Asia/Shanghai` };
-  log(`!!` + toCode(`const chinese = y2000.clone;
-  chinese.locale = { locale: \`zh-Hant\`, timeZone: \`Asia/Shanghai\` };`, true));
-  log(`${toCode(`chinese.local`)} => ${chinese.local}`);
-  log(`${toCode(`chinese.monthName`)} => ${chinese.monthName}`);
-  log(`${toCode(`chinese.weekDay`)} => ${chinese.weekDay}`);
-  y2000.time = {hour: 12, minutes: 13, seconds: 0};
-  log(`${toCode(`y2000.time = {hour: 12, minutes: 13, seconds: 0};\ny2000.timeStr(true);`, true)}<p>=> ${
-    y2000.timeStr(true)}</p>`);
-  log(`${toCode(`y2000.time`)} => [${y2000.time}]`);
-  /* endregion custom properties */
 
   /* region values */
   log(`!!<h3 id="values">Values</h3>`);
@@ -354,68 +389,6 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     $D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})}`);
   /* endregion now & validateLocale */
   
-  /* region extend */
-  extendHelper();
-  log(`!!<h3 id="extendCustom">Utilities: Extend the ‘constructor’</h3>
-    <div>Additional extension properties/methods can be created using<br>
-      <code>$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</div>
-      <ul class="sub"><li><code>fn</code>: the function to use. The function should at least have one parameter,
-      that being the date value of the instance. By default the extension function is added as property
-      (<code>isMethod</code> false). When <code>isMethod</code> is true, the function
-      is considered (and callable as) a method and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
-      <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date,
-      enables chaining. False by default.
-      <br><b>Note</b>: when <code>fn</code> returns the instance date, there's no need to set this value.</li></ul>`);
-  log(`!!<code class="codeblock">$D.extendWith({
-  name: \`isTodayOrLaterThen\`,
-  fn: (dt, nextDt) => +dt >= +nextDt,
-  isMethod: true });
-
-// locale aware 'getTimezoneOffset'
-$D.extendWith({name: \`utcDistanceHours\`, fn: dt => {
-    const timeZone = dt.localeInfo?.timeZone ||
-      Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const fmt = Intl.DateTimeFormat(\`en-CA\`, {
-      year: \`numeric\`,
-      timeZone: timeZone,
-      timeZoneName: \`shortOffset\`,
-    });
-    let distance = fmt.format(dt).match(/[+-]\\d+$/);
-    return !distance ? 0 : distance.shift();  }
-  });
-
- //  difference between the local time (as determined by the
- // instance locale) and the time in the given time zone
- $D.extendWith({name: \`localeDiff\`, fn: (dt, timeZone) => {
-      const cloned = dt.clone.localizedDT;
-      const localized = dt.clone.relocate({timeZone}).localizedDT;
-      // milliseconds possibly influence the difference calculation
-      // and are not relevant here, so discard
-      localized.time = cloned.time = {milliseconds: 0};
-      const sign = cloned === localized ? \`\` : localized.isTodayOrLaterThen(cloned) ? \`+\` : \`-\`;
-      return \`\${sign}\${cloned.differenceFrom(localized).clean}\`;
-    }, isMethod: true });
-
-// returns instance Date, so chainable
-$D.extendWith({name: \`midNight\`, fn: dt => {
-  dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
-  return dt.clone; }, proxifyResult: true });</code>
-  <code>$D().add(\`1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`1 day`).isTodayOrLaterThen($D())}<br>
-  <code>$D().add(\`-1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`-1 day`).isTodayOrLaterThen($D())}<br>
-  <code>$D().utcDistanceHours</code> => ${$D().utcDistanceHours}<br>
-  <code>$D().relocate({locale: \`gmt\`, timeZone: \`Europe/Greenwich\`}).utcDistanceHours</code> => ${$D().relocate({locale: `gmt`, timeZone: `utc`}).utcDistanceHours}<br>
-  <code>$D().relocate({timeZone: \`America/New_York\`}).utcDistanceHours</code> => ${$D().relocate({locale: `en-US`, timeZone: `America/New_York`}).utcDistanceHours}<br>
-  <code>$D().localeDiff(\`Pacific/Auckland\`)</code> => ${
-    $D().localeDiff(`Pacific/Auckland`) }<br>
-  <code>$D().localeDiff(\`America/New_York\`)</code> => ${
-    $D().localeDiff(`America/New_York`) }<br>
-  <code>$D.now.localeDiff(\`Asia/Calcutta\`)</code> => ${
-    $D().localeDiff(`Asia/Calcutta`) }<br>
-  <code>$D({timeZone: \`Asia/Calcutta\`}).localeDiff(\`America/New_York\`)</code> => ${
-    $D({timeZone: `Asia/Calcutta`}).localeDiff(`America/New_York`) }<br>
-  <code>$D().midNight.local</code> => ${$D().midNight.local}<br>`);
-  /* endregion extend */
-
   /* region performance */
   log(`!!<h3 id="perfomance">Performance</h3>`);
   log(checkPerformance(1_500));
@@ -481,11 +454,11 @@ function createContent() {
   codeBlocks2Code();
   const container = $.node(`.container`);
   $.delegate(`click`, `h3[id]`, () => {
-    container.scrollTo(0,0);
+    container.scrollTo(0, 0);
   });
-  $.delegate(`click`, `.content li .linkLike`, evt => {
-    const origin = $(evt.target.dataset.target);
-    container.scrollTo(0, origin.dimensions.top - 12);
+  $.delegate(`click`, `[data-target]`, evt => {
+    const target = $(evt.target.dataset.target);
+    container.scrollTo(0, Math.round(target.dimensions.top) - 12);
   });
   const contentDiv = $(
     `<div class="content" id="content"><h3>Content</h3><ul></ul></div>`,
@@ -494,7 +467,7 @@ function createContent() {
   const ul = contentDiv.find$(`ul`);
   $(`h3[id]`).each(h3 => {
     const header = $(h3).duplicate();
-    const doQuote = header.hasClass(`quoted`) ? ` class="linkLike quoted"` : `class="linkLike"`;
+    const doQuote = header.hasClass(`quoted`) ? ` class="quoted"` : ``;
     header.find$(`a`).remove();
     const headerText = header.html();
     ul.append(`<li><div ${doQuote} data-target="h3#${h3.id}">${headerText.replace(/\(.+\)/, ``)}</div></li>`);
@@ -507,43 +480,55 @@ function createContent() {
 }
 
 function extendHelper() {
-  $D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
-  $D.extendWith({name: `utcDistanceHours`, fn: dt => {
-      const timeZone = dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const fmt = Intl.DateTimeFormat(`en-CA`, {
-        year: `numeric`,
-        timeZone: timeZone,
-        timeZoneName: "shortOffset",
-      });
-      let distance = fmt.format(dt).match(/[+-]\d+$/);
-      return !distance ? 0 : distance.shift();  }
-  });
-  $D.extendWith({name: `localeDiff`, fn: (dt, timeZone) => {
-      const cloned = dt.clone.localizedDT;
-      const localized = dt.clone.relocate({timeZone}).localizedDT;
-      localized.time = cloned.time = {milliseconds: 0};
-      const sign = cloned === localized ? `` : localized.isTodayOrLaterThen(cloned) ? `+` : `-`;
-      return `${sign}${cloned.differenceFrom(localized).clean}`;
-    }, isMethod: true });
-  $D.extendWith({name: `utcDiff`, fn: dt => {
-      const dtClone = dt.clone;
-      const tz = {timeZone: dtClone.locale?.timeZone || `utc`};
-      const utcDiff = dt.getTimezoneOffset() * -1;
-      const local4TZ = dtClone.localize4TZ(tz.timeZone).add(`${utcDiff} minutes, 1 second`);
-      let diff = dt.differenceFrom(local4TZ);
-      diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
-      return `UTC difference for ${tz.timeZone}: ${diff}`;
-    } });
-  $D.extendWith({name: `midNight`, fn: dt => {
-      dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
-      return dt; }, proxifyResult: true });
-}
+$D.extendWith({name: `isTodayOrLaterThen`, fn: (dt, nextDt) => +dt >= +nextDt, isMethod: true});
 
+// locale aware `getTimezoneOffset`
+$D.extendWith({name: `utcDistanceHours`, fn: dt => {
+  const timeZone = dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const fmt = Intl.DateTimeFormat(`en-CA`, {
+    year: `numeric`,
+    timeZone: timeZone,
+    timeZoneName: "shortOffset",
+  });
+  let distance = fmt.format(dt).match(/[+-]\d+$/);
+  return !distance ? 0 : distance.shift();  }
+});
+
+// difference between the local time (as determined by the
+// instance locale) and the time in the given time zone
+$D.extendWith({name: `localeDiff`, fn: (dt, timeZone) => {
+  const cloned = dt.clone.localizedDT;
+  const localized = dt.clone.relocate({timeZone}).localizedDT;
+  // milliseconds possibly influence the difference calculation
+  // and are not relevant here, so discard
+  localized.time = cloned.time = {milliseconds: 0};
+  const sign = cloned === localized ? `` : localized.isTodayOrLaterThen(cloned) ? `+` : `-`;
+  return `${sign}${cloned.differenceFrom(localized).clean}`;
+}, isMethod: true });
+
+$D.extendWith({name: `utcDiff`, fn: dt => {
+  const dtClone = dt.clone;
+  const tz = {timeZone: dtClone.locale?.timeZone || `utc`};
+  const utcDiff = dt.getTimezoneOffset() * -1;
+  const local4TZ = dtClone.localize4TZ(tz.timeZone).add(`${utcDiff} minutes, 1 second`);
+  let diff = dt.differenceFrom(local4TZ);
+  diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
+  return `UTC difference for ${tz.timeZone}: ${diff}`;
+} });
+
+// returns $D instance, so chainable
+$D.extendWith({name: `midNight`, fn: dt => {
+  dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+  return dt; }, proxifyResult: true });
+}
+/* endregion helpers */
+
+/* region styling */
 function styleIt() {
   $.editCssRules(
     `body {
       margin: 0;
-      font: normal 12px/16px verdana, arial;
+      font: normal 12px/17px verdana, arial;
     }`,
     `.container { position: absolute; inset: 0; overflow-y: auto; }`,
     `.head div, .head pre, pre {font-weight: normal; color: #777}`,
@@ -599,6 +584,7 @@ function styleIt() {
     `code.codeblock .comment { color: rgb(169 156 156); }`,
     `ul#log2screen {margin: 0 auto;}`,
     `ul#log2screen li {margin-top: 0.8rem;}`,
+    `ul#log2screen ul.sub { margin-left: -0.8rem; }`,
     `ul#log2screen ul.sub li { margin-top: 0.3rem; }`,
     `#log2screen li.head {
       list-style-type: none;
@@ -630,7 +616,8 @@ function styleIt() {
     `a[data-top]:before, a.internalLink:before, a[target="_top"]:before {
       content: '\\21BA';
      }`,
-    `#log2screen .content ul li div[data-target]:hover {
+    `#log2screen .content ul li div[data-target]:hover,
+     #log2screen ul li span[data-target] {
       color: blue;
     }`,
     `#log2screen .content {
@@ -644,11 +631,11 @@ function styleIt() {
       padding-left: 24px;
       color: red;
     }`,
+    `[data-target] { cursor: pointer; }`,
     `#log2screen .content ul li {
       margin-left: -1.4rem;
       margin-top: auto;
       list-style: '\\27A4';
-      cursor: pointer;
     }`,
     `li div p {
       margin-top: 0.3rem;
@@ -693,5 +680,4 @@ function styleIt() {
     }`,
   );
 }
-
-/* endregion helpers */
+/* endregion styling */
