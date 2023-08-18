@@ -39,6 +39,10 @@ For each flavor, the script is (bundled and) minified. The location of the minif
 
 ### NodeJS require
 
+Download links:
+- https://cdn.jsdelivr.net/gh/KooiInc/es-date-fiddler@latest/Bundle/index.cjs.min.js
+- https://kooiinc.github.io/es-date-fiddler/Bundle/index.cjs.min.js
+
 ``` javascript
 // after download of the bundle from 
 // https://kooiinc.github.io/es-date-fiddler/Bundle/index.cjs.min.js
@@ -48,6 +52,11 @@ const { $D } = require("[local location of the bundle]/index.cjs.min.js");
 ```
 
 ### ESM import
+
+Import links:
+- https://cdn.jsdelivr.net/gh/KooiInc/es-date-fiddler@latest/Bundle/index.esm.min.js
+- https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js
+
 ``` javascript
 const $D = ( await 
   import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js") 
@@ -61,6 +70,11 @@ const $D = dxFactory();
 ```
 
 ### Browser script
+
+Import links:
+- https://cdn.jsdelivr.net/gh/KooiInc/es-date-fiddler@latest/Bundle/index.browser.min.js
+- https://kooiinc.github.io/es-date-fiddler/Bundle/index.browser.min.js
+ 
 ``` html
 <script 
   src="https://kooiinc.github.io/es-date-fiddler/Bundle/index.browser.min.js">
