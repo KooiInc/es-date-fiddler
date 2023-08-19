@@ -555,7 +555,7 @@ function getInitialExtensions() {
     <li><b>clone</b> (getter, chainable)</li>
     <li><b>cloneDateTo</b> (method, chainable)</li>
     <li><b>cloneTimeTo</b> (method, chainable)</li>
-    <li><b>date</b> (setter and getter, getter chainable)</li>
+    <li><b>date</b> (setter and getter)</li>
     <li><b>dateISOStr</b> (getter)</li>
     <li><b>dateStr</b> (getter)</li>
     <li><b>daysInMonth</b> (getter)</li>
@@ -570,10 +570,10 @@ function getInitialExtensions() {
     <li><b>locale</b> (setter and getter)</li>
     <li><b>locale2Formats</b> (getter)</li>
     <li><b>localizedDT</b> (getter, chainable)</li>
-    <li><b>minutes</b> (setter and getter, getter chainable)</li>
-    <li><b>month</b> (setter and getter, getter chainable)</li>
+    <li><b>minutes</b> (setter and getter)</li>
+    <li><b>month</b> (setter and getter)</li>
     <li><b>monthName</b> (getter)</li>
-    <li><b>ms</b> (setter and getter, getter chainable)</li>
+    <li><b>ms</b> (setter and getter)</li>
     <li><b>nextMonth</b> (mutating getter, chainable)</li>
     <li><b>nextWeek</b> (mutating getter, chainable)</li>
     <li><b>nextYear</b> (mutating getter, chainable)</li>
@@ -582,15 +582,15 @@ function getInitialExtensions() {
     <li><b>previousYear</b> (mutating getter, chainable)</li>
     <li><b>relocate</b> (setter method, chainable)</li>
     <li><b>removeLocale</b> (setter method, chainable)</li>
-    <li><b>seconds</b> (setter and getter, getter chainable)</li>
+    <li><b>seconds</b> (setter and getter)</li>
     <li><b>self</b> (getter)</li>
     <li><b>subtract</b> (mutating getter method, chainable)</li>
-    <li><b>time</b> (setter and getter, getter chainable)</li>
+    <li><b>time</b> (setter and getter)</li>
     <li><b>timeStr</b> (getter method)</li>
     <li><b>tomorrow</b> (mutating getter, chainable)</li>
     <li><b>values</b> (getter)</li>
     <li><b>weekDay</b> (getter)</li>
-    <li><b>year</b> (setter and getter, getter chainable)</li>
+    <li><b>year</b> (setter and getter)</li>
     <li><b>yesterday</b> (mutating getter, chainable)</li>`;
 }
 
