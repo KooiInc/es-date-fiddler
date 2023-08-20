@@ -211,8 +211,8 @@ function demoNdTest() {
   log(toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()`) + ` => ${
     $D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()}`);
   log(toCode(`$D().getTimezone`) + ` (your local time zone) => ${$D().getTimezone}`);
-  log(toCode(`d2German.removeLocale().local`) + ` => ${d2German.removeLocale().local}`);
-  log(toCode(`d2German.locale`) + ` => ${d2German.removeLocale().locale}`);
+  log(toCode(`d2German.removeLocale.local`) + ` => ${d2German.removeLocale.local}`);
+  log(toCode(`d2German.locale`) + ` => ${d2German.removeLocale.locale}`);
   log(toCode(`invalidLocale.dateStr`) + ` => ${invalidLocale.dateStr}`);
   log(toCode(`invalidLocale.local`) + ` => ${invalidLocale.local}`);
   log(toCode(`invalidTimezone.locale`) + ` => ${toJSON(invalidTimezone.locale)}`)
@@ -610,14 +610,14 @@ function getInitialExtensions() {
     <li><b>previousWeek</b> (mutating getter, chainable)</li>
     <li><b>previousYear</b> (mutating getter, chainable)</li>
     <li><b>relocate</b> (setter method, chainable)</li>
-    <li><b>removeLocale</b> (setter method, chainable)</li>
+    <li><b>removeLocale</b> (getter, chainable)</li>
     <li><b>seconds</b> (setter and getter)</li>
     <li><b>self</b> (getter)</li>
     <li><b>subtract</b> (mutating getter method, chainable)</li>
     <li><b>time</b> (setter and getter)</li>
     <li><b>timeStr</b> (getter method)</li>
     <li><b>tomorrow</b> (mutating getter, chainable)</li>
-    <li><b>values</b> (getter)</li>
+    <li><b>values</b> (getter method)</li>
     <li><b>weekDay</b> (getter)</li>
     <li><b>year</b> (setter and getter)</li>
     <li><b>yesterday</b> (mutating getter, chainable)</li>`;
