@@ -297,7 +297,7 @@ function methodHelpersFactory(proxify, validateLocale) {
       self: d => d,
       local: d => getLocalStr(d),
       locale: (d, {locale, timeZone} = {}) => getOrSetLocale(d, {locale, timeZone}),
-      removeLocale: d => () => removeLocaleInfo(d),
+      removeLocale: d => removeLocaleInfo(d),
       relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
       differenceFrom: d => fromDate => diffCalculator({start: d, end: fromDate}),
       values: d => (monthZeroBased = false) => getValues(d, monthZeroBased),
