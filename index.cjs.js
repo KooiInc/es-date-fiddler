@@ -66,6 +66,7 @@ function DateXFactory() {
   }
 
   function xDateFn(dateOrLocale, localeInfo) {
+    dateOrLocale = Array.isArray(dateOrLocale) ? new Date(...dateOrLocale) : dateOrLocale;
     const dateIsLocaleInfo = dateOrLocale?.locale || dateOrLocale?.timeZone;
     const dateIsDate = (dateOrLocale || ``) instanceof Date;
     const maybeDate = dateIsLocaleInfo
