@@ -330,7 +330,8 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   log(`${toCode(`exampleDate.subtract(\`5 days, 3 hours, 1 year\`).local`)} => ${
     exampleDate.subtract(`5 days, 3 hours, 1 year`).local}`);
   log(`${toCode(`$D().previousYear.nextMonth.local`)} => ${$D().previousYear.nextMonth.local}`);
-
+  /* endregion arithmetic */
+  
   /* region difference */
   log(`!!<h3 id="difference">Difference utility</h3>`);
   log(`${toCode(`$D().differenceFrom('1991/08/27 13:30').full`)}
@@ -349,26 +350,21 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   log(`${toCode(`then.differenceFrom(then).full`)} ${toJSON(then.differenceFrom(then).full)}`);
   log(`${toCode(`then.differenceFrom(then).clean`)} ${then.differenceFrom(then).clean}`);
   /* endregion difference */
-  /* endregion arithmetic */
 
   /* region values */
   log(`!!<h3 id="values">Values</h3>`);
   log(`<code>y2000.values()</code> => <p>${JSON.stringify(y2000.values())}</p>`);
   log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
-
-  // natives
-  log(`!!<h3 id="natives">Use all native <code>Date</code> methods</h3>`);
-  y2000.setHours(y2000.hour - 3);
-  log(`<code>y2000.setHours(y2000.hour - 3)</code><p>${toCode(`y2024.getHours()`)} => ${y2000.getHours()}</p>`);
-  log(`<code>y2000.getFullYear()</code> ${y2000.getFullYear()}`);
-  log(`<code>y2000.toLocaleString()</code> ${y2000.toLocaleString()}`);
-  log(`<code>y2000.toISOString()</code> ${y2000.toISOString()}`);
-  log(`<code>y2000.toUTCString()</code> ${y2000.toUTCString()}`);
-  log(`<code>y2000.getUTCHours()</code> ${y2000.getUTCHours()}`);
-  log(`<code>y2000.toLocaleString(\`br-BR\`, {timeZone: \`America/Fortaleza\`})</code> <p> => ${
-    y2000.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}</p>`);
   /* endregion values */
-
+  
+  /* region natives */
+  log(`!!<h3 id="natives">Use native <code>Date</code> getters/setters</h3>
+    <p>Most native getters/setters (e.g. <code>setFullYear</code> or <code>getFullYear</code>)
+    are wrapped in extensions. Because a <code>$D</code> instance is a actually a
+    proxied <code>Date</code> instance, you can also use the native getters and/or setters.`);
+    log(`!!<code class="codeblock">${nativesHelper(y2000).join(`\n`)}</code>`);
+  /* endregion natives */
+  
   /* region now & validateLocale */
   log(`<h3 id="utilities">Utilities: now, validateLocale</h3>
     <div><code>now</code>, as you may have expected, delivers an instance from the current date.</div>
@@ -500,6 +496,22 @@ function createContent() {
     contentDiv, $.at.AfterEnd);
   $.editCssRule(`.bottomSpace { height: ${container.clientHeight}px; }`);
   $(`#log2screen`).afterMe(`<div class="bottomSpace"></div>`);
+}
+
+function nativesHelper() {
+  const currenDate = $D.now;
+  return [
+    `const currenDate = $D.now;`,
+    `currentDate.getFullYear(); //=> ${currenDate.getFullYear()}`,
+    `currentDate.toLocaleString(); //=> ${currenDate.toLocaleString()}`,
+    `currentDate.toISOString(); //=> ${currenDate.toISOString()}`,
+    `currentDate.toUTCString(); //=> ${currenDate.toUTCString()}`,
+    `currentDate.getUTCHours(); // => ${currenDate.getUTCHours()}`,
+    `currentDate.toLocaleString(\`br-BR\`, {timeZone: \`America/Fortaleza\`}); => ${
+      currenDate.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}`,
+    `currentDate.setHours(currentDate.hour - 3);`,
+    `currentDate.getHours(); // => ${currenDate.getHours()}`,
+  ];
 }
 
 function extendHelper() {
