@@ -499,18 +499,19 @@ function createContent() {
 }
 
 function nativesHelper() {
-  const currenDate = $D.now;
+  const currentDate = $D.now;
   return [
     `const currenDate = $D.now;`,
-    `currentDate.getFullYear(); //=> ${currenDate.getFullYear()}`,
-    `currentDate.toLocaleString(); //=> ${currenDate.toLocaleString()}`,
-    `currentDate.toISOString(); //=> ${currenDate.toISOString()}`,
-    `currentDate.toUTCString(); //=> ${currenDate.toUTCString()}`,
-    `currentDate.getUTCHours(); // => ${currenDate.getUTCHours()}`,
+    `currentDate.getFullYear(); //=> ${currentDate.getFullYear()}`,
+    `currentDate.toLocaleString(); //=> ${currentDate.toLocaleString()}`,
+    `currentDate.toISOString(); //=> ${currentDate.toISOString()}`,
+    `currentDate.toUTCString(); //=> ${currentDate.toUTCString()}`,
+    `currentDate.getUTCHours(); // => ${currentDate.getUTCHours()}`,
     `currentDate.toLocaleString(\`br-BR\`, {timeZone: \`America/Fortaleza\`}); => ${
-      currenDate.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}`,
+      currentDate.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}`,
     `currentDate.setHours(currentDate.hour - 3);`,
-    `currentDate.getHours(); // => ${currenDate.getHours()}`,
+    `currentDate.getHours(); // => ${
+      (currentDate.setHours(currentDate.hour - 3), currentDate.getHours())}`,
   ];
 }
 
