@@ -352,9 +352,10 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   /* endregion difference */
 
   /* region values */
-  log(`!!<h3 id="values">Values</h3>`);
-  log(`<code>y2000.values()</code> => <p>${JSON.stringify(y2000.values())}</p>`);
-  log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
+  log(`!!<h3 id="values">Values</h3>
+    ${valuesHelper()}`);
+  // log(`<code>y2000.values()</code> => <p>${JSON.stringify(y2000.values())}</p>`);
+  // log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
   /* endregion values */
   
   /* region natives */
@@ -496,6 +497,18 @@ function createContent() {
     contentDiv, $.at.AfterEnd);
   $.editCssRule(`.bottomSpace { height: ${container.clientHeight}px; }`);
   $(`#log2screen`).afterMe(`<div class="bottomSpace"></div>`);
+}
+
+function valuesHelper() {
+  const now = $D.now;
+  const nowNxtYear = $D(now.values(true)).add(`1 year`);
+  return `<code class="codeblock">${[
+    `const now = $D.now;`,
+    `now.values(); //=> ${JSON.stringify(now.values())}`,
+    `now.values(true); //=> [${now.values(true)}]`,
+    `const nowNxtYear = $D(now.values(true)).add(\`1 year\`);`,
+    `nowNxtYear.local //=> ${nowNxtYear.local}`,
+  ].join(`\n`)}</code>`;
 }
 
 function nativesHelper() {
