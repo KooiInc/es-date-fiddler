@@ -358,11 +358,11 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   /* endregion values */
   
   /* region natives */
-  log(`!!<h3 id="natives">Use native <code>Date</code> getters/setters</h3>
+  log(`!!<h3 id="natives">Use native Date getters/setters</h3>
     <p>Most native getters/setters (e.g. <code>setFullYear</code> or <code>getFullYear</code>)
     are wrapped in extensions. Because a <code>$D</code> instance is a actually a
-    proxied <code>Date</code> instance, you can also use the native getters and/or setters.`);
-    log(`!!<code class="codeblock">${nativesHelper(y2000).join(`\n`)}</code>`);
+    proxied <code>Date</code> instance, you can also use the native getters and/or setters.
+    <code class="codeblock">${nativesHelper().join(`\n`)}</code>`);
   /* endregion natives */
   
   /* region now & validateLocale */
@@ -506,11 +506,11 @@ function nativesHelper() {
     `currentDate.toLocaleString(); //=> ${currentDate.toLocaleString()}`,
     `currentDate.toISOString(); //=> ${currentDate.toISOString()}`,
     `currentDate.toUTCString(); //=> ${currentDate.toUTCString()}`,
-    `currentDate.getUTCHours(); // => ${currentDate.getUTCHours()}`,
-    `currentDate.toLocaleString(\`br-BR\`, {timeZone: \`America/Fortaleza\`}); => ${
+    `currentDate.getUTCHours(); //=> ${currentDate.getUTCHours()}`,
+    `currentDate.toLocaleString(\`br-BR\`, {timeZone: \`America/Fortaleza\`}); //=> ${
       currentDate.toLocaleString(`br-BR`, {timeZone: `America/Fortaleza`})}`,
     `currentDate.setHours(currentDate.hour - 3);`,
-    `currentDate.getHours(); // => ${
+    `currentDate.getHours(); //=> ${
       (currentDate.setHours(currentDate.hour - 3), currentDate.getHours())}`,
   ];
 }
