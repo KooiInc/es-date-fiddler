@@ -353,9 +353,11 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
 
   /* region values */
   log(`!!<h3 id="values">Values</h3>
+    <p>The <code>[instance].values({asArray: boolean, monthZeroBased: boolean})</code> getter method delivers either
+    an Object (default <code>{asArray: false}</code>) or an Array (<code>{asArray: true}</code>)
+    containing the instances' date values.<br>
+    Use <code>{monthZeroBased: true}</code> if you want to use the values for a new Date.</p>
     ${valuesHelper()}`);
-  // log(`<code>y2000.values()</code> => <p>${JSON.stringify(y2000.values())}</p>`);
-  // log(`<code>y2000.values(true)</code> => ${JSON.stringify(y2000.values(true))}`);
   /* endregion values */
   
   /* region natives */
@@ -501,13 +503,13 @@ function createContent() {
 
 function valuesHelper() {
   const now = $D.now;
-  const nowNxtYear = $D(now.values(true)).add(`1 year`);
+  const nowTomorrow = $D(now.values({asArray: true, monthZeroBased: true})).tomorrow;
   return `<code class="codeblock">${[
     `const now = $D.now;`,
     `now.values(); //=> ${JSON.stringify(now.values())}`,
-    `now.values(true); //=> [${now.values(true)}]`,
-    `const nowNxtYear = $D(now.values(true)).add(\`1 year\`);`,
-    `nowNxtYear.local //=> ${nowNxtYear.local}`,
+    `now.values({asArray: true}); //=> [${now.values({asArray: true})}]`,
+    `const nowTomorrow = $D(now.values({asArray: true, monthZeroBased: true})).tomorrow;`,
+    `nowTomorrow.local; //=> ${nowTomorrow.local}`,
   ].join(`\n`)}</code>`;
 }
 
