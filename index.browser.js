@@ -103,13 +103,15 @@ function methodHelpersFactory(proxify, validateLocale) {
   const zeroPadArr = arr => arr.map(v => String(v)?.padStart(2, `0`) ?? v);
   const isoDateStr = d => zeroPadArr(getDate(d)).join(`-`);
   const getNumbers = obj => Object.entries(obj).filter( ([, value]) => isNumberAndDefined(value) );
-  const getValues = (d, asArray = false, monthZeroBased = false) => {
+  const getValues = (d, monthZeroBased = false) => {
     const addMonth = monthZeroBased ? 0 : 1;
     const valueObj = {
       year: d.getFullYear(), month: d.getMonth() + addMonth, date: d.getDate(),
       hour: d.getHours(), minutes: d.getMinutes(),
-      seconds: d.getSeconds(), milliseconds: d.getMilliseconds() };
-    return asArray ? Object.values(valueObj) : valueObj;
+      seconds: d.getSeconds(), milliseconds: d.getMilliseconds()
+    };
+    
+    return { get object() {return valueObj}, get array() { return Object.values(valueObj) } };
   };
   const localizedDT = dt => {
     const tz = {timeZone: getTimezone(dt), hourCycle: `h23`};
@@ -298,7 +300,7 @@ function methodHelpersFactory(proxify, validateLocale) {
       removeLocale: d => () => removeLocaleInfo(d),
       relocate: d => ({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
       differenceFrom: d => fromDate => diffCalculator({start: d, end: fromDate}),
-      values: d => ({asArray = false, monthZeroBased = false} = {}) => getValues(d, asArray, monthZeroBased),
+      values: d => (monthZeroBased = false) => getValues(d, monthZeroBased),
       ISO: d => d.toISOString(),
       daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
       isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,
