@@ -66,13 +66,14 @@ function demoNdTest() {
   /* region constructor */
   log(`!!<h3 id="constructor" class="quoted">Constructor</h3>
     <div>The constructor (here <code>$D</code>) has the signature:</div>
-    <p><code>$D([dateOrLocale: Date | string | {locale, timeZone}], [localeInfo: {locale, timeZone}])</code></p>
+    <p><code>$D([dateOrLocale: Date | string | Array[Number] | {locale, timeZone}], [localeInfo: {locale, timeZone}])</code></p>
     <ul class="sub">
       <li><code>dateOrLocale</code> can be a regular Date (<code>new Date(...)</code>), a (valid)
-      date string (<code>\`2022/07/18\`</code>) or an Object with locale information
-      (one of or both, e.g. <code>{locale: \`en-CA\`, timeZone: \`America/Toronto\`}</code>). If it's a string and no date can
-      be inferred from it, the current date ('now') will be the instances' Date. If it's an Object
-      the current date with the locale parameters from the Object will be the instances' Date.</li>
+      date string (<code>\`2022/07/18\`</code>), an array of Number or an Object with locale information
+      (one of or both, e.g. <code>{locale: \`en-CA\`, timeZone: \`America/Toronto\`}</code>).
+      When no date can be inferred from it, the current date ('now')  will be the instances'
+      Date. If it's an Object the current date with the locale parameters from the Object
+      (if valid) will be the instances' Date.</li>
       <li><code>localeInfo</code> When the first parameter is a Date or a date string, the second
         parameter can be used to associate locale information with that Date (see
         <span data-target="#locale">Locale</span>).</li>
