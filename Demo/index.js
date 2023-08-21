@@ -481,7 +481,7 @@ function createContent() {
   });
   $.delegate(`click`, `[data-target]`, evt => {
     const target = $(evt.target.dataset.target);
-    container.scrollTo(0, Math.round(target.dimensions.top) - 12);
+    container.scrollTo(0, container.scrollTop + Math.round(target.dimensions.top) - 12);
   });
   const contentDiv = $(
     `<div class="content" id="content"><h3>Content</h3><ul></ul></div>`,
