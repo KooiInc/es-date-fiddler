@@ -176,7 +176,7 @@ function demoNdTest() {
         <li>The locale information is also used with the <code>dateStr</code> property.
         If such information is available the string value returned will be in the instance dates'
         local format.</li>
-        <li><b>Note</b>: you can check the locale information from the examples hereafter
+        <li><b>Note</b>: you can check the locale information of the examples hereafter
         @<a target="_blank" href="https://time.is/">time.is</a></li></ul>
         <p><br>There are several ways to associate (and make use of) locale information
         with a <code>$D</code> instance. Here are some examples.</p>
