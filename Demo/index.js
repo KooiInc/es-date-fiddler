@@ -160,6 +160,8 @@ function demoNdTest() {
   <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${$D(`2022/06/01`).daysUntil($D(`2023/06/01`))}<br>
   <code>$D(\`2023/06/01\`).daysUntil($D(\`2024/06/01\`))</code> => ${
     $D(`2023/06/01`).daysUntil($D(`2024/06/01`))}<br>
+  <code>$D(\`2024/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${
+    $D(`2024/06/01`).daysUntil($D(`2023/06/01`), false)} (<b>Note</b>: Start date > end date)<br>
   <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`), false)</code> => ${
     $D(`2022/06/01`).daysUntil($D(`2023/06/01`), false)}<br>`);
   
@@ -581,6 +583,11 @@ $D.extendWith({name: `daysUntil`, fn: (dt, nextDate, reportString = true) => {
     let z = 0, containsLeapYear = false;
     nextDate = !nextDate.time ? $D(nextDate) : nextDate;
     dt.time = nextDate.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+    
+    if (dt > nextDate) {
+      [dt, nextDate] = [nextDate, dt];
+    }
+    
     while (dt < nextDate) {
       dt.add(`1 day`);
       if (!containsLeapYear && dt.isLeapYear) { containsLeapYear = true; }
