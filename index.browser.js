@@ -274,6 +274,11 @@ function methodHelpersFactory(proxify, validateLocale) {
     dt = proxify(dt);
     nextDate = proxify(nextDate);
     dt.time = nextDate.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+    
+    if (dt > nextDate) {
+      [dt, nextDate] = [nextDate, dt];
+    }
+    
     while (dt < nexDate) {
       dt.add(`1 day`);
       z += 1;
