@@ -156,7 +156,13 @@ function demoNdTest() {
     $D().localeDiff(`Asia/Calcutta`) }<br>
   <code>$D({timeZone: \`Asia/Calcutta\`}).localeDiff(\`America/New_York\`)</code> => ${
     $D({timeZone: `Asia/Calcutta`}).localeDiff(`America/New_York`) }<br>
-  <code>$D().midNight.local</code> => ${$D().midNight.local}<br>`);
+  <code>$D().midNight.local</code> => ${$D().midNight.local}<br>
+  <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${$D(`2022/06/01`).daysUntil($D(`2023/06/01`))}<br>
+  <code>$D(\`2023/06/01\`).daysUntil($D(\`2024/06/01\`))</code> => ${
+    $D(`2023/06/01`).daysUntil($D(`2024/06/01`))}<br>
+  <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`), false)</code> => ${
+    $D(`2022/06/01`).daysUntil($D(`2023/06/01`), false)}<br>`);
+  
   /* endregion extend */
 
   /* region locale */
@@ -568,6 +574,23 @@ $D.extendWith({name: `utcDiff`, fn: dt => {
   diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
   return `UTC difference for ${tz.timeZone}: ${diff}`;
 } });
+
+// Note: this getter method (daysUntil) already exists in $D instances.
+// It will be overwritten ...
+$D.extendWith({name: `daysUntil`, fn: (dt, nextDate, reportString = true) => {
+    let z = 0, containsLeapYear = false;
+    nextDate = !nextDate.time ? $D(nextDate) : nextDate;
+    dt.time = nextDate.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+    while (dt < nextDate) {
+      dt.add(`1 day`);
+      if (!containsLeapYear && dt.isLeapYear) { containsLeapYear = true; }
+      z += 1;
+    }
+    return reportString ? `Days from ${dt.date.join(`/`)} until ${nextDate.date.join(`/`)}: ${z} ${
+      containsLeapYear ? `(range contains leap year)` : ``}` : z;
+  },
+  isMethod: true,
+});
 
 // returns $D instance, so chainable
 $D.extendWith({name: `midNight`, fn: dt => {
