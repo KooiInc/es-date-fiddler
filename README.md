@@ -119,6 +119,9 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
   - **Note**: `[instance].cloneTimeTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
+- `daysUntil(nextDate: Date | $D instance)`: returns the number of days between two dates
+  - **Note** The time of both dates will not be considered, so returns the number of days between
+    *midnight* from - and to date. 
 - `dateStr`: get the date part from the instance date as string.
   - **Note** when locale information is associated with the instance, will be formatted cf that locale.
 - `dateISOStr`: get the date part from the instance date as ISO 8601 string (yyyy-mm-dd).
