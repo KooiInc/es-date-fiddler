@@ -269,6 +269,17 @@ function methodHelpersFactory(proxify, validateLocale) {
     const [fmt1, fmt2] = [fmt.format(dt1), fmt.format(dt2)];
     return offset2Number(fmt1) - offset2Number(fmt2) !== 0;
   };
+  function daysUntil(dt, nextDate) {
+    let z = 0;
+    dt = proxify(dt);
+    nextDate = proxify(nextDate);
+    dt.time = nextDate.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
+    while (dt < nexDate) {
+      dt.add(`1 day`);
+      z += 1;
+    }
+    return z;
+  }
 
   return ({
     ...{
@@ -305,6 +316,7 @@ function methodHelpersFactory(proxify, validateLocale) {
       daysInMonth: d => getDaysInMonth(d.getFullYear(), d.getMonth()),
       isLeapYear: d => getDaysInMonth(d.getFullYear(), 1) === 29,
       format: d => (...args) => doFormat(d, ...args),
+      daysUntil: d => nextD => daysUntil(d, nextD),
     },
     ...{
       addYears: d => (amount = 1) => add2Date(d, `${amount} years`),
