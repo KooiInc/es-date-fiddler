@@ -620,6 +620,7 @@ function getInitialExtensions() {
     <li><b>dateISOStr</b> (getter)</li>
     <li><b>dateStr</b> (getter)</li>
     <li><b>daysInMonth</b> (getter)</li>
+    <li><b>daysUntil</b> (getter method)</li>
     <li><b>differenceFrom</b> (getter method)</li>
     <li><b>format</b> (getter method)</li>
     <li><b>getTimezone</b> (getter)</li>
