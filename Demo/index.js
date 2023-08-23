@@ -95,7 +95,8 @@ function demoNdTest() {
   /* endregion constructor */
   
   /* region extensions */
-  log(`!!<h3 id="customprops">Extension getters / setters</h3>`);
+  log(`!!<h3 id="customprops">Extension getters / setters</h3>
+    <p>See also: <span data-target="#allNames">List of all getters/setters</span></p>`);
   const now = $D();
   const y2000 = now.clone;
   y2000.date = { year: 2000 };
@@ -752,7 +753,7 @@ function styleIt() {
       content: '\\21BA';
      }`,
     `#log2screen .content ul li div[data-target]:hover,
-     #log2screen ul li span[data-target] {
+     span[data-target] {
       color: blue;
     }`,
     `#log2screen .content {

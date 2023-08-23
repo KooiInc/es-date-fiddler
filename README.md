@@ -133,12 +133,12 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `local`: `[instance].local`: `tolocalestring()` equivalent, but 
   - when `[instance].locale` is set, will use that (so `toLocaleString(locale, {timeZone})`)
 - `localizedDT`: retrieve the local date/time for the either the instances' associated time zone or the local time zone (the latter is not very usefull). May be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). This is especially useful for determining the time for a date in a remote time zone.
+- `locale2Formats`: derive a formatting string from the locale (if applicable) for use in `[instance].format` (second parameter).
 - `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' locale
 - `self`: returns the original `Date` as a plain ES `Date`.
 - `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).
 - `values`(asArray: boolean): returns the values (year, month etc.) either as `Object` or as `Array`.
 - `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' locale
-
 
 ### Additional getter and/or setters are:
 - `date`: `[instance].date = /* Object literal. One or more of */ { year, month, date };`
