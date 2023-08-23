@@ -174,7 +174,7 @@ function demoNdTest() {
   log(`!!<h3 id="locale">Locale</h3>`);
   log(`!!<div>
         <p>With <code>$D</code> you can associate a <i>locale</i> and/or <i>timeZone</i>
-          with its <code>Date</code></p>
+          with the instance</p>
         <b>Notes</b><ul class="decimal">
         <li>As long as <code>[instance].locale</code> is not set, the <code>$D</code> instance
           Date is associated with your locale (like a regular <code>Date instance</code>).
@@ -329,7 +329,7 @@ function demoNdTest() {
   <div><b>Notes</b></div><ul class="sub">
     <li>add/subtract and all aggregates like ${toCode(`.nextYear`)}, ${toCode(`.tomorrow`)} are
       <a target="_blank" href="https://www.tutorialspoint.com/method-chaining-in-javascript">chainable</a></li>
-    <li>add/subtract and all aggregates <i>change</i> the instance Date</li>
+    <li>add/subtract and all aggregates are mutating, so <i>change</i> the Date</li>
   </ul>
   <code class="codeblock">const exampleDate = $D().relocate({locale: \`en-GB\`, timeZone: \`Europe/London\`});
 const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
