@@ -251,17 +251,17 @@ function demoNdTest() {
 
   d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});
   log(`!!` + toCode(`d1.relocate({locale: 'pl-PL', timeZone: 'Europe/Warsaw'});`));
-  log(`${toCode(`d1.format(\`{1. d1 with instance locale:} &lt;i>&ltb>WD MM d yyyy hh:mmi dp&lt/b>&lt;/i>\`)}`)}
-    <p>=> ${d1.format(`{1. d1 with instance locale:} <i><b>WD d MM yyyy hh:mmi dp</b></i>`)}`);
+  log(`${toCode(`d1.format(\`{1. d1 with instance locale:} &lt;i>&ltb>WD MM d yyyy hh:mmi&lt/b>&lt;/i>\`)}`)}
+    <p>=> ${d1.format(`{1. d1 with instance locale:} <i><b>WD d MM yyyy hh:mmi</b></i>`)}`);
   log(`${
     toCode(`d1.format(\`{2. d1 formatted /w second parameter:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss)&lt/b>&lt/i>\`, <b><i>'l:fr-FR'</i></b>)`)}
     <p>=> ${ d1.format(`{2. d1 formatted /w second parameter:} <i><b>(WD) d MM yyyy (hh:mmi:ss)</b></i>`, 'l:fr-FR')}</p>` );
   log(`${
-    toCode(`$D().format(\`{3. new instance default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss dp)&lt/b>&lt;/i>\`)`)}
-    <p>=> ${ $D().format(`{3. new instance default (your) locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss dp)</b></i>`)}</p>` );
+    toCode(`$D().format(\`{3. new instance default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss~dp)&lt/b>&lt;/i>\`)`)}
+    <p>=> ${ $D().format(`{3. new instance default (your) locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss~dp)</b></i>`)}</p>` );
   log(`${
-    toCode(`d1.format(\`{4. d1 default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss dp)&lt/b>&lt;/i>\`, <b><i>undefined</i></b>)`)}
-    <p>=> ${ d1.format(`{4. d1 default (your) your locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss dp)</b></i>`, undefined)}</p>` );
+    toCode(`d1.format(\`{4. d1 default (your) locale:} &lt;i>&ltb>(WD) d MM yyyy (hh:mmi:ss~dp)&lt/b>&lt;/i>\`, <b><i>undefined</i></b>)`)}
+    <p>=> ${ d1.format(`{4. d1 default (your) your locale:} <i><b>(WD) d MM yyyy (hh:mmi:ss~dp)</b></i>`, undefined)}</p>` );
 
   const d2French = d2.clone;
   d2French.locale = {locale: `fr-FR`, timeZone: `Europe/Paris`};
