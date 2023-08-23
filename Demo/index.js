@@ -157,9 +157,10 @@ function demoNdTest() {
   <code>$D({timeZone: \`Asia/Calcutta\`}).localeDiff(\`America/New_York\`)</code> => ${
     $D({timeZone: `Asia/Calcutta`}).localeDiff(`America/New_York`) }<br>
   <code>$D().midNight.local</code> => ${$D().midNight.local}<br>
-  <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${$D(`2022/06/01`).daysUntil($D(`2023/06/01`))}<br>
-  <code>$D(\`2023/06/01\`).daysUntil($D(\`2024/06/01\`))</code> => ${
-    $D(`2023/06/01`).daysUntil($D(`2024/06/01`))}<br>
+  <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${
+    $D(`2022/06/01`).daysUntil($D(`2023/06/01`))}<br>
+  <code>$D(\`2023/06/01\`).daysUntil($D(\`2029/06/01\`))</code> => ${
+    $D(`2023/06/01`).daysUntil($D(`2029/06/01`))}<br>
   <code>$D(\`2024/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${
     $D(`2024/06/01`).daysUntil($D(`2023/06/01`), false)} (<b>Note</b>: Start date > end date)<br>
   <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`), false)</code> => ${
@@ -581,20 +582,20 @@ $D.extendWith({name: `utcDiff`, fn: dt => {
 // It will be overwritten ...
 $D.extendWith({name: `daysUntil`, fn: (dt, nextDate, reportString = true) => {
     let z = 0, containsLeapYear = false;
+    [dt, nextDate] = dt > nextDate ? [nextDate, dt] : [dt, nextDate];
+    const initial = dt.clone;
     nextDate = !nextDate.time ? $D(nextDate) : nextDate;
     dt.time = nextDate.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
-    
-    if (dt > nextDate) {
-      [dt, nextDate] = [nextDate, dt];
-    }
     
     while (dt < nextDate) {
       dt.add(`1 day`);
       if (!containsLeapYear && dt.isLeapYear) { containsLeapYear = true; }
       z += 1;
     }
-    return reportString ? `Days from ${dt.date.join(`/`)} until ${nextDate.date.join(`/`)}: ${z} ${
-      containsLeapYear ? `(range contains leap year)` : ``}` : z;
+    
+    return reportString ? `Days from ${initial.date.join(`/`)} until ${
+      nextDate.date.join(`/`)}: ${z} ${
+        containsLeapYear ? `(range contains leap year(s))` : ``}` : z;
   },
   isMethod: true,
 });
