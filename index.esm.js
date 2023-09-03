@@ -17,9 +17,13 @@ function DateXFactory() {
     }
 
     if (root) {
-      Object.defineProperty(xDateFn, name, { value: (...args) => {
-        return proxify(fn(...args));
-      } });
+      Object.defineProperty( xDateFn, name, {
+        value: (...args) => {
+          const called = fn(...args);
+          return called instanceof Date ? proxify(called) : called;
+        }
+      } );
+
       return console.log(`✔ created '${name}' root level method`);
     }
 
