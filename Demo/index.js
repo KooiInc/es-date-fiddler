@@ -142,8 +142,8 @@ function demoNdTest() {
         (<code>isMethod</code> false). When <code>isMethod</code> is true, the function is considered (and callable as) 
         a getter <i>method</i> and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
       <li><code>root: boolean</code> When true <code>fn</code> is added as method to the <code>$D</code> <i>constructor</i>.
-        <code>fn</code> should return a Date, which after execution returns a new <code>$D</code> instance from 
-        that Date.<br>
+        When called the extension method returns a <code>$D</code> instance when its return value is an actual 
+        Date instance (so, when <code>fn</code> returns a Date instance).<br>
         <b>Note</b>: with <code>root: true</code> you do not need the date as the minimal parameter. The
         <code>isMethod</code> and <code>proxifyResult</code> are ignored.</li>
       <li><code>isMethod: boolean</code> see <code>fn</code></li>  
