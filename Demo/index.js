@@ -62,7 +62,7 @@ function demoNdTest() {
   log(`${toCode(`d3.local`)} (no timeZone) => ${d3.local}<br>${toCode(`d3.dateStr`)} => ${
     d3.dateStr}<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`)
   /* endregion init  */
-  
+
   /* region constructor */
   log(`!!<h3 id="constructor" class="quoted">Constructor</h3>
     <div>The constructor (here <code>$D</code>) has the signature:</div>
@@ -93,7 +93,7 @@ function demoNdTest() {
     const frDateFormatted = frDate.format('WD d MM yyyy hh:mmi')`, true)}
     <p>=> Instance with locale parameters formatted: ${frDateFormatted}</p>`);
   /* endregion constructor */
-  
+
   /* region extensions */
   log(`!!<h3 id="customprops">Extension getters / setters</h3>
     <p>See also: <span data-target="#allNames">List of all getters/setters</span></p>`);
@@ -130,19 +130,26 @@ function demoNdTest() {
   log(`<code>y2000.minutes</code> => ${y2000.minutes}`);
   log(`${toCode(`y2000.time`)} => [${y2000.time}]`);
   /* endregion  extensions */
-  
+
   /* region extend */
   extendHelper();
   log(`!!<h3 id="extendCustom">Utilities: add extensions to the constructor dynamically</h3>
     <div>Additional extension properties/methods can be created using</div>
-      <p><code>$D.extendWith({name: string, fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</p>
-      <ul class="sub"><li><code>fn</code>: the function to use. The function should at least have one parameter,
-      that being the date value of the instance. By default the extension function is added as property
-      (<code>isMethod</code> false). When <code>isMethod</code> is true, the function
-      is considered (and callable as) a method and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
-      <li><code>proxifyResult</code> When true <i>and</i> <code>fn</code> returns the instance date,
-      enables chaining. False by default.
-      <br><b>Note</b>: when <code>fn</code> returns the instance date, there's no need to set this value.</li></ul>`);
+      <p><code>$D.extendWith({name: string, root: fale, 
+        fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</p>
+      <ul class="sub"><li><code>fn: Function</code>: the function to use. The function should at least have one parameter,
+        that being the date value of the instance. By default the extension function is added as <i>getter</i> 
+        (<code>isMethod</code> false). When <code>isMethod</code> is true, the function is considered (and callable as) 
+        a getter <i>method</i> and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
+      <li><code>root: boolean</code> When true <code>fn</code> is added as method to the <code>$D</code> <i>constructor</i>.
+        <code>fn</code> should return a Date, which after execution returns a new <code>$D</code> instance from 
+        that Date.</li>
+      <li><code>isMethod: boolean</code> see <code>fn</code></li>  
+      <li><code>proxifyResult: boolean</code> When true <i>and</i> <code>fn</code> returns the date as <code>$D</code> 
+        instance, which enables chaining. False by default.</li></ul>
+      <p><b>Note</b>: when <code>fn</code> does <i>not</i> return a Date, for either root or instance extensions 
+        <code>proxyResult: true</code> will return an instance with the current Date. That may not 
+        be what you expect.</p>`);
   log(`!!<code class="codeblock">${xtndFN4Display}</code>`);
   log(`<code>$D().add(\`1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`1 day`).isTodayOrLaterThen($D())}<br>
   <code>$D().add(\`-1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`-1 day`).isTodayOrLaterThen($D())}<br>
@@ -165,8 +172,9 @@ function demoNdTest() {
   <code>$D(\`2024/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${
     $D(`2024/06/01`).daysUntil($D(`2023/06/01`), false)} (<b>Note</b>: Start date > end date)<br>
   <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`), false)</code> => ${
-    $D(`2022/06/01`).daysUntil($D(`2023/06/01`), false)}<br>`);
-  
+    $D(`2022/06/01`).daysUntil($D(`2023/06/01`), false)}<br>
+  <code>$D.fromExif(\`2022:06:01 22:05:07\`).local</code> => ${$D.fromExif(`2022:06:01 22:05:07`).local}`);
+
   /* endregion extend */
 
   /* region locale */
@@ -301,7 +309,7 @@ function demoNdTest() {
     invalidTimezone.format('dd MM yyyy hh:mmi:ss dp')}</p>` );
 
   /* endregion formatting */
-  
+
   /* region clone date or time part */
   log(`!!<h3 id="cloning">Clone date- or time part</h3>`);
   log(`!!<div><b>Notes</b>:<ul class="decimal">
@@ -342,7 +350,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     exampleDate.subtract(`5 days, 3 hours, 1 year`).local}`);
   log(`${toCode(`$D().previousYear.nextMonth.local`)} => ${$D().previousYear.nextMonth.local}`);
   /* endregion arithmetic */
-  
+
   /* region difference */
   log(`!!<h3 id="difference">Difference utility</h3>`);
   log(`${toCode(`$D().differenceFrom('1991/08/27 13:30').full`)}
@@ -370,7 +378,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     Use <code>monthZeroBased = true</code> if you want to use the values for a new Date.</p>
     ${valuesHelper()}`);
   /* endregion values */
-  
+
   /* region natives */
   log(`!!<h3 id="natives">Use native Date getters/setters</h3>
     <p>Most native getters/setters (e.g. <code>setFullYear</code> or <code>getFullYear</code>)
@@ -378,7 +386,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     proxied <code>Date</code> instance, you can also use the native getters and/or setters.
     <code class="codeblock">${nativesHelper().join(`\n`)}</code>`);
   /* endregion natives */
-  
+
   /* region now & validateLocale */
   log(`<h3 id="utilities">Utilities: now, validateLocale</h3>
     <div><code>now</code>, as you may have expected, delivers an instance from the current date.</div>
@@ -401,7 +409,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   log(`${toCode(`$D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})`)} => ${
     $D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})}`);
   /* endregion now & validateLocale */
-  
+
   /* region all extension names */
     log(`!!<h3 id="allNames">List of default instance extension getters/setters</h3>
       <p>You can retrieve the names of all getters/setters (properties/methods) using
@@ -421,7 +429,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
         (e.g. <code>[instance].hour = 4</code>)</li>
         ${getInitialExtensions()}</ul>`);
   /* endregion all extension names */
-  
+
   /* region performance */
   log(`!!<h3 id="perfomance">Performance</h3>`);
   log(checkPerformance(1_500));
@@ -587,13 +595,13 @@ $D.extendWith({name: `daysUntil`, fn: (dt, nextDate, reportString = true) => {
     const initial = dt.clone;
     nextDate = !nextDate.time ? $D(nextDate) : nextDate;
     dt.time = nextDate.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
-    
+
     while (dt < nextDate) {
       dt.add(`1 day`);
       if (!containsLeapYear && dt.isLeapYear) { containsLeapYear = true; }
       z += 1;
     }
-    
+
     return reportString ? `Days from ${initial.date.join(`/`)} until ${
       nextDate.date.join(`/`)}: ${z} ${
         containsLeapYear ? `(range contains leap year(s))` : ``}` : z;
@@ -605,6 +613,11 @@ $D.extendWith({name: `daysUntil`, fn: (dt, nextDate, reportString = true) => {
 $D.extendWith({name: `midNight`, fn: dt => {
   dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
   return dt; }, proxifyResult: true });
+
+// root level
+$D.extendWith({name: `fromExif`, root: true, fn: dateString =>
+  new Date(...dateString.split(/:|\s/).map( (v, i) => i === 1 ? +v - 1 : +v)) }
+);
 }
 
 function getInitialExtensions() {
