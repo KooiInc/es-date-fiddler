@@ -11,18 +11,25 @@ function DateXFactory() {
     has: (target, key) => key in extensionGettersAndSetters || key in target,
   };
 
-  function extendWith({name, fn, isMethod = false, proxifyResult = false} = {}) {
+  function extendWith({name, fn, root = false, isMethod = false, proxifyResult = false} = {}) {
     if (!name || !fn || !(fn instanceof Function)) {
       return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
     }
 
+    if (root) {
+      Object.defineProperty(xDateFn, name, { value: (...args) => {
+        return proxify(fn(...args));
+      } });
+      return console.log(`✔ created '${name}' root level method`);
+    }
+
     extensionGettersAndSetters = Object.freeze({...extensionGettersAndSetters, [name]: dt => {
         dt = proxify(dt);
-        
+
         if (dt.localeInfo) {
           dt.relocate(dt.localeInfo);
         }
-        
+
         return isMethod
           ? (...args) => proxifyResult ? proxify(fn(dt, ...args)) : fn(dt, ...args)
           : proxifyResult ? proxify(fn(dt)) : fn(dt);
@@ -30,7 +37,7 @@ function DateXFactory() {
     });
     console.log(`✔ created '${name}' ${isMethod ? `method` : `getter`}`);
   }
-  
+
   function localeValidator(locale, timeZone, logError = true) {
     const reportLocaleError = errLocale =>
       console.error(`invalid locale (time zone: "${errLocale.timeZone}", locale: "${
@@ -50,7 +57,7 @@ function DateXFactory() {
   function validateLocale({locale, timeZone} = {}) {
     if (!locale && !timeZone) { return false; }
     const validated = localeValidator(locale, timeZone, false);
-    
+
     if (locale && !timeZone) { return validated.locale === locale; }
     if (timeZone && !locale) { return timeZone === validated.timeZone; }
 
