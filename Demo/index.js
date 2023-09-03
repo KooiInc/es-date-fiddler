@@ -143,7 +143,9 @@ function demoNdTest() {
         a getter <i>method</i> and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
       <li><code>root: boolean</code> When true <code>fn</code> is added as method to the <code>$D</code> <i>constructor</i>.
         <code>fn</code> should return a Date, which after execution returns a new <code>$D</code> instance from 
-        that Date.</li>
+        that Date.<br>
+        <b>Note</b>: with <code>root: true</code> you do not need the date as the minimal parameter. The
+        <code>isMethod</code> and <code>proxifyResult</code> are ignored.</li>
       <li><code>isMethod: boolean</code> see <code>fn</code></li>  
       <li><code>proxifyResult: boolean</code> When true <i>and</i> <code>fn</code> returns the date as <code>$D</code> 
         instance, which enables chaining. False by default.</li></ul>
