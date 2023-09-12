@@ -60,7 +60,7 @@ function demoNdTest() {
   log(`${toCode(`d2.local`)} (timeZone: ${d2.locale?.timeZone}) => ${d2.local}<br>${toCode(`d2.dateStr`)} => ${
     d2.dateStr}<br>${toCode(`d2.timeStr(true)`)} => ${d2.timeStr(true)}`);
   log(`${toCode(`d3.local`)} (no timeZone) => ${d3.local}<br>${toCode(`d3.dateStr`)} => ${
-    d3.dateStr}<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`)
+    d3.dateStr}<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`);
   /* endregion init  */
 
   /* region constructor */
@@ -129,28 +129,43 @@ function demoNdTest() {
     y2000.timeStr(true)}</p>`);
   log(`<code>y2000.minutes</code> => ${y2000.minutes}`);
   log(`${toCode(`y2000.time`)} => [${y2000.time}]`);
+  log(`${toCode(`$D.now.firstWeekday().format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now.firstWeekday().format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
+  log(`${toCode(`$D.now.firstWeekday({midnight: true}).format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now.firstWeekday({midnight: true}).format(`WD yyyy/mm/dd hh:mmi:ss`)}`);
+  log(`${toCode(`$D.now.firstWeekday({sunday: true}).format(\`WD yyyy/mm/dd\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now.firstWeekday({sunday: true}).format(`WD yyyy/mm/dd`)}`);
+  log(`${toCode(`$D.now.next(\`fri\`).format(\`WD yyyy/mm/dd\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now.next(`fri`).format(`WD yyyy/mm/dd`)}`);
+  log(`${toCode(`$D.now.previous(\`fri\`).format(\`WD yyyy/mm/dd\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now.previous(`fri`).format(`WD yyyy/mm/dd`)}`);
+  log(`${toCode(`$D(\`2003/11/01 00:30:00\`).previous(\`tue\`).format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${
+    $D(`2003/11/01 00:30:00`).previous(`tue`).format(`WD yyyy/mm/dd hh:mmi:ss`)}`);
+  log(`${toCode(`$D(\`2003/11/01 00:30:00\`).previous(\`tue\`, {midnight: true}).format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D(`2003/11/01 00:30:00`).previous(`tue`, {midnight: true}).format(`WD yyyy/mm/dd hh:mmi:ss`)}`);
   /* endregion  extensions */
 
   /* region extend */
   extendHelper();
   log(`!!<h3 id="extendCustom">Utilities: add extensions to the constructor dynamically</h3>
     <div>Additional extension properties/methods can be created using</div>
-      <p><code>$D.extendWith({name: string, root: fale, 
+      <p><code>$D.extendWith({name: string, root: fale,
         fn: Function, isMethod: boolean, proxifyResult: boolean})</code>.</p>
       <ul class="sub"><li><code>fn: Function</code>: the function to use. The function should at least have one parameter,
-        that being the date value of the instance. By default the extension function is added as <i>getter</i> 
-        (<code>isMethod</code> false). When <code>isMethod</code> is true, the function is considered (and callable as) 
+        that being the date value of the instance. By default the extension function is added as <i>getter</i>
+        (<code>isMethod</code> false). When <code>isMethod</code> is true, the function is considered (and callable as)
         a getter <i>method</i> and can receive parameters (<code>[instance][name](dateValue, ...args)</code>).</li>
       <li><code>root: boolean</code> When true <code>fn</code> is added as method to the <code>$D</code> <i>constructor</i>.
-        When called the extension method returns a <code>$D</code> instance when its return value is an actual 
+        When called the extension method returns a <code>$D</code> instance when its return value is an actual
         Date instance (so, when <code>fn</code> returns a Date instance).<br>
         <b>Note</b>: with <code>root: true</code> you do not need the date as the minimal parameter. The
         <code>isMethod</code> and <code>proxifyResult</code> are ignored.</li>
-      <li><code>isMethod: boolean</code> see <code>fn</code></li>  
-      <li><code>proxifyResult: boolean</code> When true <i>and</i> <code>fn</code> returns the date as <code>$D</code> 
+      <li><code>isMethod: boolean</code> see <code>fn</code></li>
+      <li><code>proxifyResult: boolean</code> When true <i>and</i> <code>fn</code> returns the date as <code>$D</code>
         instance, which enables chaining. False by default.</li></ul>
-      <p><b>Note</b>: when <code>fn</code> does <i>not</i> return a Date, for either root or instance extensions 
-        <code>proxyResult: true</code> will return an instance with the current Date. That may not 
+      <p><b>Note</b>: when <code>fn</code> does <i>not</i> return a Date, for either root or instance extensions
+        <code>proxyResult: true</code> will return an instance with the current Date. That may not
         be what you expect.</p>`);
   log(`!!<code class="codeblock">${xtndFN4Display}</code>`);
   log(`<code>$D().add(\`1 day\`).isTodayOrLaterThen($D());</code> => ${$D().add(`1 day`).isTodayOrLaterThen($D())}<br>
