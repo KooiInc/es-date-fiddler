@@ -653,6 +653,7 @@ function getInitialExtensions() {
     <li><b>daysInMonth</b> (getter)</li>
     <li><b>daysUntil</b> (getter method)</li>
     <li><b>differenceFrom</b> (getter method)</li>
+    <li><b>firstWeekday</b> (getter method, chainable)</li>
     <li><b>format</b> (getter method)</li>
     <li><b>getTimezone</b> (getter)</li>
     <li><b>hasDST</b> (getter)</li>
@@ -667,9 +668,11 @@ function getInitialExtensions() {
     <li><b>month</b> (setter and getter)</li>
     <li><b>monthName</b> (getter)</li>
     <li><b>ms</b> (setter and getter)</li>
+    <li><b>next</b> (getter method, chainable)</li>
     <li><b>nextMonth</b> (mutating getter, chainable)</li>
     <li><b>nextWeek</b> (mutating getter, chainable)</li>
     <li><b>nextYear</b> (mutating getter, chainable)</li>
+    <li><b>previous</b> (getter method, chainable)</li>
     <li><b>previousMonth</b> (mutating getter, chainable)</li>
     <li><b>previousWeek</b> (mutating getter, chainable)</li>
     <li><b>previousYear</b> (mutating getter, chainable)</li>
