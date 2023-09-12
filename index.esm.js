@@ -3,7 +3,8 @@ const dx = DateXFactory();
 export { dx as default, DateXFactory };
 
 function DateXFactory() {
-  let extensionGettersAndSetters = Object.freeze(methodHelpersFactory(proxify, localeValidator));
+  let extensionGettersAndSetters = methodHelpersFactory(proxify, localeValidator);
+  
   const proxy = {
     get: ( target, key ) => { return !target[key] ? extensionGettersAndSetters[key]?.(target) : targetGetter(target, key); },
     set: ( target, key, value ) => { return extensionGettersAndSetters[key] ? extensionGettersAndSetters[key](target, value) : target[key]; },
@@ -11,7 +12,7 @@ function DateXFactory() {
     has: (target, key) => key in extensionGettersAndSetters || key in target,
   };
 
-  function extendWith({name, fn, root = false, isMethod = false, proxifyResult = false} = {}) {
+  function extendWith({name, fn, root, isMethod, proxifyResult} = {}) {
     if (!name || !fn || !(fn instanceof Function)) {
       return console.error(`es-date-fiddler (extendWith): cannot extend without name and/or fn (function)`);
     }
