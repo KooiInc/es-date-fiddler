@@ -16,8 +16,13 @@ function methodHelpersFactory(proxify, validateLocale) {
   const isoDateStr = d => zeroPadArr(getDate(d)).join(`-`);
   const getNumbers = obj => Object.entries(obj).filter(([, value]) => isNumberAndDefined(value));
   const getValues = (d, monthZeroBased = false) => {
+    d = proxify(d);
     const addMonth = monthZeroBased ? 0 : 1;
     const valueObj = {
+      monthZeroBased,
+      monthName: d.monthName,
+      weekDay: d.weekDay,
+      locale: d.locale || `no locale (yet)`,
       year: d.getFullYear(), month: d.getMonth() + addMonth, date: d.getDate(),
       hour: d.getHours(), minutes: d.getMinutes(),
       seconds: d.getSeconds(), milliseconds: d.getMilliseconds()
