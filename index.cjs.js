@@ -124,11 +124,8 @@ function methodHelpersFactory(proxify, validateLocale) {
     };
     
     return {
-      get object() {
-        return valueObj
-      }, get array() {
-        return Object.values(valueObj)
-      }
+      get object() { return valueObj; },
+      get array() { return Object.values(valueObj); }
     };
   };
   const localizedDT = dt => {
