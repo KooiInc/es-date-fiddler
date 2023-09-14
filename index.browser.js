@@ -119,7 +119,7 @@ function methodHelpersFactory(proxify, validateLocale) {
     d = proxify(d);
     const addMonth = monthZeroBased ? 0 : 1;
     const valueObj = {
-      year: d.getFullYear(), month: d.getMonth() + addMonth, date: d.getDate(),
+      year: d.getFullYear(), month: d.getMonth(), date: d.getDate(),
       hour: d.getHours(), minutes: d.getMinutes(),
       seconds: d.getSeconds(), milliseconds: d.getMilliseconds(),
       monthZeroBased,
@@ -130,7 +130,10 @@ function methodHelpersFactory(proxify, validateLocale) {
     
     return {
       get object() { return valueObj; },
-      get array() { return Object.values(valueObj).filter(v => !isNaN(parseInt(v))); }
+      get array() { return [
+        d.getFullYear(), d.getMonth() + addMonth, d.getDate(),
+        d.getHours(), d.getMinutes(), d.getSeconds(),
+        d.getMilliseconds() ]; }
     };
   };
   const localizedDT = dt => {
