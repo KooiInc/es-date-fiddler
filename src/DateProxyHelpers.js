@@ -19,18 +19,18 @@ function methodHelpersFactory(proxify, validateLocale) {
     d = proxify(d);
     const addMonth = monthZeroBased ? 0 : 1;
     const valueObj = {
+      year: d.getFullYear(), month: d.getMonth() + addMonth, date: d.getDate(),
+      hour: d.getHours(), minutes: d.getMinutes(),
+      seconds: d.getSeconds(), milliseconds: d.getMilliseconds(),
       monthZeroBased,
       monthName: d.monthName,
       weekDay: d.weekDay,
       locale: d.locale || `no locale (yet)`,
-      year: d.getFullYear(), month: d.getMonth() + addMonth, date: d.getDate(),
-      hour: d.getHours(), minutes: d.getMinutes(),
-      seconds: d.getSeconds(), milliseconds: d.getMilliseconds()
     };
     
     return {
       get object() { return valueObj; },
-      get array() { return Object.values(valueObj); }
+      get array() { return Object.values(valueObj).filter(v => !isNaN(parseInt(v))); }
     };
   };
   const localizedDT = dt => {
