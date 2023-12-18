@@ -48,6 +48,7 @@ function demoNdTest() {
 
   log(`!!<h3 id="inits">Initialization</h3>`);
   log(`!!` + toCode(`// $D imported (import $D from "[location of module]")
+// note: the IANA time zone identifier for US/Pacific is America/Los_Angeles
     const d1 = $D({ locale: \`en-US\`, timeZone: \`US/Pacific\` });
     const d2 = d1.clone;
     const d3 = $D(new Date(200, 2, 18, 12, 0, 30));

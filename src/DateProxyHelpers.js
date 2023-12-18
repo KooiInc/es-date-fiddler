@@ -174,10 +174,12 @@ function methodHelpersFactory(proxify, validateLocale) {
     
     return d.toLocaleDateString(locale, opts);
   };
+  const getMs =() => `.`.concat(`${d.getMilliseconds()}`.padStart(3, "0"));
   const getTimeStr = (d, ms) => {
-    const timeArr = getTime(d)
-      .reduce((acc, v, i) => [...acc, i < 3 ? zeroPad(v) : zeroPad(v, 3)], []);
-    return `${timeArr.slice(0, 3).join(`:`)}${ms ? `.${timeArr.slice(-1)}` : ``}`;
+    console.log(d.localeInfo?.formats);
+    const opts = {timeZone: d.localeInfo?.timeZone};
+    return d.toLocaleTimeString(d.localeInfo?.locale, {timeZone: d.localeInfo?.timeZone})
+      .concat(ms ? getMs() : ``);
   };
   const hasDST = dt => {
     const timeZone = getTimezone(dt);
