@@ -56,8 +56,10 @@ function demoNdTest() {
     d2.date = { year: 2022, date: 10, month: 12 };
     d2.locale = { locale: \`nl-NL\`, timeZone: \`Europe/Amsterdam\` };`, true) );
 
-  log(`${toCode(`d1.local`)} (timeZone: ${d1.locale?.timeZone}) => ${d1.local}<br>${toCode(`d1.dateStr`)} => ${
-    d1.dateStr}<br>${toCode(`d1.timeStr()`)} => ${d1.timeStr()}`);
+  log(`<b>Note</b>: ${toCode(`local/dateStr/timeStr`)} are locale aware<br>${
+      toCode(`d1.local`)} (timeZone: ${d1.locale?.timeZone}) => ${
+      d1.local}<br>${toCode(`d1.dateStr`)} => ${d1.dateStr} <br>${
+      toCode(`d1.timeStr()`)} => ${d1.timeStr()}`);
   log(`${toCode(`d2.local`)} (timeZone: ${d2.locale?.timeZone}) => ${d2.local}<br>${toCode(`d2.dateStr`)} => ${
     d2.dateStr}<br>${toCode(`d2.timeStr(true)`)} => ${d2.timeStr(true)}`);
   log(`${toCode(`d3.local`)} (no timeZone) => ${d3.local}<br>${toCode(`d3.dateStr`)} => ${
