@@ -1,4 +1,5 @@
-const $D = DateX = DateXFactory();
+const $D = DateXFactory();
+const DateX = $D;
 module.exports = { DateX, $D, DateXFactory };
 
 function DateXFactory() {
@@ -274,12 +275,11 @@ function methodHelpersFactory(proxify, validateLocale) {
     
     return d.toLocaleDateString(locale, opts);
   };
-  const getMs =() => `.`.concat(`${d.getMilliseconds()}`.padStart(3, "0"));
+  const getMs = d => `.${String(d.getMilliseconds()).padStart(3, "0")}`;
   const getTimeStr = (d, ms) => {
-    console.log(d.localeInfo?.formats);
     const opts = {timeZone: d.localeInfo?.timeZone};
     return d.toLocaleTimeString(d.localeInfo?.locale, {timeZone: d.localeInfo?.timeZone})
-      .concat(ms ? getMs() : ``);
+      .concat(ms ? getMs(d) : ``);
   };
   const hasDST = dt => {
     const timeZone = getTimezone(dt);
