@@ -444,7 +444,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
         (e.g. <code>[instance].tomorrow</code>)</li>
         <li>A <i>getter method</i> is called with parameters(s) and retrieves a (calculated) value
         of the instance (e.g. <code>[instance].time(true)</code>)</li>
-        <li>A <i>getter</i> retrieves a (calculated) value of the instance (e.g. <code>[instance].isDST</code>)</li>
+        <li>A <i>getter</i> retrieves a (calculated) value of the instance (e.g. <code>[instance].hasDST</code>)</li>
         <li>A <i>setter and getter</i> either retrieves a value or can be used to <i>assign</i> a value
         (e.g. <code>[instance].hour = 4</code>)</li>
         ${getInitialExtensions()}</ul>`);
