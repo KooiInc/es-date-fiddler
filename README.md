@@ -39,15 +39,21 @@ For each flavor, the script is (bundled and) minified. The location of the minif
 **Note**: earlier version of this module exported `DateX`. That's still available, but may be deprecated in a later version.
 
 ### NodeJS commonjs
-The library is a of type *module*. The cjs-code exports the constructor as `DateX` and `$D` and the factory `DateXFactory`.
+The cjs-code exports the constructor as `DateX` and `$D` and the factory `DateXFactory`. 
 
 Download links:
 - https://cdn.jsdelivr.net/gh/KooiInc/es-date-fiddler@latest/Node/index.bundle.cjs
 - https://kooiinc.github.io/es-date-fiddler/Node/index.bundle.cjs
 
 ``` javascript
-// after download of the bundle from one of the download links 
-import {$D} from "[local location of the bundle]/index.bundle.cjs";
+// no package.json or "type": "commonjs" in your package.json
+const $D = require("[local location of the cjs bundle]/index.bundle.cjs").$D;
+
+// "type": "module" in your package.json:
+// after download of the bundle from one of the download links
+// Note: in this case you may as well use the esm import.
+// See next chapter (ESM import) 
+import {$D} from "[local location of the cjs bundle]/index.bundle.cjs";
 /* ... */
 ```
 
