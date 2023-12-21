@@ -38,17 +38,16 @@ For each flavor, the script is (bundled and) minified. The location of the minif
 
 **Note**: earlier version of this module exported `DateX`. That's still available, but may be deprecated in a later version.
 
-### NodeJS require
+### NodeJS commonjs
+The library is a of type *module*. The cjs-code exports the constructor as `DateX` and `$D` and the factory `DateXFactory`.
 
 Download links:
-- https://cdn.jsdelivr.net/gh/KooiInc/es-date-fiddler@latest/Bundle/index.cjs.min.js
-- https://kooiinc.github.io/es-date-fiddler/Bundle/index.cjs.min.js
+- https://cdn.jsdelivr.net/gh/KooiInc/es-date-fiddler@latest/Node/index.bundle.cjs
+- https://kooiinc.github.io/es-date-fiddler/Node/index.bundle.cjs
 
 ``` javascript
-// after download of the bundle from 
-// https://kooiinc.github.io/es-date-fiddler/Bundle/index.cjs.min.js
-// Note: the module is exported as a function
-const { $D } = require("[local location of the bundle]/index.cjs.min.js");
+// after download of the bundle from one of the download links 
+import {$D} from "[local location of the bundle]/index.bundle.cjs";
 /* ... */
 ```
 
@@ -59,13 +58,10 @@ Import links:
 - https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js
 
 ``` javascript
-const $D = ( await 
-  import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js") 
-).default;
+import $D = from "https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js";
+
 // Note: the module also exports a factory named DateXFactory. Use it as
-const dxFactory = (await 
-  import("https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js")
-    .DateXFactory;
+import import {DateXFactory} from "https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js";
 const $D = dxFactory();
 /* ... */
 ```
