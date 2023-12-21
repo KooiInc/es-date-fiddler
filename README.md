@@ -67,6 +67,8 @@ const $D = dxFactory();
 ```
 
 ### Browser script
+The browser-code makes the constructor available as `window.$D` or `window.DateX`, 
+and the factory as `window.DateXFactory`.
 
 Import links:
 - https://cdn.jsdelivr.net/gh/KooiInc/es-date-fiddler@latest/Bundle/index.browser.min.js
