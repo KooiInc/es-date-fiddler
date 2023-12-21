@@ -7,7 +7,7 @@ See [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 
 <h2 id="What">What is it?</h2>
 
-The datefiddler library by default delivers an enhanced ES-Date constructor, and a factory to create the constructor (`DateXFactory`). In the following we named it `$D`.
+The datefiddler library by default delivers an enhanced ES-Date constructor, and a factory to create the constructor (`DateXFactory`). In the following we name the constructor `$D`.
 
 `$D` is a normal ECMAScript `Date` constructor, without the need to use `new`. 
 By using `Proxy` functionality one can use and/or create a number of additional setters and getters (e.g. for arithmetic, formatting, locale awareness), *as well as* use all regular `Date` functionality. 
