@@ -21,13 +21,19 @@ myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
 // one doesn't need to fill all values, the following keeps the current year of the XDate
 myDate.date = { date: 12, month: 5 };
 ```
-`$D` can be *locale aware*. When one initializes a `$D`, one can either provide a locale and/or timezone for it, or set it later. If a locale is set, some of the getters will use it. The locale is either set on initialization of a `$D`, or by the `.locale` setter. The next snippet demonstrates this (it shows the basic syntax of `$D` as well).
+Instances are ***locale aware***. When one instantiates a `$D` instance, one can either provide a locale and/or timezone for it, or set it later.
+
+When no locale/timeZone is set, an instance will be associated with the local (your) locale/timeZone   
+
+The next snippet demonstrates this (it shows the basic syntax of `$D` as well).
 
 ``` javascript
 const myDate = $D(`2021/2/15`, {locale: `fr-FR`, timeZone: `Europe/Paris`});
 const nowGermany = $D({locale: `de-DE`, timeZone: `Europe/Berlin`});
-const myDutchDate = myDate.clone;
-myDutchDate.locale = {locale: `nl-NL`, timeZone: `Europe/Amsterdam`};
+const aClone = myDate.clone;
+aClone.locale; //=> {locale: `fr-FR`, timeZone: `Europe/Paris`}
+const myDutchDate = myDate.cloneLocal;
+myDutchDate.locale; //=> {locale: [your locale], timeZone: [your time zone]};
 ```
 
 ## Import & initialize
