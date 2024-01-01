@@ -333,13 +333,14 @@ function methodHelpersFactory(proxify, validateLocale) {
     return z;
   }
   
-  function nextOrPrevious(d, {day, next = false, midnight = true} = {}) {
+  function nextOrPrevious(d, {day, next = false, midnight = true, forFirstWeekday = false} = {}) {
     d = proxify(d);
     const dd = d.clone;
     let today = dd.getDay();
     dd.time = midnight ? { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 } : {};
     let dayNr = `sun,mon,tue,wed,thu,fri,sat`.split(`,`).findIndex(v => v === day);
     let addTerm = `${ next ? 1 : -1 } days`;
+    if (forFirstWeekday && today === dayNr) { return dd; }
     return dayNr < 0 ? d : function(){
       today = today === dayNr ? dd.add(addTerm).getDay() : today;
       while( today !== dayNr ) { today = dd.add(addTerm).getDay(); }
@@ -354,7 +355,7 @@ function methodHelpersFactory(proxify, validateLocale) {
       hasDST,
       dateStr,
       timeZone: d => /*g*/getTimezone(d),
-      firstWeekday: d => ({sunday = false, midnight = false} = {}) => /*gm,c*/nextOrPrevious( d, { day: sunday ? `sun` : `mon`, midnight } ),
+      firstWeekday: d => ({sunday = false, midnight = false} = {}) => /*gm,c*/nextOrPrevious( d, { day: sunday ? `sun` : `mon`, midnight, forFirstWeekday: true } ),
       next: d => (day, {midnight = false} = {}) => /*gm,c*/nextOrPrevious( d, { day, midnight, next: true } ),
       previous: d => (day, {midnight = false} = {}) => /*gm,c*/ nextOrPrevious( d, { day, midnight } ),
       year: (d, setValue) => /*g,s*/setValue && d.setFullYear(setValue) || getValues(d).year,
