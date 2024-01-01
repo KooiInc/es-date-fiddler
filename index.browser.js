@@ -312,8 +312,10 @@ function methodHelpersFactory(proxify, validateLocale) {
     // milliseconds possibly influence the difference calculation
     // and are not relevant here, so discard
     selfHere.time = self.time = { milliseconds: 0 };
-    const sign = self === selfHere ? `` : +self >= +selfHere ? `+` : `-`;
-    return `${sign}${self.differenceFrom(selfHere).clean}`;
+    const difference = self.differenceFrom(selfHere).clean;
+    const equal = /equal/.test(difference);
+    const sign =  equal ? `` : +self >= +selfHere ? `+` : `-`;
+    return `${sign}${equal ? `no difference` : difference}`;
   }
   
   function daysUntil(dt, nextDate) {

@@ -74,10 +74,11 @@ function demoNdTest() {
       ${toCode(`d1.hour`)} => ${d1.hour}<br>
       ${toCode(`d1.timeDiffToHere`)} (time difference to local date/time): ${d1.timeDiffToHere}`
   );
-  print(`${toCode(`d2.local`)} (timeZone: ${d2.locale?.timeZone}) => ${d2.local}<br>
+  print(`${toCode(`d2.local`)} => ${d2.local} (${toCode(`d2.timeZone`)} => ${d2.timeZone})<br>
       ${toCode(`d2.dateStr`)} => ${d2.dateStr}<br>
       ${toCode(`d2.timeStr(true)`)} => ${d2.timeStr(true)}<br>
-      ${toCode(`d2.hour`)} => ${d2.hour}` );
+      ${toCode(`d2.hour`)} => ${d2.hour}<br>
+      ${toCode(`d2.timeDiffToHere`)} (time difference to local date/time): ${d2.timeDiffToHere}` );
   print(`${toCode(`d3.local`)} => ${
     d3.local}<br>${toCode(`d3.dateStr`)} => ${
       d3.dateStr} (default (your) timeZone; ${toCode(`d3.timeZone`)} => ${
