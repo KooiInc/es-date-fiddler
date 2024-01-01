@@ -116,8 +116,9 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `locale`: returns the internal value of locale (if it is set, otherwise `undefined`). See additional getters/setters for setter.
 
 ### Additional getters are
-- `clone`: clones the `$D` instance to a new `$D`
-  - **Note**: `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
+- `clone`: clones the `$D` instance to a new `$D` instance
+  - **Note**: An instance is cloning including its locale and timeZone. `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). 
+- `cloneLocal`: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*
 - `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
   - **Note**: `[instance].cloneDateTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
@@ -129,19 +130,27 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `dateStr`: get the date part from the instance date as string.
   - **Note** when locale information is associated with the instance, will be formatted cf that locale.
 - `dateISOStr`: get the date part from the instance date as ISO 8601 string (yyyy-mm-dd).
+- `firstWeekday([{sunday: boolean, midnight: boolean}])`: retrieve the date of the instances' first weekday,  
+   starting from monday (default) or sunday (`{ sunday: true }`) with the instances' time (default)   
+   or the time set to midnight (`{ midnight: true }`).
 - `getTimezone`: retrieves the time zone of the instance date (either the associated - or the local time zone).
 - `hasDST`: determine if the instance date timeZone is within a Daylight Saving Time zone.
   - **Note**: this uses the instances' associated locale information or the current local timeZone of the instance date.
 - `isLeapYear`: calculates and returns if the `$D` instance is a leap year (return true or false).
 - `ISO`: short for `.toISOString()`, so returns the ISO string representation of the `$D` instance
 - `local`: `[instance].local`: `tolocalestring()` equivalent, but 
-  - when `[instance].locale` is set, will use that (so `toLocaleString(locale, {timeZone})`)
-- `localizedDT`: retrieve the local date/time for the either the instances' associated time zone or the local time zone (the latter is not very usefull). May be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). This is especially useful for determining the time for a date in a remote time zone.
-- `locale2Formats`: derive a formatting string from the locale (if applicable) for use in `[instance].format` (second parameter).
+  - `[instance].local` will use the instances' locale (either set or the default (your) locale).
+- `localizedDT`: retrieve the local date/time for the either the instances' associated time zone (the latter is not very usefull). May be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). This is especially useful for determining the time for a date in a remote timeZone.
+- `locale2Formats`: derive a formatting string from the locale (if applicable) for use as the second parameter in `[instance].format`.
 - `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' locale
 - `self`: returns the original `Date` as a plain ES `Date`.
-- `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).
-- `values`(asArray: boolean): returns the values (year, month etc.) either as `Object` or as `Array`.
+- `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`). 
+  - **Note**: the result will be the time within the instances' timeZone, with a 24-hour notation (hh:mm:ss[.ms]).
+- `timeZone`: retrieves the current timeZone associated with the instance.
+- `timeDiffToHere`: retrieves the time difference (hour, minutes) from an instance to the date within your timeZone.
+- `values`(asArray: boolean): returns the values (year, month etc.) as `Object`:  
+   `{year, month, date, hour, minutes, seconds, milliseconds, dayPeriod, monthName, weekDay, resolvedLocale, valuesArray}`.  
+   - **Note**: the values represent the values for the instances' timeZone 
 - `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' locale
 
 ### Additional getter and/or setters are:
@@ -150,10 +159,12 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `locale`:  `[instance].locale = /* Object literal. One or both of */ { locale: [locale], timeZone: [timeZone] }`.
   - **Note**: when the locale of a `$D` instance is not set ones current locale is used.
   - **Note**: it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), some stringify-getters (`format, local`) will show an error message in the resulting string. [See also](https://betterprogramming.pub/formatting-dates-with-the-datetimeformat-object-9c808dc58604), or [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
-- `reLocate(newLocale: Object: {locale: string, timeZone: string})`: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance.
-- `removeLocale()`: remove all associated locale information from the `$D` instance.  
+- `relocate(newLocale: Object: {locale: string, timeZone: string})`: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance.
+- `removeLocale`: remove all associated locale information from the `$D` instance. May be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). 
 - `format(template: string, options: string)`: format the date (locale specific) using a template string. This uses a specific library. See [Github](https://github.com/KooiInc/dateformat) for all about the syntax.
-- `differenceFrom(someDate: Date | $D)`: calculates the difference from `somedate` in years, months, days, hours, minutes, seconds and milliseconds. See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for a few examples.
+- `differenceFrom(date: instance or ES-Date)`: retrieve the instances' *absolute* difference from [date] (as Object).  
+  `{from, to, years, months, days, hours, minutes, seconds, milliseconds, full (string from all values), clean (string from non zero values)}`  
+  See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for a few examples.
 - `relocate({locale, timeZone}: Object)`: (re)set the locale of the instance. When one or neither of `locale`/  `timeZone` is/are present, the locale will be set to `{locale: 'utc', timeZone: 'Etc/UTC'}`.
    - **Note**: `[instance].relocate(...)` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 

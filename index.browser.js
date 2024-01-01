@@ -353,7 +353,6 @@ function methodHelpersFactory(proxify, validateLocale) {
     ...{
       clone,
       cloneLocal,
-      localizedDT,
       hasDST,
       dateStr,
       timeZone: d => /*g*/getTimezone(d),
