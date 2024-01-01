@@ -169,6 +169,10 @@ chinese.locale = { locale: \`zh\`, timeZone: \`Asia/Shanghai\` };`,  true));
     <br>&nbsp;&nbsp;=> ${$D.now
     .firstWeekday({sunday: true})
     .format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
+  print(`${toCode(`$D(\`2023/12/31 22:00\`).firstWeekday().format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D(`2023/12/31 22:00`)
+    .firstWeekday()
+    .format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
   print(`${toCode(`$D(\`2023/12/31 22:00\`).firstWeekday({sunday: true}).format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
     <br>&nbsp;&nbsp;=> ${$D(`2023/12/31 22:00`)
     .firstWeekday({sunday: true})
