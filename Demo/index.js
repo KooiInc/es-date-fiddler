@@ -326,10 +326,10 @@ chinese.locale = { locale: \`zh\`, timeZone: \`Asia/Shanghai\` };`,  true));
   print(toCode(`nwZealandTomorrow.cloneLocal.local`) + ` => ${
     nwZealandTomorrow.cloneLocal.local} (<code>nwZealandTomorrow</code> in your locale/timeZone)`);
   print(
-    toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).localizedDT.timeStr()`) +
+    toCode(`$D().relocate({timeZone: 'Australia/Darwin'}).timeStr()`) +
     ` => ${$D()
       .relocate({ timeZone: 'Australia/Darwin' })
-      .localizedDT.timeStr()}`);
+      .timeStr()}`);
   print(toCode(`$D().timeZone`) +` (your local time zone) => ${$D().timeZone}`);
   print(toCode(`d2German.removeLocale.local`) + ` => ${d2German.removeLocale.local}`);
   print(toCode(`d2German.locale`) + ` => ${d2German.removeLocale.locale}`);
