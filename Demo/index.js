@@ -32,6 +32,7 @@ function demoNdTest() {
   const methodSignatures = Object.entries($D.describe)
     .map( ([mName, signature]) => `<li><b>${mName}</b> (${signature})`)
     .join(``);
+  // noinspection RegExpRepeatedSpace
   const customExtensionsCode = ( theCode => theCode
     .trim()
     .slice(theCode.indexOf(`\n`), -1)
@@ -42,16 +43,14 @@ function demoNdTest() {
     `<code${block ? ` class="codeblock"` : ``}>${
       str.replace(/^\s+(?=\b|(\/\/))/gm, ``)}</code>`;
   const yn = (tf) => (tf ? `Yep` : `Nope`);
-  const toJSON = (obj, format) =>
-    format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
+  const toJSON = (obj, format) => format ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
   window.DX = $D;
   const d1 = $D({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.cloneLocal;
   const d3 = $D(new Date(200, 2, 18, 12, 0, 30));
   print(
     `!!<h1>Demo for es-date-fiddler</h1>`,
-    `!!<h2>a proxy to extend and make working with ES <code>Date</code> somewhat easier</h3>`
-  );
+    `!!<h2>a proxy to extend and make working with ES <code>Date</code> somewhat easier</h3>` );
   
   print(`!!<h3 id="inits">Initialization</h3>
   <div>The datefiddler library by default delivers an enhanced ES-Date constructor.</div>
@@ -164,6 +163,24 @@ chinese.locale = { locale: \`zh\`, timeZone: \`Asia/Shanghai\` };`,  true));
   print(`${toCode(`y2000.time`)} => [${y2000.time}]`);
   print(`${toCode(`$D.now.firstWeekday().format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
     <br>&nbsp;&nbsp;=> ${$D.now
+    .firstWeekday()
+    .format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
+  print(`${toCode(`$D.now.firstWeekday({sunday: true}).format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now
+    .firstWeekday({sunday: true})
+    .format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
+  print(`${toCode(`$D(\`2023/12/31 22:00\`).firstWeekday({sunday: true}).format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D(`2023/12/31 22:00`)
+    .firstWeekday({sunday: true})
+    .format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
+  print(`${toCode(`$D.now.add(\`2 days\`).firstWeekday().format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now
+    .add(`2 days`)
+    .firstWeekday()
+    .format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
+  print(`${toCode(`$D.now.add(\`12 days\`).firstWeekday().format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
+    <br>&nbsp;&nbsp;=> ${$D.now
+    .add(`12 days`)
     .firstWeekday()
     .format(`WD yyyy/mm/dd  hh:mmi:ss`)}`);
   print(`${toCode(`$D.now.firstWeekday({midnight: true}).format(\`WD yyyy/mm/dd hh:mmi:ss\`)`)}
@@ -691,30 +708,26 @@ function nativesHelper() {
 
 function extendHelper() {
   $D.extendWith({
-    name: `isTodayOrLaterThen`,
+    name: "isTodayOrLaterThen",
     fn: (dt, nextDt) => +dt >= +nextDt,
     isMethod: true,
   });
   
   // locale aware `getTimezoneOffset`
   $D.extendWith({
-    name: `utcDistanceHours`,
+    name: "utcDistanceHours",
     fn: (dt) => {
-      const timeZone =
-        dt.localeInfo?.timeZone ||
-        Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const fmt = Intl.DateTimeFormat(`en-CA`, {
-        year: `numeric`,
-        timeZone: timeZone,
-        timeZoneName: 'shortOffset',
-      });
+      const timeZone = dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const fmt = Intl.DateTimeFormat(
+        "en-CA",
+        { year: "numeric",  timeZone: timeZone, timeZoneName: "shortOffset", } );
       let distance = fmt.format(dt).match(/[+-]\d+$/);
       return !distance ? 0 : distance.shift();
     },
   });
   
   $D.extendWith({
-    name: `utcDiff`,
+    name: "utcDiff",
     fn: (dt) => {
       const dtClone = dt.clone;
       const tz = { timeZone: dtClone.locale?.timeZone || `utc` };
@@ -723,7 +736,7 @@ function extendHelper() {
         .localize4TZ(tz.timeZone)
         .add(`${utcDiff} minutes, 1 second`);
       let diff = dt.differenceFrom(local4TZ);
-      diff = diff.clean.startsWith(`Dates`) ? `no difference` : diff.clean;
+      diff = diff.clean.startsWith("Dates") ? "no difference" : diff.clean;
       return `UTC difference for ${tz.timeZone}: ${diff}`;
     },
   });
@@ -731,32 +744,23 @@ function extendHelper() {
   // Note: this getter method (daysUntil) already exists in $D instances.
   // It will be overwritten ...
   $D.extendWith({
-    name: `daysUntil`,
+    name: "daysUntil",
     fn: (dt, nextDate, reportString = true) => {
-      let z = 0,
-        containsLeapYear = false;
+      let z = 0, containsLeapYear = false;
       [dt, nextDate] = dt > nextDate ? [nextDate, dt] : [dt, nextDate];
       const initial = dt.clone;
       nextDate = !nextDate.time ? $D(nextDate) : nextDate;
-      dt.time = nextDate.time = {
-        hour: 0,
-        minutes: 0,
-        seconds: 0,
-        milliseconds: 0,
-      };
+      dt.time = nextDate.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0, };
       
       while (dt < nextDate) {
-        dt.add(`1 day`);
-        if (!containsLeapYear && dt.isLeapYear) {
-          containsLeapYear = true;
-        }
+        dt.add("1 day");
+        if (!containsLeapYear && dt.isLeapYear) { containsLeapYear = true; }
         z += 1;
       }
       
       return reportString
-        ? `Days from ${initial.date.join(`/`)} until ${nextDate.date.join(
-          `/`
-        )}: ${z} ${containsLeapYear ? `(range contains leap year(s))` : ``}`
+        ? `Days from ${initial.date.join(`/`)} until ${nextDate.date.join(`/`)}: ${z} ${
+              containsLeapYear ? `(range contains leap year(s))` : ``}`
         : z;
     },
     isMethod: true,
@@ -764,7 +768,7 @@ function extendHelper() {
   
   // returns $D instance, so chainable
   $D.extendWith({
-    name: `midNight`,
+    name: "midNight",
     fn: (dt) => {
       dt.time = { hour: 0, minutes: 0, seconds: 0, milliseconds: 0 };
       return dt;
@@ -774,12 +778,9 @@ function extendHelper() {
   
   // root level
   $D.extendWith({
-    name: `fromExif`,
+    name: "fromExif",
     root: true,
-    fn: (dateString) =>
-      new Date(
-        ...dateString.split(/:|\s/).map((v, i) => (i === 1 ? +v - 1 : +v))
-      ),
+    fn: (dateString) => new Date(...dateString.split(/:|\s/).map((v, i) => (i === 1 ? +v - 1 : +v))),
   });
 }
 /* endregion helpers */
