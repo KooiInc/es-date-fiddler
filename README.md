@@ -125,9 +125,9 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `clone`: clones the `$D` instance to a new `$D` instance
   - **Note**: An instance is cloning including its locale and timeZone. `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). 
 - `cloneLocal`: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*
-- `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
+- `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
   - **Note**: `[instance].cloneDateTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
-- `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance (*including its locale*) to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
+- `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
   - **Note**: `[instance].cloneTimeTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
 - `daysUntil(nextDate: Date | $D instance)`: returns the number of days between two dates
