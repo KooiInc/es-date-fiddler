@@ -544,11 +544,14 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
         (e.g. <code>[instance].add(\`4 years\`)</code>)</li>
         <li>A <i>mutating getter</i> changes the instance date and retrieves it
         (e.g. <code>[instance].tomorrow</code>)</li>
-        <li>A <i>getter method</i> is called with parameters(s) and retrieves a (calculated) value
+        <li>A <i>getter method</i> is called with parameters(s) and retrieves a (calculated/extracted) value
         derived from the instance (e.g. <code>[instance].format(...)</code>)</li>
-        <li>A <i>getter</i> retrieves a (calculated) value of the instance (e.g. <code>[instance].hasDST</code>)</li>
+        <li>A <i>getter</i> retrieves a (calculated/extracted) value derived from the instance
+          (e.g. <code>[instance].hasDST</code>)</li>
         <li>A <i>setter</i> can be used to <i>assign</i> a value (e.g. <code>[instance].hour = 4</code>).
           It (ofcourse) changes the instance date</li>
+        <li>For mutating getter (methods) you can avoid mutating using
+          a <i>clone</i> of the instance (<code>[instance].clone</code> or <code>[instance].cloneLocal</code>)</li>
         <li class="head"><h3>The list</b>: <code>[$D instance].[...]</code></h3></li>
         ${methodSignatures}</ul>`);
   
