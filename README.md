@@ -140,7 +140,6 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `ISO`: short for `.toISOString()`, so returns the ISO string representation of the `$D` instance
 - `local`: `[instance].local`: `tolocalestring()` equivalent, but 
   - `[instance].local` will use the instances' locale (either set or the default (your) locale).
-- `localizedDT`: retrieve the local date/time for the either the instances' associated time zone (the latter is not very usefull). May be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). This is especially useful for determining the time for a date in a remote timeZone.
 - `locale2Formats`: derive a formatting string from the locale (if applicable) for use as the second parameter in `[instance].format`.
 - `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' locale
 - `self`: returns the original `Date` as a plain ES `Date`.
