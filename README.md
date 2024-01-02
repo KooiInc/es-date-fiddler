@@ -129,13 +129,13 @@ const nextweek = $D(`2024/01/01`)
 ### Additional getters are
 - `clone`<sup>chainable</sup>: clones the `$D` instance to a new `$D` instance, including its associate locale/timeZone.
 - `cloneLocal`<sup>chainable</sup>: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*.
-- `cloneDateTo([dateTo]: Date|$D)`<sup>chainable</sup>: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
-- `cloneTimeTo([dateTo]: Date/$D)`<sup>chainable</sup>: clones the *time part*  of the `$D` instance to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
+- `cloneDateTo([dateTo]: Date|$D)`<sup>chainable</sup>: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance for `[dateTo]`.
+- `cloneTimeTo([dateTo]: Date/$D)`<sup>chainable</sup>: clones the *time part*  of the `$D` instance to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance for `[dateTo]`.
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
-- `daysUntil(nextDate: Date | $D instance)`: returns the number of days between two dates. 
+- `daysUntil(nextDate: Date | $D instance)`: returns the number of days between two dates.<br> 
    The time of both dates will not be considered, so returns the number of days between
     *midnight* from - and to date.
-- `dateStr`: get the date part from the instance date as string. 
+- `dateStr`: get the date part from the instance date as string.<br>
    The string will be formatted using the instances' associated locale information.
 - `dateISOStr`: get the date part from the instance date as ISO 8601 string (yyyy-mm-dd).
 - `firstWeekday([{sunday: boolean, midnight: boolean}])`<sup>chainable</sup>: retrieve new instance 
@@ -150,7 +150,7 @@ const nextweek = $D(`2024/01/01`)
    locale/timeZone (either set or the default (your) locale/timeZone).
 - `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' associated locale.
 - `self`: returns the original `Date` as a plain ES `Date`.
-- `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).   
+- `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).<br>
    The result will be the time within the instances' associated timeZone, with a 24-hour notation (hh:mm:ss[.ms]).
 - `timeZone`: retrieves the timeZone currently associated with the instance.
 - `timeDiffToHere`: retrieves the time difference (hour, minutes) from an instance to the date within the default (your) timeZone.
@@ -161,12 +161,12 @@ const nextweek = $D(`2024/01/01`)
 ### Additional getter and/or setters are:
 - `date` (setter): `[instance].date = /* Object literal. One or more of { year, month, date }; */`
 - `time` (setter): `[instance].time = /* Object literal. One or more of { hour, minutes, seconds, milliseconds }; */` 
-- `locale` (setter):  `[instance].locale = /* Object literal. One or both of  { locale: [locale], timeZone: [timeZone] } */`.  
+- `locale` (setter):  `[instance].locale = /* Object literal. One or both of  { locale: [locale], timeZone: [timeZone] } */`.<br>
    **Notes**: 
    - when the locale of a `$D` instance is not set ones current locale/timeZone is used.
    - it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), 
      some stringify-getters (`format, local`) will revert to ones current locale/timeZone. See [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
-- `relocate(newLocale: Object: {locale: string, timeZone: string})`<sup>chainable</sup>: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance.
+- `relocate(newLocale: Object: {locale: string, timeZone: string})`<sup>chainable</sup>: locale setter as method. Associate [locale] and/or [timeZone] with the current `$D` instance.
 - `removeLocale`<sup>chainable</sup>: remove associated locale information from the `$D` instance (**note**: resets to local (your) locale). 
 - `format(template: string, options: string)`: format the date (locale specific) using a template string. This uses a specific library. See [Github](https://github.com/KooiInc/dateformat) for all about the syntax.
 - `differenceFrom(date: instance or ES-Date)`: retrieve the instances' *absolute* difference from [date]. Returns:  
