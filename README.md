@@ -21,9 +21,12 @@ myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
 // one doesn't need to fill all values, the following keeps the current year of the XDate
 myDate.date = { date: 12, month: 5 };
 ```
-Instances are ***locale aware***. When one instantiates a `$D` instance, one can either provide a locale and/or timezone for it, or set it later.
+Instances are ***locale aware***. When one instantiates a `$D` instance, 
+one can either provide a locale (e.g. `de-DE`) and/or timeZone identifier (e.g. `Europ/Berlin`) 
+for it, or set it later.
 
-When no locale/timeZone is set, an instance will be associated with the local (your) locale/timeZone   
+When locale/timeZone is not associated with an instance, the instance will be 
+associated with the local (your) locale and timeZone identifier.
 
 The next snippet demonstrates this (it shows the basic syntax of `$D` as well).
 
@@ -97,18 +100,19 @@ Import links:
 ```
 
 ## Usage examples
+The [**DEMO**](https://kooiinc.github.io/es-date-fiddler/Demo/) contains a lot of usage examples.
+
+## Getters and setters of `$D` instances
+
+A number of getter (-methods) return the instance. These may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). For example:
+
 ```javascript
-// $D imported and initialized
-const now = $D();
-const then = $D(`1997/04/27 01:30`);
-const previousMonth = now.clone.previousMonth;
-console.log(now.differenceFrom(then));
-console.log(previousMonth.local);
-````
-
-For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/es-date-fiddler/Demo/).
-
-## Getters and setters of `$D`
+const nextweek = $D(`2024/01/01`)
+  .nextMonth
+  .add(`-3 hours, 20 minutes, 5 seconds`)
+  .relocate({locale: `en-AU`, timeZone: 'Australia/Darwin'})
+  .format(`WD MM d yyyy hh:mmi:ss dp`); //=> 'Thursday February 1 2024 06:50:05 am'
+```
 
 ### Simple getters/setters are: 
 - `year`: `[instance].year` or `[instance].year = [value]` 
@@ -122,56 +126,52 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 - `locale`: returns the internal value of locale (if it is set, otherwise `undefined`). See additional getters/setters for setter.
 
 ### Additional getters are
-- `clone`: clones the `$D` instance to a new `$D` instance
-  - **Notes**: An instance clone includes its locale and timeZone. `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). 
-- `cloneLocal`: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*
-- `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
-  - **Note**: `[instance].cloneDateTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
-- `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
-  - **Note**: `[instance].cloneTimeTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
+- `clone`: clones the `$D` instance to a new `$D` instance, including its associate locale/timeZone. <u>Chainable</u>.
+- `cloneLocal`: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*. <u>Chainable</u>.
+- `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance. <u>Chainable</u>.
+- `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance. <u>Chainable</u>.
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
-- `daysUntil(nextDate: Date | $D instance)`: returns the number of days between two dates
-  - **Note** The time of both dates will not be considered, so returns the number of days between
-    *midnight* from - and to date. 
-- `dateStr`: get the date part from the instance date as string.
-  - **Note** when locale information is associated with the instance, will be formatted cf that locale.
+- `daysUntil(nextDate: Date | $D instance)`: returns the number of days between two dates. 
+   The time of both dates will not be considered, so returns the number of days between
+    *midnight* from - and to date.
+- `dateStr`: get the date part from the instance date as string. 
+   The string will be formatted using the instances' associated locale information.
 - `dateISOStr`: get the date part from the instance date as ISO 8601 string (yyyy-mm-dd).
 - `firstWeekday([{sunday: boolean, midnight: boolean}])`: retrieve the date of the instances' first weekday,  
    starting from monday (default) or sunday (`{ sunday: true }`) with the instances' time (default)   
-   or the time set to midnight (`{ midnight: true }`).
+   or the time set to midnight (`{ midnight: true }`).  <u>Chainable</u>.
 - `getTimezone`: retrieves the time zone of the instance date (either the associated - or the local time zone).
-- `hasDST`: determine if the instance date timeZone is within a Daylight Saving Time zone.
-  - **Note**: this uses the instances' associated locale information or the current local timeZone of the instance date.
+- `hasDST`: determine if the instance date timeZone is within a Daylight Saving Time zone, using the instances' 
+   associated timeZone information.
 - `isLeapYear`: calculates and returns if the `$D` instance is a leap year (return true or false).
 - `ISO`: short for `.toISOString()`, so returns the ISO string representation of the `$D` instance
-- `local`: `[instance].local`: `tolocalestring()` equivalent, but 
-  - `[instance].local` will use the instances' locale (either set or the default (your) locale).
-- `locale2Formats`: derive a formatting string from the locale (if applicable) for use as the second parameter in `[instance].format`.
-- `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' locale
+- `local`: `[instance].local`: `tolocalestring()` equivalent, but `[instance].local` will use the instances' 
+   locale/timeZone (either set or the default (your) locale/timeZone).
+- `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' associated locale.
 - `self`: returns the original `Date` as a plain ES `Date`.
-- `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`). 
-  - **Note**: the result will be the time within the instances' timeZone, with a 24-hour notation (hh:mm:ss[.ms]).
-- `timeZone`: retrieves the current timeZone associated with the instance.
-- `timeDiffToHere`: retrieves the time difference (hour, minutes) from an instance to the date within your timeZone.
-- `values`(asArray: boolean): returns the values (year, month etc.) as `Object`:  
-   `{year, month, date, hour, minutes, seconds, milliseconds, dayPeriod, monthName, weekDay, resolvedLocale, valuesArray}`.  
-   - **Note**: the values represent the values for the instances' timeZone 
-- `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' locale
+- `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).   
+   The result will be the time within the instances' associated timeZone, with a 24-hour notation (hh:mm:ss[.ms]).
+- `timeZone`: retrieves the timeZone currently associated with the instance.
+- `timeDiffToHere`: retrieves the time difference (hour, minutes) from an instance to the date within the default (your) timeZone.
+- `values(asArray: boolean)`: returns the values (year, month etc.) using the associated locale/timeZone as `Object`:  
+   `{year, month, date, hour, minutes, seconds, milliseconds, dayPeriod, monthName, weekDay, resolvedLocale, valuesArray}`.
+- `weekDay`: `[instance.weekDay]` The name of the weekday (monday, tuesday ...), using the instances' associated locale.
 
 ### Additional getter and/or setters are:
-- `date`: `[instance].date = /* Object literal. One or more of */ { year, month, date };`
-- `time`: `[instance].time = /* Object literal. One or more of */ { hour, minutes, seconds, milliseconds };` 
-- `locale`:  `[instance].locale = /* Object literal. One or both of */ { locale: [locale], timeZone: [timeZone] }`.
-  - **Note**: when the locale of a `$D` instance is not set ones current locale is used.
-  - **Note**: it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), some stringify-getters (`format, local`) will show an error message in the resulting string. [See also](https://betterprogramming.pub/formatting-dates-with-the-datetimeformat-object-9c808dc58604), or [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
-- `relocate(newLocale: Object: {locale: string, timeZone: string})`: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance.
-- `removeLocale`: remove all associated locale information from the `$D` instance. May be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). 
+- `date` (setter): `[instance].date = /* Object literal. One or more of { year, month, date }; */`
+- `time` (setter): `[instance].time = /* Object literal. One or more of { hour, minutes, seconds, milliseconds }; */` 
+- `locale` (setter):  `[instance].locale = /* Object literal. One or both of  { locale: [locale], timeZone: [timeZone] } */`.  
+   **Notes**: 
+   - when the locale of a `$D` instance is not set ones current locale/timeZone is used.
+   - it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), 
+     some stringify-getters (`format, local`) will revert to ones current locale/timeZone. See [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+- `relocate(newLocale: Object: {locale: string, timeZone: string})`: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance. <u>Chainable</u>.
+- `removeLocale`: remove associated locale information from the `$D` instance (resets to local (your) locale). <u>Chainable</u>. 
 - `format(template: string, options: string)`: format the date (locale specific) using a template string. This uses a specific library. See [Github](https://github.com/KooiInc/dateformat) for all about the syntax.
-- `differenceFrom(date: instance or ES-Date)`: retrieve the instances' *absolute* difference from [date] (as Object).  
+- `differenceFrom(date: instance or ES-Date)`: retrieve the instances' *absolute* difference from [date]. Returns:  
   `{from, to, years, months, days, hours, minutes, seconds, milliseconds, full (string from all values), clean (string from non zero values)}`  
   See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for a few examples.
-- `relocate({locale, timeZone}: Object)`: (re)set the locale of the instance. When one or neither of `locale`/  `timeZone` is/are present, the locale will be set to `{locale: 'utc', timeZone: 'Etc/UTC'}`.
-   - **Note**: `[instance].relocate(...)` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
+- `relocate({locale, timeZone}: Object)`: (re)set the locale of the instance. When one or neither of `locale`/  `timeZone` is/are present, the locale will be set to `{locale: 'utc', timeZone: 'Etc/UTC'}`. <u>Chainable</u>.
 
 ### Setters to add or subtract days, years, hours etc.
 The following setters use the following basic syntax for adding or subtracting things from the date at hand.
@@ -187,7 +187,7 @@ See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 
 **Notes**:
 * all setters below *change the instance Date*. If one doesn't want that, `clone` the `$D` instance first, e.g `const nextYear = [instance].clone.nextYear`.
-* all setters below can be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript), e.g. `[instance].nextYear.add("15 days").subtract("2 hours, 30 minutes")`.
+* all setters below are chainable, e.g. `[instance].nextYear.add("15 days").subtract("2 hours, 30 minutes")`.
 * for convenience the `$D` constructor has the property (getter) `now` to create an instance with the current `Date`. `$D.now` is equivalent to `$D()`. 
 ---
 - `add(...things2Add: string | string[])`: add [things2Add] to the `$D` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].add("1 day, 5 hours")` or `[instance].add("1 day", "5 hours")` 
