@@ -126,10 +126,10 @@ const nextweek = $D(`2024/01/01`)
 - `locale`: returns the internal value of locale (if it is set, otherwise `undefined`). See additional getters/setters for setter.
 
 ### Additional getters are
-- `clone`: clones the `$D` instance to a new `$D` instance, including its associate locale/timeZone. <u>Chainable</u>.
-- `cloneLocal`: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*. <u>Chainable</u>.
-- `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance. <u>Chainable</u>.
-- `cloneTimeTo([dateTo]: Date/$D)`: clones the *time part*  of the `$D` instance to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance. <u>Chainable</u>.
+- `clone`<sup>chainable</sup>: clones the `$D` instance to a new `$D` instance, including its associate locale/timeZone.
+- `cloneLocal`<sup>chainable</sup>: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*.
+- `cloneDateTo([dateTo]: Date|$D)`<sup>chainable</sup>: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
+- `cloneTimeTo([dateTo]: Date/$D)`<sup>chainable</sup>: clones the *time part*  of the `$D` instance to `dateTo`. When `dateTo` is missing the time part is copied to *now*.<br>Returns a new `$D` instance.
 - `daysInMonth`: returns the days in the month of the `$D` instance Date.
 - `daysUntil(nextDate: Date | $D instance)`: returns the number of days between two dates. 
    The time of both dates will not be considered, so returns the number of days between
@@ -137,9 +137,9 @@ const nextweek = $D(`2024/01/01`)
 - `dateStr`: get the date part from the instance date as string. 
    The string will be formatted using the instances' associated locale information.
 - `dateISOStr`: get the date part from the instance date as ISO 8601 string (yyyy-mm-dd).
-- `firstWeekday([{sunday: boolean, midnight: boolean}])`: retrieve the date of the instances' first weekday,  
-   starting from monday (default) or sunday (`{ sunday: true }`) with the instances' time (default)   
-   or the time set to midnight (`{ midnight: true }`).  <u>Chainable</u>.
+- `firstWeekday([{sunday: boolean, midnight: boolean}])`<sup>chainable</sup>: retrieve new instance 
+   from the date of the instances' first weekday, starting from monday (default) or 
+   sunday (`{ sunday: true }`) with the instances' time (default) or the time set to midnight (`{ midnight: true }`). 
 - `getTimezone`: retrieves the time zone of the instance date (either the associated - or the local time zone).
 - `hasDST`: determine if the instance date timeZone is within a Daylight Saving Time zone, using the instances' 
    associated timeZone information.
@@ -165,13 +165,13 @@ const nextweek = $D(`2024/01/01`)
    - when the locale of a `$D` instance is not set ones current locale/timeZone is used.
    - it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), 
      some stringify-getters (`format, local`) will revert to ones current locale/timeZone. See [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
-- `relocate(newLocale: Object: {locale: string, timeZone: string})`: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance. <u>Chainable</u>.
-- `removeLocale`: remove associated locale information from the `$D` instance (resets to local (your) locale). <u>Chainable</u>. 
+- `relocate(newLocale: Object: {locale: string, timeZone: string})`<sup>chainable</sup>: locale setter as method. Associate [locale] and [timeZone] with the current `$D` instance.
+- `removeLocale`<sup>chainable</sup>: remove associated locale information from the `$D` instance (**note**: resets to local (your) locale). 
 - `format(template: string, options: string)`: format the date (locale specific) using a template string. This uses a specific library. See [Github](https://github.com/KooiInc/dateformat) for all about the syntax.
 - `differenceFrom(date: instance or ES-Date)`: retrieve the instances' *absolute* difference from [date]. Returns:  
   `{from, to, years, months, days, hours, minutes, seconds, milliseconds, full (string from all values), clean (string from non zero values)}`  
   See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for a few examples.
-- `relocate({locale, timeZone}: Object)`: (re)set the locale of the instance. When one or neither of `locale`/  `timeZone` is/are present, the locale will be set to `{locale: 'utc', timeZone: 'Etc/UTC'}`. <u>Chainable</u>.
+- `relocate({locale, timeZone}: Object)`<sup>chainable</sup>: (re)set the locale of the instance. When one or neither of `locale`/  `timeZone` is/are present, the locale will be set to `{locale: 'utc', timeZone: 'Etc/UTC'}`.
 
 ### Setters to add or subtract days, years, hours etc.
 The following setters use the following basic syntax for adding or subtracting things from the date at hand.
@@ -190,21 +190,21 @@ See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 * all setters below are chainable, e.g. `[instance].nextYear.add("15 days").subtract("2 hours, 30 minutes")`.
 * for convenience the `$D` constructor has the property (getter) `now` to create an instance with the current `Date`. `$D.now` is equivalent to `$D()`. 
 ---
-- `add(...things2Add: string | string[])`: add [things2Add] to the `$D` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].add("1 day, 5 hours")` or `[instance].add("1 day", "5 hours")` 
-- `subtract(...things2Subtract: string | string[])`: subtract [things2Add] from the `$D` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].subtract("1 day, 5 hours")` or `[instance].subtract("1 day", "5 hours")`.
+- `add(...things2Add: string | string[])`<sup>chainable</sup>: add [things2Add] to the `$D` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].add("1 day, 5 hours")` or `[instance].add("1 day", "5 hours")` 
+- `subtract(...things2Subtract: string | string[])`<sup>chainable</sup>: subtract [things2Add] from the `$D` instance and set its value to the result. [thing2Add] can be either a comma delimited string, or a number of strings, e.g. `[instance].subtract("1 day, 5 hours")` or `[instance].subtract("1 day", "5 hours")`.
   - **Note**: `subtract` is for convenience, it can also be written as `[instance].add("-1 day, -5 hours")`
-- `addYears(n: Number)`: add `n` years to the `$D` instance and set its value to the result. `n` May be  negative. 
-- `addMonths(n: Number)`: add `n` months to the `$D` instance and set its value to the result. `n` May be  negative. 
-- `addWeeks(n: Number)`: add `n` weeks to the `$D` instance and set its value to the result. `n` May be  negative.
-- `addDays(n: Number)`: add `n` days to the `$D` instance and set its value to the result. `n` May be negative.
-- `nextYear`: add one year to the `$D` instance and set its value to the result.
-- `previousYear`: subtract one year to the `$D` instance and set its value to the result.
-- `nextWeek`: add one week (7 days) to the `$D` instance and set its value to the result. 
-- `previousWeek`: subtract one week (7 days) from the `$D` instance  and set its value to the result.
-- `nextMonth`: add one month to the `$D` instance and set its value to the result. 
-- `previousMonth`: subtract one month to the `$D` instance and set its value to the result. 
-- `tomorrow`: add one day to the `$D` instance and set its value to the result. 
-- `yesterday`: subtract one day from the `$D` instance and set its value to the result.
+- `addYears(n: Number)`<sup>chainable</sup>: add `n` years to the `$D` instance and set its value to the result. `n` May be  negative. 
+- `addMonths(n: Number)`<sup>chainable</sup>: add `n` months to the `$D` instance and set its value to the result. `n` May be  negative. 
+- `addWeeks(n: Number)`<sup>chainable</sup>: add `n` weeks to the `$D` instance and set its value to the result. `n` May be  negative.
+- `addDays(n: Number)`<sup>chainable</sup>: add `n` days to the `$D` instance and set its value to the result. `n` May be negative.
+- `nextYear`<sup>chainable</sup>: add one year to the `$D` instance and set its value to the result.
+- `previousYear`<sup>chainable</sup>: subtract one year to the `$D` instance and set its value to the result.
+- `nextWeek`<sup>chainable</sup>: add one week (7 days) to the `$D` instance and set its value to the result. 
+- `previousWeek`<sup>chainable</sup>: subtract one week (7 days) from the `$D` instance  and set its value to the result.
+- `nextMonth`<sup>chainable</sup>: add one month to the `$D` instance and set its value to the result. 
+- `previousMonth`<sup>chainable</sup>: subtract one month to the `$D` instance and set its value to the result. 
+- `tomorrow`<sup>chainable</sup>: add one day to the `$D` instance and set its value to the result. 
+- `yesterday`<sup>chainable</sup>: subtract one day from the `$D` instance and set its value to the result.
 
 ## Instance utilities
 
