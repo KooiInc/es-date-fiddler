@@ -76,7 +76,7 @@ Import links:
 import $D = from "https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js";
 
 // Note: the module also exports a factory named DateXFactory. Use it as
-import import {DateXFactory} from "https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js";
+import {DateXFactory} from "https://kooiinc.github.io/es-date-fiddler/Bundle/index.esm.min.js";
 const $D = dxFactory();
 /* ... */
 ```
