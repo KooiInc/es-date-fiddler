@@ -123,7 +123,8 @@ const nextweek = $D(`2024/01/01`)
 - `ms`: `[instance].ms` or `[instance].ms = [value]`
 - `date`: `[instance].date` (see additional getter/setters for setter)
 - `time`: `[instance].time` returns an [h, m, s, ms] (see additional getters/setters for setter)
-- `locale`: returns the internal value of locale (if it is set, otherwise `undefined`). See additional getters/setters for setter.
+- `locale`: returns the current value of locale and timeZone identifier (`{locale, timeZone}`). 
+   See additional getters/setters for the setter.
 
 ### Additional getters are
 - `clone`<sup>chainable</sup>: clones the `$D` instance to a new `$D` instance, including its associate locale/timeZone.
