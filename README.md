@@ -123,7 +123,7 @@ For more comprehensive usage examples, see [**demo**](https://kooiinc.github.io/
 
 ### Additional getters are
 - `clone`: clones the `$D` instance to a new `$D` instance
-  - **Note**: An instance is cloning including its locale and timeZone. `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). 
+  - **Notes**: An instance clone includes its locale and timeZone. `[instance].clone` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript). 
 - `cloneLocal`: clones the `$D` instance to new `$D` instance *with the default (your) locale/timeZone*
 - `cloneDateTo([dateTo]: Date|$D)`: copies the *date part* of the `$D` instance to `dateTo`. When `dateTo` is missing the date part is copied to *now*.<br>Returns a new `$D` instance.
   - **Note**: `[instance].cloneDateTo` may be [chained](https://www.tutorialspoint.com/method-chaining-in-javascript).
