@@ -1,11 +1,12 @@
 /* region intialize/start */
 const isDev = location.host.startsWith(`dev.`);
 const devMini = t => t ? `../Bundle/index.esm.min.js` : `../index.esm.js`;
+const mini4Test = false;
 import $ from "https://kooiinc.github.io/JQL/Bundle/jql.min.js";
 if (!/stackblitz/i.test(location)) { console.clear(); }
 const $D = isDev
-  ? (await import(devMini(false))).default
-  : (await import("../Bundle/index.esm.min.js")).default;
+  ? (await import(devMini(mini4Test))).default
+  : (await import(devMini(false))).default;
 const { log:print, logTop } = logFactory(true);
 const debug = false;
 window.$D = $D;
