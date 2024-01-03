@@ -18,8 +18,8 @@ So, to create a `$D` extended `Date`, instead of `new Date(...)` one uses `$D(..
 
 *Locaclized*  means that one can set (associate) the locale (e.g. `de-DE`) and/or 
 timeZone identifier (e.g. `Europe/Berlin`) for an `$D` instance. 
-Subsequently all retrieved values from the instance are the values 
-*within the associate Timezone*. By default an instance is associated with
+Subsequently all retrieved date/time values from the instance are the values 
+*within the associated Timezone*. By default an instance is associated with
 the local locale and timeZone identifier within the environment (browser,
 node) of the user.
 
@@ -47,7 +47,7 @@ const nowInGermany = $D({locale: `de-DE`, timeZone: `Europe/Berlin`});
 const aCloneInFrance = myDate.clone.relocate({locale: `fr-FR`, timeZone: `Europe/Paris`});
 aCloneInFrance.locale; //=> {locale: `fr-FR`, timeZone: `Europe/Paris`}
 const myDateHere = acCloneInFrance.cloneLocal;
-myDateHere.locale; //=> {locale: [your locale], timeZone: [your time zone]};
+myDateHere.locale; //=> {locale: [user environment locale], timeZone: [user environment time zone]};
 
 ```
 
