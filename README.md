@@ -7,37 +7,52 @@ See [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 
 <h2 id="What">What is it?</h2>
 
-The datefiddler library by default delivers an enhanced ES-Date constructor, and a factory to create the constructor (`DateXFactory`). In the following we name the constructor `$D`.
+The datefiddler library by default delivers an enhanced ES-Date constructor, and a factory to create the constructor (`DateXFactory`). 
+In the following we name the constructor `$D`.
 
 `$D` is a normal ECMAScript `Date` constructor, without the need to use `new`. 
-By using `Proxy` functionality one can use and/or create a number of additional setters and getters (e.g. for arithmetic, formatting, locale awareness), *as well as* use all regular `Date` functionality. 
+By using `Proxy` functionality one can use and/or create a *localized* ES-Date making a number of 
+additional setters and getters (e.g. for arithmetic, formatting, locale awareness) available, 
+*as well as* use all regular `Date` getters/setters/methods. 
 So, to create a `$D` extended `Date`, instead of `new Date(...)` one uses `$D(...)`.
 
-For example, to set the date of a `$D`, use
+*Locaclized*  means that one can set (associate) the locale (e.g. `de-DE`) and/or 
+timeZone identifier (e.g. `Europe/Berlin`) for an `$D` instance. 
+Subsequently all retrieved values from the instance are the values 
+*within the associate Timezone*. By default an instance is associated with
+the local locale and timeZone identifier within the environment (browser,
+node) of the user.
+
+## Syntax
+```
+$D([dateOrLocale: Date | string | Array[Number] | {locale, timeZone}], [localeInfo: {locale, timeZone}])
+```
+- `dateOrLocale`: can be a regular Date (`new Date(...)`), a (valid) date string ("2022/07/18"), a `Number` array 
+or an Object with locale information (one of or both, e.g. `{locale: "en-CA", timeZone: "America/Toronto"}`). 
+When no date can be inferred from `dateOrLocale` or the parameter is not given,
+the current date/time ('now') will be the instances' Date (associated with the users locale/Timezone).
+If `dateOrLocale` is and `Object` the current date with the locale parameters from the Object entries (if valid)
+will be the instances' Date.
+- `localeInfo`: when the first parameter is a `Date` or a date string, the second parameter can be used to
+   associate locale information with that Date (see Locale).
+
+A few examples:
 
 ``` javascript
 const myDate = $D();
 myDate.date = { year: myDate.year + 3, date: 12, month: 1 };
 // one doesn't need to fill all values, the following keeps the current year of the XDate
 myDate.date = { date: 12, month: 5 };
+const nowInGermany = $D({locale: `de-DE`, timeZone: `Europe/Berlin`});
+const aCloneInFrance = myDate.clone.relocate({locale: `fr-FR`, timeZone: `Europe/Paris`});
+aCloneInFrance.locale; //=> {locale: `fr-FR`, timeZone: `Europe/Paris`}
+const myDateHere = acCloneInFrance.cloneLocal;
+myDateHere.locale; //=> {locale: [your locale], timeZone: [your time zone]};
+
 ```
-Instances are ***locale aware***. When one instantiates a `$D` instance, 
-one can either provide a locale (e.g. `de-DE`) and/or timeZone identifier (e.g. `Europ/Berlin`) 
-for it, or set it later.
 
-When locale/timeZone is not associated with an instance, the instance will be 
-associated with the local (your) locale and timeZone identifier.
-
-The next snippet demonstrates this (it shows the basic syntax of `$D` as well).
-
-``` javascript
-const myDate = $D(`2021/2/15`, {locale: `fr-FR`, timeZone: `Europe/Paris`});
-const nowGermany = $D({locale: `de-DE`, timeZone: `Europe/Berlin`});
-const aClone = myDate.clone;
-aClone.locale; //=> {locale: `fr-FR`, timeZone: `Europe/Paris`}
-const myDutchDate = myDate.cloneLocal;
-myDutchDate.locale; //=> {locale: [your locale], timeZone: [your time zone]};
-```
+## Usage examples
+The [**DEMO**](https://kooiinc.github.io/es-date-fiddler/Demo/) contains a lot of usage examples.
 
 ## Import & initialize
 
@@ -98,9 +113,6 @@ Import links:
   /* ... */
 </script>
 ```
-
-## Usage examples
-The [**DEMO**](https://kooiinc.github.io/es-date-fiddler/Demo/) contains a lot of usage examples.
 
 ## Getters and setters of `$D` instances
 
@@ -163,9 +175,9 @@ const nextweek = $D(`2024/01/01`)
 - `time` (setter): `[instance].time = /* Object literal. One or more of { hour, minutes, seconds, milliseconds }; */` 
 - `locale` (setter):  `[instance].locale = /* Object literal. One or both of  { locale: [locale], timeZone: [timeZone] } */`.<br>
    **Notes**: 
-   - when the locale of a `$D` instance is not set ones current locale/timeZone is used.
-   - it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `timeZone: "London"`), 
-     some stringify-getters (`format, local`) will revert to ones current locale/timeZone. See [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+   - it *is* important to use valid values. When either locale or timeZone are not valid (e.g. `{timeZone: "London"}`), 
+     some stringify-getters (`format, local`) will revert to ones current locale/timeZone.
+     See [this wikipedia page](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for all possible values.
 - `relocate(newLocale: Object: {locale: string, timeZone: string})`<sup>chainable</sup>: locale setter as method. Associate [locale] and/or [timeZone] with the current `$D` instance.
 - `removeLocale`<sup>chainable</sup>: remove associated locale information from the `$D` instance (**note**: resets to local (your) locale). 
 - `format(template: string, options: string)`: format the date (locale specific) using a template string. This uses a specific library. See [Github](https://github.com/KooiInc/dateformat) for all about the syntax.
