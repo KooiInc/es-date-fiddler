@@ -160,7 +160,9 @@ const nextweek = $D(`2024/01/01`)
 - `ISO`: short for `.toISOString()`, so returns the ISO string representation of the `$D` instance
 - `local`: `[instance].local`: `tolocalestring()` equivalent, but `[instance].local` will use the instances' 
    locale/timeZone (either set or the default (your) locale/timeZone).
-- `monthName`: `[instance.monthName]` The name of the month (january, february ...), using the instances' associated locale.
+- `monthName`: `[instance.monthName]`: The name of the month (january, february ...), using the instances' associated locale.
+- `next(day: string, {midnight: boolean})`<sup>chainable</sup>: retrieve the next [day] (one of mon, tue, ... sun), with the 
+   current time, or midnight (`{midnight: true}`). Returns a cloned instance.
 - `self`: returns the original `Date` as a plain ES `Date`.
 - `timeStr(includeMS: boolean`): retrieve time as string (`hh:mm:ss[.ms]`).<br>
    The result will be the time within the instances' associated timeZone, with a 24-hour notation (hh:mm:ss[.ms]).
