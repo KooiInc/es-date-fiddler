@@ -683,15 +683,15 @@ function createContent() {
 
 function valuesHelper() {
   const now = $D.now;
-  const us = now.clone.relocate({ locale: `en-US`, timeZone: `US/Pacific` });
+  const japan = now.clone.relocate({ locale: `ja-JP`, timeZone: `Asia/Tokyo` });
   const tomorrow = $D(now.values.array).tomorrow;
   const nowVals = now.values;
-  const usVals = us.values;
+  const japanVals = japan.values;
   const valArray4Display = str => str.replace(/(Array": )"(.+?)"/, (a,b,c) => `Array": ${c}`);
   nowVals.valuesArray = `[${now.values.valuesArray.join(`, `)}]`;
-  usVals.valuesArray = `[${us.values.valuesArray.join(`, `)}]`;
+  japanVals.valuesArray = `[${japan.values.valuesArray.join(`, `)}]`;
   const valuesComment1 = `/* =>\n${valArray4Display(JSON.stringify(nowVals, null, 2))} */`;
-  const valuesComment2 = `/* =>\n${valArray4Display(JSON.stringify(usVals, null, 2))} */`;
+  const valuesComment2 = `/* =>\n${valArray4Display(JSON.stringify(japanVals, null, 2))} */`;
   const cmmts = `year,month,date,hour,minutes,seconds,milliseconds`
     .split(`,`)
     .map( v => `// ${v}`);
@@ -699,11 +699,11 @@ function valuesHelper() {
   const valuesArrayComment = `[${vArr.join(``)}\n  ]\n`;
   return `<code class="codeblock">${[
     `const now = $D.now;`,
-    `const us = now.clone.relocate({ locale: \`en-US\`, timeZone: \`US/Pacific\` });`,
+    `const japan = now.clone.relocate({ locale: \`ja\`, timeZone: \`Asia/Tokyo\` });`,
     `now.values; ${valuesComment1}`,
     `now.values.month; //=> ${now.values.month}`,
     `// values are locale specific`,
-    `us.values; ${valuesComment2}`,
+    `japan.values; ${valuesComment2}`,
     `/* now.values.valuesArray represents => ${
     valuesArrayComment}\u2026 so one can use values.valuesArray to create a new instance */`,
     `const tomorrow = $D(now.values.valuesArray).tomorrow;`,
