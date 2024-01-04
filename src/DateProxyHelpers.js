@@ -47,7 +47,7 @@ function methodHelpersFactory(proxify, validateLocale) {
     d.localeInfo = locale || timeZone ? createLocaleInfo(d, {locale, timeZone, validate}) : d.localeInfo;
     
     return d.localeInfo;
-  };
+  }
   
   function createLocaleInfo(d, {locale, timeZone} = {}) {
     const info = validateLocale(locale, timeZone);
