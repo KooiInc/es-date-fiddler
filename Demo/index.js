@@ -497,10 +497,9 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   
   /* region values */
   print(`!!<h3 id="values">Values</h3>
-    <p>The <code>[instance].values(monthZeroBased: boolean)</code> getter method delivers
-    an Object <code>{array, object}</code><br>
-    By default the month value is <i>not</i> zero based (so january is 1).<br>
-    Use <code>monthZeroBased = true</code> if you want to use the values for a new Date.</p>
+    <p>The <code>[instance].values</code> getter delivers an Object.<br>
+    <code>[values].month</code> value is <i>not</i> zero based (so january is 1).<br>
+    <code>[values].valuesArray[1]</code> (the month) value <i>is</i> zero based (so january is 0).<br>
     ${valuesHelper()}`);
   /* endregion values */
   
@@ -684,13 +683,18 @@ function createContent() {
 
 function valuesHelper() {
   const now = $D.now;
+  const us = now.clone.relocate({ locale: `en-US`, timeZone: `US/Pacific` });
   const nowTomorrow = $D(now.values.array).tomorrow;
+  const valuesComment1 = `/* =>\n${JSON.stringify(now.values, null, 2)} */`;
+  const valuesComment2 = `/* =>\n${JSON.stringify(us.values, null, 2)} */`;
   return `<code class="codeblock">${[
     `const now = $D.now;`,
-    `now.values; //=> ${JSON.stringify(now.values)}`,
-    `now.values.arrayValues; //=> [${now.values.valuesArray}]`,
+    `const us = now.clone.relocate({ locale: \`en-US\`, timeZone: \`US/Pacific\` });`,
+    `now.values; ${valuesComment1}`,
+    `now.values.valuesArray; //=> [${now.values.valuesArray}]`,
     `now.values.month; //=> ${now.values.month}`,
-    `const nowTomorrow = $D(now.values.arrayValues).tomorrow;`,
+    `us.values; ${valuesComment2}`,
+    `const nowTomorrow = $D(now.values.valuesArray).tomorrow;`,
     `nowTomorrow.local; //=> ${nowTomorrow.local}`,
   ].join(`\n`)}</code>`;
 }
