@@ -687,13 +687,20 @@ function valuesHelper() {
   const nowTomorrow = $D(now.values.array).tomorrow;
   const valuesComment1 = `/* =>\n${JSON.stringify(now.values, null, 2)} */`;
   const valuesComment2 = `/* =>\n${JSON.stringify(us.values, null, 2)} */`;
+  const cmmts = `year,month,date,hour,minutes,seconds,milliseconds`
+    .split(`,`)
+    .map( v => `// ${v}`);
+  const vArr = now.values.valuesArray.map( (v, i) => `${v} ${cmmts[i]}` );
+  const valuesArrayComment = `/* =>\n${JSON.stringify(vArr, null, 2)} */`.replace(/"/g, ``);
   return `<code class="codeblock">${[
     `const now = $D.now;`,
     `const us = now.clone.relocate({ locale: \`en-US\`, timeZone: \`US/Pacific\` });`,
     `now.values; ${valuesComment1}`,
-    `now.values.valuesArray; //=> [${now.values.valuesArray}]`,
+    `now.values.valuesArray; ${valuesArrayComment}`,
     `now.values.month; //=> ${now.values.month}`,
+    `// values are locale specific`,
     `us.values; ${valuesComment2}`,
+    `// use values.valuesArray to create a new instance`,
     `const nowTomorrow = $D(now.values.valuesArray).tomorrow;`,
     `nowTomorrow.local; //=> ${nowTomorrow.local}`,
   ].join(`\n`)}</code>`;
