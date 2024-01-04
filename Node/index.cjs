@@ -58,7 +58,7 @@ function DateXFactory() {
     return xDateFn();
   }
   
-  function validateLocale({locale, timeZone} = {}) {
+  function validateLocaleConstructorExtension({locale, timeZone} = {}) {
     if (!locale && !timeZone) { return false; }
     const validated = localeValidator(locale, timeZone, false);
     
@@ -110,16 +110,14 @@ function DateXFactory() {
       ? new Date()
       : new Date( dateIsDate ? dateOrLocale : Date.parse(dateOrLocale));
     const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
-    const proxied = proxify(date2Proxy)
-      .relocate(dateIsLocaleInfo ? dateOrLocale : localeInfo);
     
-    return proxied;
+    return proxify(date2Proxy).relocate(dateIsLocaleInfo ? dateOrLocale : localeInfo);
   }
   
   Object.defineProperties(xDateFn, {
     now: { get() { return now(); } },
     extendWith: { get() { return extendWith; } },
-    validateLocale: {get() { return validateLocale; } },
+    validateLocale: {get() { return validateLocaleConstructorExtension; } },
     ownFns: { get() { return Object.getOwnPropertyDescriptors( extensionGettersAndSetters ) } },
     describe: { get() { return getDescriptions(); } }
   });
@@ -170,7 +168,7 @@ function methodHelpersFactory(proxify, validateLocale) {
     d.localeInfo = locale || timeZone ? createLocaleInfo(d, {locale, timeZone, validate}) : d.localeInfo;
     
     return d.localeInfo;
-  };
+  }
   
   function createLocaleInfo(d, {locale, timeZone} = {}) {
     const info = validateLocale(locale, timeZone);
