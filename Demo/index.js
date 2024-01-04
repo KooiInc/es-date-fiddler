@@ -690,8 +690,8 @@ function valuesHelper() {
   const cmmts = `year,month,date,hour,minutes,seconds,milliseconds`
     .split(`,`)
     .map( v => `// ${v}`);
-  const vArr = now.values.valuesArray.map( (v, i) => `${v} ${cmmts[i]}` );
-  const valuesArrayComment = `/* =>\n${JSON.stringify(vArr, null, 2)} */`.replace(/"/g, ``);
+  const vArr = now.values.valuesArray.map( (v, i) => `\n  ${`${v}`.padStart(4, ` `)}, ${cmmts[i]}` );
+  const valuesArrayComment = `/* =>\n[${vArr.join(``)} ] */`;
   return `<code class="codeblock">${[
     `const now = $D.now;`,
     `const us = now.clone.relocate({ locale: \`en-US\`, timeZone: \`US/Pacific\` });`,
