@@ -159,9 +159,7 @@ function methodHelpersFactory(proxify, validateLocale) {
   
   function getValues(d)  {
     d = proxify(d);
-    const [MM, WD] = d.toLocaleString(d.locale.locale, {timeZone: d.locale.timeZone, month: `long`, weekday: `long`})
-      .split(` `);
-    const [y,m,dd,h,mi,s,ms,dp] = d.format(`yyyy,mm,dd,hh,mmi,ss,ms,dp`).split(`,`);
+    const [y,m,dd,h,mi,s,ms,dp,MM,WD] = d.format(`yyyy,mm,dd,hh,mmi,ss,ms,dp,MM,WD`).split(`,`);
     let locale = d.localeInfo ? validateLocale(d.localeInfo.locale, d.localeInfo.timeZone) : validateLocale();
     const valueObj = {
       year: +y,
@@ -172,14 +170,14 @@ function methodHelpersFactory(proxify, validateLocale) {
       seconds: +s,
       milliseconds: +ms,
       dayPeriod: dp !== `` ? dp : `n/a`,
-      monthName: MM.normalize(),
-      weekDay: WD.normalize(),
+      monthName: MM,
+      weekDay: WD,
       resolvedLocale: locale,
       valuesArray: [y,m - 1,dd,h,mi,s,ms].map(Number),
     };
     
     return valueObj;
-  };
+  }
   
   function localeDifference2(dt)  {
     const self = localizedDT(dt);
