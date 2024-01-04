@@ -109,14 +109,9 @@ function DateXFactory() {
       ? new Date()
       : new Date( dateIsDate ? dateOrLocale : Date.parse(dateOrLocale));
     const date2Proxy = !isNaN(maybeDate) ? maybeDate : new Date(Date.now());
-    const proxied = proxify(date2Proxy);
+    const proxied = proxify(date2Proxy)
+      .relocate(dateIsLocaleInfo ? dateOrLocale : localeInfo);
     
-    if (dateIsLocaleInfo || localeInfo) {
-      proxied.locale = dateIsLocaleInfo ? dateOrLocale : localeInfo;
-      return proxied;
-    }
-    
-    proxied.relocate();
     return proxied;
   }
   
