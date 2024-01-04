@@ -684,7 +684,7 @@ function createContent() {
 function valuesHelper() {
   const now = $D.now;
   const us = now.clone.relocate({ locale: `en-US`, timeZone: `US/Pacific` });
-  const nowTomorrow = $D(now.values.array).tomorrow;
+  const tomorrow = $D(now.values.array).tomorrow;
   const nowVals = now.values;
   const usVals = us.values;
   const valArray4Display = str => str.replace(/(Array": )"(.+?)"/, (a,b,c) => `Array": ${c}`);
@@ -696,7 +696,7 @@ function valuesHelper() {
     .split(`,`)
     .map( v => `// ${v}`);
   const vArr = now.values.valuesArray.map( (v, i) => `\n  ${`${v}`.padStart(8, ` `)}, ${cmmts[i]}` );
-  const valuesArrayComment = ` [${vArr.join(``)}\n  ] */`;
+  const valuesArrayComment = `[${vArr.join(``)}\n  ]\n`;
   return `<code class="codeblock">${[
     `const now = $D.now;`,
     `const us = now.clone.relocate({ locale: \`en-US\`, timeZone: \`US/Pacific\` });`,
@@ -704,10 +704,10 @@ function valuesHelper() {
     `now.values.month; //=> ${now.values.month}`,
     `// values are locale specific`,
     `us.values; ${valuesComment2}`,
-    `/* now.values.valuesArray represents => ${valuesArrayComment}`,
-    `// so one can use values.valuesArray to create a new instance`,
-    `const nowTomorrow = $D(now.values.valuesArray).tomorrow;`,
-    `nowTomorrow.local; //=> ${nowTomorrow.local}`,
+    `/* now.values.valuesArray represents => ${
+    valuesArrayComment}\u2026 so one can use values.valuesArray to create a new instance */`,
+    `const tomorrow = $D(now.values.valuesArray).tomorrow;`,
+    `tomorrow.local; //=> ${tomorrow.local}`,
   ].join(`\n`)}</code>`;
 }
 
@@ -925,11 +925,12 @@ function styleIt() {
       margin-top: auto;
       list-style: '\\27A4';
     }`,
-    `#log2screen li div:not(.contentDiv) { line-height: 1.3rem;  }`,
+    `#log2screen li div { line-height: 1.3rem;  }`,
     `li div p {
       margin-top: 0.3rem;
       line-height: 1.2rem;
     }`,
+    `#log2screen .contentDiv { line-height: revert; }`,
     `#log2screen ul.decimal li {
       list-style-type: decimal;
       padding-left: initial;
