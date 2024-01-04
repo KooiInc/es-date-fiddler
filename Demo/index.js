@@ -665,7 +665,7 @@ function createContent() {
     header.find$(`a`).remove();
     const headerText = header.html();
     ul.append(
-      `<li><div ${doQuote} data-target="h3#${h3.id}">${headerText.replace(
+      `<li><div ${doQuote} class="contentDiv" data-target="h3#${h3.id}">${headerText.replace(
         /\(.+\)/,
         ``
       )}</div></li>`
@@ -695,17 +695,17 @@ function valuesHelper() {
   const cmmts = `year,month,date,hour,minutes,seconds,milliseconds`
     .split(`,`)
     .map( v => `// ${v}`);
-  const vArr = now.values.valuesArray.map( (v, i) => `\n  ${`${v}`.padStart(4, ` `)}, ${cmmts[i]}` );
-  const valuesArrayComment = `/* =>\n[${vArr.join(``)} ] */`;
+  const vArr = now.values.valuesArray.map( (v, i) => `\n  ${`${v}`.padStart(8, ` `)}, ${cmmts[i]}` );
+  const valuesArrayComment = ` [${vArr.join(``)}\n  ] */`;
   return `<code class="codeblock">${[
     `const now = $D.now;`,
     `const us = now.clone.relocate({ locale: \`en-US\`, timeZone: \`US/Pacific\` });`,
     `now.values; ${valuesComment1}`,
-    `now.values.valuesArray; ${valuesArrayComment}`,
     `now.values.month; //=> ${now.values.month}`,
     `// values are locale specific`,
     `us.values; ${valuesComment2}`,
-    `// use values.valuesArray to create a new instance`,
+    `/* now.values.valuesArray represents => ${valuesArrayComment}`,
+    `// so one can use values.valuesArray to create a new instance`,
     `const nowTomorrow = $D(now.values.valuesArray).tomorrow;`,
     `nowTomorrow.local; //=> ${nowTomorrow.local}`,
   ].join(`\n`)}</code>`;
@@ -925,8 +925,10 @@ function styleIt() {
       margin-top: auto;
       list-style: '\\27A4';
     }`,
+    `#log2screen li div:not(.contentDiv) { line-height: 1.3rem;  }`,
     `li div p {
       margin-top: 0.3rem;
+      line-height: 1.2rem;
     }`,
     `#log2screen ul.decimal li {
       list-style-type: decimal;
