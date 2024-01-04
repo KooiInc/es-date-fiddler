@@ -685,8 +685,13 @@ function valuesHelper() {
   const now = $D.now;
   const us = now.clone.relocate({ locale: `en-US`, timeZone: `US/Pacific` });
   const nowTomorrow = $D(now.values.array).tomorrow;
-  const valuesComment1 = `/* =>\n${JSON.stringify(now.values, null, 2)} */`;
-  const valuesComment2 = `/* =>\n${JSON.stringify(us.values, null, 2)} */`;
+  const nowVals = now.values;
+  const usVals = us.values;
+  const valArray4Display = str => str.replace(/(Array": )"(.+?)"/, (a,b,c) => `Array": ${c}`);
+  nowVals.valuesArray = `[${now.values.valuesArray.join(`, `)}]`;
+  usVals.valuesArray = `[${us.values.valuesArray.join(`, `)}]`;
+  const valuesComment1 = `/* =>\n${valArray4Display(JSON.stringify(nowVals, null, 2))} */`;
+  const valuesComment2 = `/* =>\n${valArray4Display(JSON.stringify(usVals, null, 2))} */`;
   const cmmts = `year,month,date,hour,minutes,seconds,milliseconds`
     .split(`,`)
     .map( v => `// ${v}`);
