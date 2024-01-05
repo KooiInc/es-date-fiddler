@@ -158,8 +158,10 @@ function methodHelpersFactory(proxify, validateLocale) {
   };
   
   function getValues(d)  {
+    const mafklap = d.getMonth();
     d = proxify(d);
-    const [y,m,dd,h,mi,s,ms,dp,MM,WD] = d.format(`yyyy,mm,dd,hh,mmi,ss,ms,dp,MM,WD`).split(`,`);
+    const [MM,WD] = d.format(`MM,WD`).split(`,`);
+    const [y,m,dd,h,mi,s,ms,dp] = d.format(`yyyy,m,dd,hh,mmi,ss,ms,dp`).split(`,`);
     let locale = d.localeInfo ? validateLocale(d.localeInfo.locale, d.localeInfo.timeZone) : validateLocale();
     const valueObj = {
       year: +y,
@@ -173,7 +175,7 @@ function methodHelpersFactory(proxify, validateLocale) {
       monthName: MM,
       weekDay: WD,
       resolvedLocale: locale,
-      valuesArray: [y,m - 1,dd,h,mi,s,ms].map(Number),
+      valuesArray: [y,(+m - 1),dd,h,mi,s,ms].map(Number),
     };
     
     return valueObj;
