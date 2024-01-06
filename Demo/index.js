@@ -545,10 +545,10 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   print(`!!<b>Invalid input for <code>$D.dateFromString</code> delivers invalid date</b>`);
   print(`${toCode(`$D.dateFromString("03-18-1991 invalid", "mdy").toLocaleString()`)} => ${
     $D.dateFromString("03-18-1991 invalid", "mdy").toLocaleString()} (see console)`);
-  print(`${toCode(`$D.dateFromString("invalid", "mdy")?.toLocaleString()`)} => ${
+  print(`${toCode(`$D.dateFromString("invalid", "mdy").toLocaleString()`)} => ${
     $D.dateFromString("invalid", "mdy")?.toLocaleString()} (see console)`);
-  print(`${toCode(`$D.dateFromString("1991/03/18", "mdy")?.toLocaleString()`)} => ${
-    $D.dateFromString("1991/03/18", "mdy")?.toLocaleString()} (see console)`);
+  print(`${toCode(`$D.dateFromString("1991/03/18", "mdy").toLocaleString()`)} => ${
+    $D.dateFromString("1991/03/18", "mdy").toLocaleString()} (see console)`);
   print(`!!<b>Use <code>$D.dateFromString</code> within $D constructor (note: invalid date will deliver <i>now</i></b>)`);
   print(`${toCode(`$D($D.dateFromString("03-18-1991T22:30:05", "mdy")).local`)} => ${
     $D($D.dateFromString("03-18-1991T22:30:05", "mdy")).local}`);
