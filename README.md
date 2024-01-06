@@ -225,8 +225,10 @@ See the [demo](https://kooiinc.github.io/es-date-fiddler/Demo/) for examples.
 
 ### now, validateLocale
 - `now`: (getter) as may be expected, delivers an instance from the current date. It is equivalent to `$D(()`.
-- `validatedLocale(locale: Object {locale, timeZone})`: 
+- `validatedLocale(locale: Object {locale, timeZone})`:
    validate a `locale` string, a `timeZone` label or both
+- `dateFromString(dateString: string, format: string (default "ymd")`: create an ES-Date from a [dateString],
+   using [format] to indicate the position of year (y), month (m) and date (d) in the given date string.
 
 ### `extendWith`: create additonal setters and getters for `$D`
 One can create additional setters/getter (properties/methods) to the constructor using:
