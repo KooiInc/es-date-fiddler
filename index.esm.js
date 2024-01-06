@@ -114,12 +114,59 @@ function DateXFactory() {
     return proxify(date2Proxy).relocate(dateIsLocaleInfo ? dateOrLocale : localeInfo);
   }
   
+  function dateFromStringCheck(dateStr, dateParsed) {
+    const date4Check = xDateFn(dateStr.replace(/T/, ` `));
+    const date2Check = xDateFn(dateParsed);
+    
+    return date4Check.date.join(``) === date2Check.date.join(``);
+  }
+  
+  function DateFromString(dateString, format = "ymd") {
+    dateString = dateString.trim();
+    const dsArray = dateString?.split(/[T :\-\/.,]/g).filter(v => !!(v.trim()));
+    const getResult = () => {
+      const formatMap = [...format].reduce((a, b, i) => (a[b] = i, a), {});
+      const datePart = dsArray.slice(0, 3);
+      const timePart = dsArray.slice(3);
+      const [year, month, date, hours, minutes, seconds, milliseconds] =
+        [ +datePart[formatMap.y], +datePart[formatMap.m] - 1, +datePart[formatMap.d], ]
+          .concat([...Array(4)].map( (_, i) => +timePart[i] || 0 ) );
+      
+      if (year < 1900) {
+        return new Date(new Date( year, month, date, hours, minutes, seconds, milliseconds ).setFullYear(year) );
+      }
+      
+      return new Date( year, month, date, hours, minutes, seconds, milliseconds );
+    };
+    const convert = {
+      get cando() { return getResult(); },
+      get cannot() {
+        if (!dateString || dsArray?.length < 3) {
+          console.error(`dateFromString: can't convert "${!dateString
+            ? `empty date string`
+            : dateString}" to ES-Date` );
+          return true;
+        }
+        
+        if (!dateFromStringCheck(dateString, getResult())) {
+          console.error(`dateFromString: not what we expected. Check your input ("${
+            dateString}" and "${format}")` );
+          return true;
+        }
+        
+        return undefined; },
+    }
+    
+    return convert.cannot ? new Date(NaN) : convert.cando;
+  }
+  
   Object.defineProperties(xDateFn, {
     now: { get() { return now(); } },
     extendWith: { get() { return extendWith; } },
     validateLocale: {get() { return validateLocaleConstructorExtension; } },
     ownFns: { get() { return Object.getOwnPropertyDescriptors( extensionGettersAndSetters ) } },
-    describe: { get() { return getDescriptions(); } }
+    describe: { get() { return getDescriptions(); } },
+    dateFromString: { value: DateFromString },
   });
   
   return xDateFn;
