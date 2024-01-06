@@ -516,7 +516,7 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     <div>With <code>validateLocale</code> you can validate a <code>locale</code>, a <code>timeZone</code> label
     or both</div>
     <div>With <code>dateFromString</code> you can create an <code>ES-Date</code> from a String.
-    <div>&nbsp;&nbsp;Syntax: <code>$D.dateFromString(dateString: string, [format: string (default: "ymd")]</code></div></div>`);
+    <div>&nbsp;&nbsp;Syntax: <code>$D.dateFromString(dateString: string, [format: string (default: "ymd")])</code></div></div>`);
   print(`!!<b>$D.now</b>`)
   print(`${toCode(`$D.now.local`)} => ${$D.now.local}`);
   print(`${toCode(`$D.now.weekDay`)} => ${$D.now.weekDay}`);
