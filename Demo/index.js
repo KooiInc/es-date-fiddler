@@ -82,8 +82,8 @@ function demoNdTest() {
       ${toCode(`d2.timeDiffToHere`)} (time difference to local date/time): ${d2.timeDiffToHere}` );
   print(`${toCode(`d3.local`)} => ${
     d3.local}<br>${toCode(`d3.dateStr`)} => ${
-      d3.dateStr} (default (your) timeZone; ${toCode(`d3.timeZone`)} => ${
-        d3.locale?.timeZone})<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`
+    d3.dateStr} (default (your) timeZone; ${toCode(`d3.timeZone`)} => ${
+    d3.locale?.timeZone})<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`
   );
   /* endregion init  */
   
@@ -158,7 +158,7 @@ chinese.locale = { locale: \`zh\`, timeZone: \`Asia/Shanghai\` };`,  true));
     y2000.timeStr; //=> ${y2000.timeStr(true)}
     // NOTE
     y2000.seconds = 125; //=> y2000.timeStr(true) now ${(() => {
-      y2000.seconds = 125; return y2000.timeStr(true);})()}
+    y2000.seconds = 125; return y2000.timeStr(true);})()}
     y2000.time = {hour: 25, minutes: 3, seconds: 122}; //=> y2000.local now ${
     (() => {y2000.time = {hour: 25, minutes: 3, seconds: 122}; return y2000.local;})() } `, true)}` );
   print(`<code>y2000.minutes</code> => ${y2000.minutes}`);
@@ -511,16 +511,20 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   /* endregion natives */
   
   /* region now & validateLocale */
-  print(`<h3 id="utilities">Utilities: now, validateLocale</h3>
+  print(`<h3 id="utilities">Utilities: now, validateLocale, dateFromString</h3>
     <div><code>now</code>, as you may have expected, delivers an instance from the current date.</div>
     <div>With <code>validateLocale</code> you can validate a <code>locale</code>, a <code>timeZone</code> label
-    or both</div>`);
+    or both</div>
+    <div>With <code>dateFromString</code> you can create an <code>ES-Date</code> from a String.
+    <div>&nbsp;&nbsp;Syntax: <code>$D.dateFromString(dateString: string, [format: string (default: "ymd")]</code></div></div>`);
+  print(`!!<b>$D.now</b>`)
   print(`${toCode(`$D.now.local`)} => ${$D.now.local}`);
   print(`${toCode(`$D.now.weekDay`)} => ${$D.now.weekDay}`);
   print(`${toCode(`$D.now.relocate({locale: "en-GB"}).format("{Hi! Time flies! It's} WD {again}")`)} => ${
     $D.now
       .relocate({ locale: 'en-GB' })
       .format("{Hi! Time flies! It's} WD {again}")}`);
+  print(`!!<b>*$D.validateLocale</b>`)
   print(`${toCode(`$D.validateLocale({locale: "invalid!"})`)} => ${$D.validateLocale({ locale: 'invalid!' })}`);
   print(`${toCode(`$D.validateLocale({locale: "en-GB"})`)} => ${$D.validateLocale({locale: 'en-GB',})}`);
   print(`${toCode(`$D.validateLocale({timeZone: "ToTheMoon/AndBack"})`)} => ${$D.validateLocale({ timeZone: 'ToTheMoon/AndBack' })}`);
@@ -531,6 +535,25 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
     $D.validateLocale({ locale: 'en', timeZone: 'ToTheMoon/AndBack' })}`);
   print(`${toCode(`$D.validateLocale({locale: "en", timeZone: "Asia/Shanghai"})`)} => ${
     $D.validateLocale({ locale: 'en', timeZone: 'Asia/Shanghai' })}`);
+  print(`!!<b>*$D.dateFromString</b>`)
+  print(`${toCode(`$D.dateFromString("03-18-1991", "mdy").toLocaleString()`)} => ${
+    $D.dateFromString("03-18-1991", "mdy").toLocaleString()}`);
+  print(`${toCode(`$D.dateFromString("03-18-1991T22:30:05", "mdy").toLocaleString()`)} => ${
+    $D.dateFromString("03-18-1991T22:30:05", "mdy").toLocaleString()}`);
+  print(`${toCode(`$D.dateFromString("03-18-1991 03:30", "mdy").toLocaleString()`)} => ${
+    $D.dateFromString("03-18-1991 03:30", "mdy").toLocaleString()}`);
+  print(`!!<b>Invalid input for <code>$D.dateFromString</code> delivers invalid date</b>`);
+  print(`${toCode(`$D.dateFromString("03-18-1991 invalid", "mdy").toLocaleString()`)} => ${
+    $D.dateFromString("03-18-1991 invalid", "mdy").toLocaleString()} (see console)`);
+  print(`${toCode(`$D.dateFromString("invalid", "mdy")?.toLocaleString()`)} => ${
+    $D.dateFromString("invalid", "mdy")?.toLocaleString()} (see console)`);
+  print(`${toCode(`$D.dateFromString("1991/03/18", "mdy")?.toLocaleString()`)} => ${
+    $D.dateFromString("1991/03/18", "mdy")?.toLocaleString()} (see console)`);
+  print(`!!<b>Use <code>$D.dateFromString</code> within $D constructor (note: invalid date will deliver <i>now</i></b>)`);
+  print(`${toCode(`$D($D.dateFromString("03-18-1991T22:30:05", "mdy")).local`)} => ${
+    $D($D.dateFromString("03-18-1991T22:30:05", "mdy")).local}`);
+  print(`${toCode(`$D($D.dateFromString("03-18-1991T22:30:05", "<b style="color:red">dmy</b>")).local`)} => ${
+    $D($D.dateFromString("03-18-1991T22:30:05", "dmy")).local} (see console)`);
   /* endregion now & validateLocale */
   
   /* region all extension names */
@@ -705,7 +728,7 @@ function valuesHelper() {
     `// values are locale specific`,
     `japan.values; ${valuesComment2}`,
     `/* now.values.valuesArray represents => ${
-    valuesArrayComment}\u2026 so one can use values.valuesArray to create a new instance */`,
+      valuesArrayComment}\u2026 so one can use values.valuesArray to create a new instance */`,
     `const tomorrow = $D(now.values.valuesArray).tomorrow;`,
     `tomorrow.local; //=> ${tomorrow.local}`,
   ].join(`\n`)}</code>`;
@@ -785,7 +808,7 @@ function extendHelper() {
       
       return reportString
         ? `Days from ${initial.date.join(`/`)} until ${nextDate.date.join(`/`)}: ${z} ${
-              containsLeapYear ? `(range contains leap year(s))` : ``}`
+          containsLeapYear ? `(range contains leap year(s))` : ``}`
         : z;
     },
     isMethod: true,
