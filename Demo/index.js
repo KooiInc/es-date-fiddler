@@ -552,6 +552,8 @@ const exampleDateFormatted = exampleDate.add(\`5 days, 3 hours\`).nextYear
   print(`!!<b>Use <code>$D.dateFromString</code> within $D constructor (note: invalid date will deliver <i>now</i></b>)`);
   print(`${toCode(`$D($D.dateFromString("03-18-1991T22:30:05", "mdy")).local`)} => ${
     $D($D.dateFromString("03-18-1991T22:30:05", "mdy")).local}`);
+  print(`${toCode(`$D.dateFromString(new Date(1991,2,18,22,30,5).toISOString())).local`)} => ${
+    $D($D.dateFromString(new Date(1991,2,18,22,30,5).toISOString())).local}`);
   print(`${toCode(`$D($D.dateFromString("03-18-1991T22:30:05", "<b style="color:red">dmy</b>")).local`)} => ${
     $D($D.dateFromString("03-18-1991T22:30:05", "dmy")).local} (see console)`);
   /* endregion now & validateLocale */
