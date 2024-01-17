@@ -180,9 +180,9 @@ function methodHelpersFactory(proxify, validateLocale) {
     };
   }
   
-  function localeDifference2(dt)  {
+  function localeDifference2(dt, utc=false)  {
     const self = localizedDT(dt);
-    const selfHere = localizedDT(new Date(dt));
+    const selfHere = localizedDT(utc ? proxify(dt).clone.relocate({timeZone: `Etc/UTC`}) : new Date(dt));
     // milliseconds possibly influence the difference calculation
     // and are not relevant here, so discard
     selfHere.time = self.time = { milliseconds: 0 };
@@ -246,6 +246,7 @@ function methodHelpersFactory(proxify, validateLocale) {
       removeLocale: d => /*mg,c*/removeLocaleInfo(d),
       relocate: d => /*mgm,c*/({locale, timeZone} = {}) => reLocate(d, locale, timeZone),
       timeDiffToHere: d => /*g*/localeDifference2(d),
+      timeDiffToUTC: d => /*g*/localeDifference2(d, true),
       time: (d, {hour, minutes, seconds, milliseconds} = {}) => /*g,s*/
         getOrSetTime(d, {Hours: hour, Minutes: minutes, Seconds: seconds, Milliseconds: milliseconds}),
       timeStr: d => (displayMS = false) => /*gm*/ getTimeStr(d, displayMS),
