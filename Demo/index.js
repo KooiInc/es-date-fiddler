@@ -240,11 +240,6 @@ chinese.locale = { locale: \`zh\`, timeZone: \`Asia/Shanghai\` };`,  true));
   <code>$D().add(\`-1 day\`).isTodayOrLaterThen($D());</code> => ${$D()
     .add(`-1 day`)
     .isTodayOrLaterThen($D())}<br>
-  <code>$D().utcDistanceHours</code> => ${$D().utcDistanceHours}<br>
-  <code>$D().relocate({locale: \`gmt\`, timeZone: \`Europe/Greenwich\`}).utcDistanceHours</code> => ${
-    $D().relocate({ locale: `gmt`, timeZone: `utc` }).utcDistanceHours}<br>
-  <code>$D().relocate({timeZone: \`America/New_York\`}).utcDistanceHours</code> => ${
-    $D().relocate({ locale: `en-US`, timeZone: `America/New_York` }).utcDistanceHours}<br>
   <code>$D().midNight.local</code> => ${$D().midNight.local}<br>
   <code>$D(\`2022/06/01\`).daysUntil($D(\`2023/06/01\`))</code> => ${
     $D(`2022/06/01`).daysUntil($D(`2023/06/01`))}<br>
@@ -761,34 +756,6 @@ function extendHelper() {
     name: "isTodayOrLaterThen",
     fn: (dt, nextDt) => +dt >= +nextDt,
     isMethod: true,
-  });
-  
-  // locale aware `getTimezoneOffset`
-  $D.extendWith({
-    name: "utcDistanceHours",
-    fn: (dt) => {
-      const timeZone = dt.localeInfo?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const fmt = Intl.DateTimeFormat(
-        "en-CA",
-        { year: "numeric",  timeZone: timeZone, timeZoneName: "shortOffset", } );
-      let distance = fmt.format(dt).match(/[+-]\d+$/);
-      return !distance ? 0 : distance.shift();
-    },
-  });
-  
-  $D.extendWith({
-    name: "utcDiff",
-    fn: (dt) => {
-      const dtClone = dt.clone;
-      const tz = { timeZone: dtClone.locale?.timeZone || `utc` };
-      const utcDiff = dt.timeZoneOffset() * -1;
-      const local4TZ = dtClone
-        .localize4TZ(tz.timeZone)
-        .add(`${utcDiff} minutes, 1 second`);
-      let diff = dt.differenceFrom(local4TZ);
-      diff = diff.clean.startsWith("Dates") ? "no difference" : diff.clean;
-      return `UTC difference for ${tz.timeZone}: ${diff}`;
-    },
   });
   
   // Note: this getter method (daysUntil) already exists in $D instances.
