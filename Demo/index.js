@@ -71,7 +71,8 @@ function demoNdTest() {
       toCode(`d1.local`)} => ${
       d1.local} (${toCode(`d1.timeZone`)}: ${d1.timeZone})<br>${
       toCode(`d1.dateStr`)} => ${d1.dateStr} <br>${
-      toCode(`d1.timeStr()`)} => ${d1.timeStr()}<br>
+      toCode(`d1.timeStr()`)} => ${d1.timeStr()}
+        <b>Note</b>: ${toCode(`timeStr`) } is always 24-hour notation<br>
       ${toCode(`d1.hour`)} => ${d1.hour}<br>
       ${toCode(`d1.timeDiffToHere`)} (time difference to local date/time): ${d1.timeDiffToHere}<br>
       ${toCode(`d1.timeDiffToUTC`)} (time difference to UTC): ${d1.timeDiffToUTC}`
