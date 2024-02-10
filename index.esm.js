@@ -160,14 +160,10 @@ function DateXFactory() {
     return convert.cannot ? new Date(NaN) : convert.cando;
   }
   
-  function localeWeekdays(locale = `en-GB`) {
+  function localeWeekdays(locale = `en-GB`, format = `long`) {
     return [...Array(7).keys()]
-      .map( (v) => {
-        const dayStr = new Date(Date.UTC(1970, 0, 6+v) ).toLocaleDateString(locale, { weekday: 'long' });
-        return {[dayStr]: {
-          index: v,
-          firstUp: dayStr[0].toUpperCase() + dayStr.slice(1) }
-        };
+      .map( v => {
+        return new Date(Date.UTC(1970, 0, 4 + v) ).toLocaleDateString(locale, { timeZone: `Etc/UTC`, weekday: format });
       });
   }
   
@@ -178,7 +174,7 @@ function DateXFactory() {
     ownFns: { get() { return Object.getOwnPropertyDescriptors( extensionGettersAndSetters ) } },
     describe: { get() { return getDescriptions(); } },
     dateFromString: { value: DateFromString },
-    localeWeekdays: { value: localeWeekdays },
+    weekDayNames: { value: localeWeekdays },
   });
   
   return xDateFn;
