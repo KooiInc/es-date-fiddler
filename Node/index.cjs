@@ -337,13 +337,14 @@ function methodHelpersFactory(proxify, validateLocale) {
     const mafklap = d.getMonth();
     d = proxify(d);
     const [MM,WD] = d.format(`MM,WD`).split(`,`);
-    const [y,m,dd,h,mi,s,ms,dp] = d.format(`yyyy,m,dd,hh,mmi,ss,ms,dp`).split(`,`);
+    const [y,m,dd,h,mi,s,ms,dp] = d.format(`yyyy,m,dd,h,mi,s,ms,dp`).split(`,`);
     let locale = d.localeInfo ? validateLocale(d.localeInfo.locale, d.localeInfo.timeZone) : validateLocale();
     
     return {
       year: +y,
       month: +m,
       date: +dd,
+      dow: d.getDay(),
       hour: +h,
       minutes: +mi,
       seconds: +s,
