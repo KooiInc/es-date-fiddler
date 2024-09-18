@@ -84,7 +84,7 @@ function demoNdTest() {
       ${toCode(`d2.timeDiffToHere`)} (time difference to local date/time): ${d2.timeDiffToHere}<br>
       ${toCode(`d2.timeDiffToUTC`)} (time difference to UTC): ${d2.timeDiffToUTC}` );
   print(`${toCode(`d3.local`)} => ${
-    d3.local}<br>${toCode(`d3.dateStr`)} => ${d3.dateStr} (default (your) timeZone (${
+    d3.local}<br>${toCode(`d3.dateStr`)} => ${d3.dateStr} your current timeZone (${
       d3.locale?.timeZone}) and custom locale ${d3.locale.locale}<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`
   );
   /* endregion init  */
