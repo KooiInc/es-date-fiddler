@@ -48,7 +48,7 @@ function demoNdTest() {
   window.DX = $D;
   const d1 = $D({ locale: `en-US`, timeZone: `US/Pacific` });
   const d2 = d1.cloneLocal;
-  const d3 = $D(new Date(200, 2, 18, 12, 0, 30));
+  const d3 = $D(new Date(200, 2, 18, 12, 0, 30), {locale: `nl-NL`});
   print(
     `!!<h1>Demo for es-date-fiddler</h1>`,
     `!!<h2>a proxy to extend and make working with ES <code>Date</code> somewhat easier</h3>` );
@@ -60,16 +60,15 @@ function demoNdTest() {
   getting the hour from it will show the hour value within that timeZone.
   In the examples you can see it in action.</div>`);
   print(
-    `!!` +
-    toCode(`// Constructor imported as $D (import $D from "[location of module]")
+    `!!` +toCode(`// Constructor imported as $D (import $D from "[location of module]")
     // note: the IANA time zone identifier for US/Pacific is America/Los_Angeles
     const d1 = $D({ locale: \`en-US\`, timeZone: \`US/Pacific\` });
     const d2 = d1.cloneLocal; // <= clone with default (your) locale
-    const d3 = $D(new Date(200, 2, 18, 12, 0, 30));`, true) );
+    const d3 = $D(new Date(200, 2, 18, 12, 0, 30), \{locale: "nl-NL"\}); }`, true) );
   print(
     `${
       toCode(`d1.local`)} => ${
-      d1.local} (${toCode(`d1.timeZone`)}: ${d1.timeZone})<br>${
+      d1.local} (${toCode(`d1.timeZone`)}: ${d1.timeZone}, ${toCode(`d1.locale`)}: ${d1.locale.locale})<br>${
       toCode(`d1.dateStr`)} => ${d1.dateStr} <br>${
       toCode(`d1.timeStr()`)} => ${d1.timeStr()}
         <b>Note</b>: ${toCode(`timeStr`) } is always 24-hour notation<br>
@@ -77,16 +76,16 @@ function demoNdTest() {
       ${toCode(`d1.timeDiffToHere`)} (time difference to local date/time): ${d1.timeDiffToHere}<br>
       ${toCode(`d1.timeDiffToUTC`)} (time difference to UTC): ${d1.timeDiffToUTC}`
   );
-  print(`${toCode(`d2.local`)} => ${d2.local} (${toCode(`d2.timeZone`)} => ${d2.timeZone})<br>
+  print(`${toCode(`d2.local`)} => ${d2.local} (${toCode(`d2.timeZone`)} => ${d2.timeZone}, ${toCode(`d2.locale`)}: ${
+        d2.locale.locale})<br>
       ${toCode(`d2.dateStr`)} => ${d2.dateStr}<br>
       ${toCode(`d2.timeStr(true)`)} => ${d2.timeStr(true)}<br>
       ${toCode(`d2.hour`)} => ${d2.hour}<br>
       ${toCode(`d2.timeDiffToHere`)} (time difference to local date/time): ${d2.timeDiffToHere}<br>
       ${toCode(`d2.timeDiffToUTC`)} (time difference to UTC): ${d2.timeDiffToUTC}` );
   print(`${toCode(`d3.local`)} => ${
-    d3.local}<br>${toCode(`d3.dateStr`)} => ${
-    d3.dateStr} (default (your) timeZone; ${toCode(`d3.timeZone`)} => ${
-    d3.locale?.timeZone})<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`
+    d3.local}<br>${toCode(`d3.dateStr`)} => ${d3.dateStr} (default (your) timeZone (${
+      d3.locale?.timeZone}) and custom locale ${d3.locale.locale}<br>${toCode(`d3.timeStr()`)} => ${d3.timeStr()}`
   );
   /* endregion init  */
   
