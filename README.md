@@ -1,3 +1,5 @@
+![deprecated/not maintained](https://kooiinc.github.io/es-date-fiddler/img/unmaintained-badge.svg "This library is not maintained anymore")
+
 # Deprecated
 This library is deprecated/replaced with [TickTock.js](https://github.com/KooiInc/ticktock.js).
 
