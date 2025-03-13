@@ -1,3 +1,6 @@
+# Deprecated
+This library is deprecated/replaced with [TickTock.js](https://github.com/KooiInc/ticktock.js).
+
 # es-date-fiddler
 An ES Date with nifty extensions using [ES Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). 
 It is programmed in a [class free object oriented](https://depth-first.com/articles/2019/03/04/class-free-object-oriented-programming/) coding style.
