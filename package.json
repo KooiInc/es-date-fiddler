@@ -1,10 +1,10 @@
 {
   "name": "es-date-fiddler",
   "type": "module",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "private": false,
   "main": "./index.esm.js",
-  "description": "ES Date helper",
+  "description": "DEPRECATED ES Date helper",
   "keywords": [
     "ECMAScript",
     "Date",
